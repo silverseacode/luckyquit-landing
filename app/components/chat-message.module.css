@@ -1,0 +1,91 @@
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+  }
+
+  .containerModal {
+    background-color: #FFF;
+    height: 470px;
+    width: 550px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+  }
+
+  .modalConfirm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+  }
+
+  .containerModalConfirm {
+    background-color: #FFF;
+    height: 430px;
+    width: 450px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 20px;
+  }
+
+  .containerInput {
+    position: absolute;
+    bottom: 0;
+    background: #fff;
+    max-width: 427px;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .input {
+    width: 100%;
+    max-width: 427px;
+    flex-direction: row;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+  }
+
+  .modalEvent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+  }
+
+  .containerModalEvent {
+    background-color: #FFF;
+    height: 340px;
+    width: 450px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 20px;
+  }
+  
+
+  .modalPicker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+  }
+
+  .containerModalPicker {
+    background-color: #FFF;
+    height: 180px;
+    width: 350px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 20px;
+  }

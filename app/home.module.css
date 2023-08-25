@@ -1,0 +1,9 @@
+.container {
+    background-color: #F3F2EF;
+    height: 100%;
+    padding-top: 50px;
+}
+
+.MuiGrid-item {
+    padding-top: 0 !important;
+}

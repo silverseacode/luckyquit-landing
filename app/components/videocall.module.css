@@ -1,0 +1,38 @@
+.user-video {
+    width: 200px;
+    height: 136px;
+}
+
+.myStream {
+    background-color: #292D30;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 136px;
+    margin-top: -10px;
+}
+
+.chat-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #000;
+    height: 100vh;
+    padding-top: -50px;
+}
+
+.remoteStream video {
+    width: 900px;
+    height: 550px;
+    margin-top: 5px;
+  }
+.controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    top: -20px
+}

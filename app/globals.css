@@ -1,0 +1,183 @@
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 100%;
+    font-family: var(--font-montserrat) !important;
+  }
+
+  button {
+    font-family: var(--font-montserrat) !important;
+  }
+  p {
+    font-family: var(--font-montserrat) !important;
+  }
+
+  input {
+    font-family: var(--font-montserrat) !important;
+  }
+  textarea {
+    font-family: var(--font-montserrat) !important;
+  }
+
+  input:focus {
+    border: 1px solid #7D5FCE !important;
+  }
+
+  textarea:focus {
+    border: 1px solid #7D5FCE !important;
+  }
+  
+  .animation-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateX(100%); /* Initial position outside the viewport */
+    transition: opacity 2s ease, transform 2s ease;
+  }
+  
+  .animation-container.animate {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .animation-image {
+    max-width: 300px; /* Adjust the image size as needed */
+    border-radius: 24px;
+  }
+  
+  .static-text {
+    margin-right: 50px; /* Adjust the spacing as needed */
+    width: 400px;
+    font-size: 20px;
+  }
+
+  .static-text-reverse {
+    margin-left: 50px; /* Adjust the spacing as needed */
+    width: 400px;
+    font-size: 20px;
+  }
+.feature-first {
+  display: flex;
+    margin-top: 0px;
+    flex-direction: row;
+    justify-content: center;
+}
+
+  .feature {
+    display: flex;
+    margin-top: 200px;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .animation-container-reverse {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateX(-100%); /* Initial position outside the viewport */
+    transition: opacity 2s ease, transform 2s ease;
+  }
+  
+  .animation-container-reverse.animate {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+
+  .accordion-item {
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px;
+    cursor: pointer;
+    background-color: #f1f1f1;
+  }
+  
+  .accordion-header h3 {
+    margin: 0;
+    font-weight: normal;
+  }
+  
+  .accordion-icon {
+    width: 10px;
+    height: 10px;
+    border: solid #888;
+    border-width: 0 1px 1px 0;
+    transform: rotate(45deg);
+    transition: transform 0.3s ease;
+  }
+  
+  .accordion-content {
+    padding: 30px;
+    display: none;
+    line-height: 1.5;
+  }
+  
+  .accordion-item.active .accordion-icon {
+    transform: rotate(-135deg);
+  }
+  
+  .accordion-item.active .accordion-content {
+    display: block;
+  }
+
+  .text-feature {
+    line-height: 1.5;
+    color: #6c7984ff
+  }
+
+  @media screen and (max-width: 425px) {
+    .static-text {
+      font-size: 14px;
+      width: unset;
+      margin: 0 20px;
+    }
+    .static-text-reverse {
+      font-size: 14px;
+      width: unset;
+      margin: 0 20px;
+    }
+    .animation-image{
+      width: 150px;
+      height: 150px;
+      margin-right: 20px;
+    }
+    .animation-image-reverse {
+      margin-left: 20px;
+    }
+    .feature {
+      margin-top: 50px;
+    }
+  }
+
+  @media screen and (max-width: 375px) {
+    .static-text {
+      font-size: 12px;
+      width: unset;
+      margin: 0 20px;
+    }
+    .static-text-reverse {
+      font-size: 12px;
+      width: unset;
+      margin: 0 20px;
+    }
+    .animation-image{
+      width: 100px;
+      height: 100px;
+      margin-right: 20px;
+    }
+    .animation-image-reverse {
+      margin-left: 20px;
+    }
+    .feature {
+      margin-top: 50px;
+    }
+    .accordion-content {
+      font-size: 15px;
+    }
+  }

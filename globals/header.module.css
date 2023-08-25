@@ -1,0 +1,52 @@
+.container {
+    background-color: #fff;
+    flex-direction: row;
+    display: flex;
+    width: 100%;
+}
+
+.subContainer {
+    flex-direction: row;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-top: 8px;
+}
+
+.menuItems {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 50%;
+    position: relative;
+}
+
+.menuItem {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    cursor: pointer;
+    position: relative;
+}
+
+
+.menuItemText {
+    margin-top: 5px;
+    color: #55616C;
+    margin-bottom: 5px;
+}
+
+.borderActiveRoute {
+    border: 1px solid #000;
+    width: 20px;
+    width: 70px;
+}
+
+@media (max-width: 580px) {
+    .subContainer {
+        width: 70%;
+    }
+  }

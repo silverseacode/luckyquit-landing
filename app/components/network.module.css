@@ -1,0 +1,24 @@
+.container {
+    background-color: #F3F2EF;
+    height: 100vh;
+    padding-top: 50px;
+}
+
+.containerModal {
+    background-color: #FFF;
+    height: 500px;
+    width: 500px;
+    max-height: 500px;
+    overflow: hidden;
+    overflow-y: scroll;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+}
+
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}

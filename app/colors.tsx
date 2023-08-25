@@ -1,0 +1,17 @@
+export const Colors = {
+    //primary: "#CAC776",
+    primary: "#7D5FCE",
+    black: "#3F4850",
+    darkGray: "#55616C",
+    lightGray: "#EDEFF0",
+    success: "#64CE83",
+    blue: "#3659A2",
+    lightblue: "#007E92",
+    violet: "#733A88",
+    lightherblue: "#B3DBD8",
+    red: "#9B3B5A",
+    white: "#FFF",
+    blackDefault: "#000",
+    blackCardDarkMode: "#292D30",
+    backgroundGray: "#EBEAF6",
+  };

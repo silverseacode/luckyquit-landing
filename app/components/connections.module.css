@@ -1,0 +1,15 @@
+.containerModal {
+    background-color: #FFF;
+    height: 500px;
+    width: 500px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+}
+
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}

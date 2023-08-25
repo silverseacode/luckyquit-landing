@@ -1,0 +1,486 @@
+.mainContainer {
+   background-color: #fff;
+   width: 1362px;
+   margin: 0 auto;
+}
+
+.navbar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    padding-top: 20px;
+}
+
+.menuItems {
+    margin-left: 50px;
+    display: flex;
+}
+
+.menuItem {
+    margin-left: 25px;
+    cursor: pointer;
+}
+
+.jumbotron {
+    height: 100vh;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    display: flex;
+}
+
+.imageMain {
+    position: relative;
+  }
+
+.mainText {
+    margin-top: 100px;
+    font-size: 25px;
+}
+
+.textLeft {
+    display: flex;
+    flex-direction: column;
+}
+
+.secondText {
+color: #55616C;
+}
+
+.downloadButtons {
+    margin-top: 20px;
+}
+
+.flexContainer {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+.column {
+    flex-basis: 30%; /* Adjust the width of the columns as needed */
+    padding: 20px;
+    display: flex;
+  align-items: center;
+  flex-direction: column;
+  }
+  .flexContainerFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .columnFooter {
+    flex-basis: 30%; /* Adjust the width of the columns as needed */
+    padding: 20px;
+    text-align: center;
+  }
+
+  .coachSection {
+    text-align: center;
+    padding: 40px 0px;
+  }
+
+  .featuresSection {
+    text-align: center;
+    padding: 20px 0px;
+   
+  }
+
+  .titleSection {
+    cursor: pointer;
+  }
+
+  .faqSection {
+    text-align: center;
+    padding: 20px 0px;
+  }
+
+  .containerFaq {
+    width: 600px;
+    margin: 0 auto;
+  }
+  .footer {
+    margin-top: 100px;
+    width: 100%;
+    background-color: #292D30;
+    height: 200px;
+  }
+
+  .textFooter {
+    color: #55616C;
+    cursor: pointer;
+  }
+
+  .social {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .socialButton {
+    background-color: #5C5C5C;
+    border-radius: 50%;
+    padding: 5px;
+    width: 25px;
+    height: 25px;
+    margin-right: 1rem;
+    display: flex;
+    align-items: center;
+    -ms-flex-align: center;
+    justify-content: center;
+}
+
+.imagePhone {
+  animation: animate 2s infinite ease alternate;
+
+  
+}
+
+
+
+@keyframes animate {
+  to {
+    transform: translateY(20px);
+  }
+}
+
+.signInButton {
+  background-color: #FFF;
+  border-radius: 8px;
+  padding: 10px 40px;
+  z-index: 3;
+  border: 1px solid #55616C;
+  cursor: pointer;
+}
+.iconCoachSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 24px;
+}
+
+.footerNotDesktop {
+  display: none;
+}
+
+.textCoachSection {
+  font-size: 20px;
+  line-height: 1.5;
+  color: #6c7984ff;
+}
+
+.containerCanvas  div {
+  width: 800px !important;
+}
+
+.modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.containerModal {
+  background-color: #FFF;
+  height: 500px;
+  width: 500px;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+
+
+@media screen and (max-width: 850px) {
+  .imageMain {
+    display: none;
+  }
+  .footer {
+    
+    display: none;
+  }
+  .getTheApp {
+    display: none;
+  }
+  .downloadButtonsMobile {
+    display: flex;
+    justify-content: center;
+  }
+  .textFooter {
+    font-size: 14px;
+  }
+  .footerNotDesktop {
+    display: block;
+    height: 70vw;
+    width: 100%;
+    background-color: #292D30;
+  }
+  .signInButton {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 851px) and (max-width: 1000px)  {
+  .footerNotDesktop {
+    display: block;
+    background-color: #292D30;
+  }
+ .footer {
+  display: none;
+ }
+ .featuresSection {
+  margin-top: 400px;
+}
+}
+
+@media  screen and (max-width: 1000px) {
+.signInButton {
+  display: none;
+}
+}
+
+@media  screen and (min-width: 1000px) {
+  .downloadButtonsMobile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  .appIconFooter {
+    margin-left: 0px !important;
+    margin-top: 10px;
+    margin-right: 20px;
+  }
+}
+
+
+
+@media  screen and (max-width: 1080px) {
+  .mainContainer {
+    overflow: hidden;
+    width: 100vw;
+    margin-right: 70px;
+    box-sizing: border-box;
+  }
+  .imageMain {
+    display: none;
+  }
+  .jumbotron {
+    flex-direction: column;
+    align-items: center;
+    display: flex;
+    width: 100vw;
+    height: 100vw;
+  }
+  .navbar {
+    width: 100vw;
+    margin-left: 5px;
+  }
+  .signInButton {
+    margin-right: 20px;
+  }
+  .textLeft {
+    margin-left: 15px;
+    margin-right: 20px;
+  }
+  .headerAppIcons {
+    width: 150px;
+    height: 50px;
+  }
+  .featuresSection {
+    margin-top: -500px !important;
+  }
+  .featuresSection h1 {
+    font-size: 25px;
+  }
+  .faqSection h1 {
+    font-size: 25px;
+  }
+  .coachSection h1 {
+    font-size: 25px;
+  }
+  .column {
+    flex-basis: 100%;
+  }
+  .flexContainer {
+    display: block;
+  }
+  .textCoachSection {
+    font-size: 16px;
+    padding: 0 150px;
+    text-align: center;
+  }
+  .iconCoachSection {
+    width: 150px;
+    height: 150px;
+  }
+  .containerFaq {
+    width: 100vw;
+  }
+  .columnFooter h1 {
+    font-size: 25px;
+  }
+  .columnFooter h3 {
+    font-size: 14px;
+  }
+  .footerNotDesktop {
+    height: 40vw;
+    width: 100%;
+  }
+}
+
+
+@media screen and (max-width: 375px) {
+  .featuresSection {
+    margin-top: 70px;
+  }
+
+  .headerAppIcons {
+    width: 125px !important;
+    height:45px;
+  }
+  .textCoachSection {
+    font-size: 12px;
+  }
+  .faqTitle{
+    font-size: 15px;
+  }
+  .lucky {
+   margin-top: 0px;
+    font-size: 16px !important;
+  }
+  .socialButtonImage {
+    width: 5px !important;
+    height: 5px;
+    padding: 5px;
+    margin-right: 5px;
+  }
+  .socialButton {
+    width: 5px;
+    height: 5px;
+    padding: 5px;
+    background-color: unset;
+  }
+  .socialButton img {
+    border-radius: 6px;
+  }
+  .rights {
+    font-size: 10px !important;
+  }
+  .legal {
+    font-size: 11px !important;
+    margin-top: -10px;
+  }
+  .textFooter {
+    font-size: 11px !important;
+  }
+  .downloadButtonsMobile {
+    display: none;
+  }
+  .textCoachSection {
+    padding: 0 30px;
+    text-align: unset;
+  }
+}
+
+@media  screen and (max-width: 769px) {
+  .featuresSection {
+    margin-top: -200px !important;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .mainContainer {
+    overflow: hidden;
+    width: 100vw;
+    margin-right: 70px;
+    box-sizing: border-box;
+  }
+  .imageMain {
+    display: none;
+  }
+  .jumbotron {
+    flex-direction: column;
+    align-items: center;
+    display: flex;
+    width: 100vw;
+    height: 100vw;
+  }
+  .mainText {
+    margin-top: 30px;
+  }
+  .mainText h1 {
+    font-size: 20px;
+  }
+  
+  .brand {
+    width: 150px;
+  }
+  .menuItem span {
+    font-size: 12px;
+  }
+  .navItem {
+    display: none;
+  }
+  .navbar {
+    width: 100vw;
+    margin-left: 5px;
+  }
+  .signInButton {
+    margin-right: 20px;
+  }
+  .textLeft {
+    margin-left: 15px;
+    margin-right: 20px;
+  }
+  .headerAppIcons {
+    width: 150px;
+    height: 50px;
+  }
+  .featuresSection {
+    margin-top: 60px !important;
+  }
+  .featuresSection h1 {
+    font-size: 25px;
+  }
+  .faqSection h1 {
+    font-size: 25px;
+  }
+  .coachSection h1 {
+    font-size: 25px;
+  }
+  .column {
+    flex-basis: 100%;
+  }
+  .flexContainer {
+    display: block;
+  }
+  .textCoachSection {
+    font-size: 16px;
+    text-align: center !important;
+    padding: 0 20px !important;
+  }
+  .iconCoachSection {
+    width: 150px;
+    height: 150px;
+  }
+  .containerFaq {
+    width: 100vw;
+  }
+  .columnFooter h1 {
+    font-size: 25px;
+  }
+  .columnFooter h3 {
+    font-size: 14px;
+  }
+  
+}
+
+@media screen and (min-width: 1440px) and (max-width: 1500px) {
+  .featuresSection {
+    margin-top: 150px !important;
+  }
+}
