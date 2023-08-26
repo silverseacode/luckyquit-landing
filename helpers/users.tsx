@@ -511,3 +511,22 @@ export const updateBackgroundPictureBE = async (data: {
     console.error(error);
   }
 };
+
+export const removeCertificatesBE = async (
+  userId: string,
+  fileName: string
+) => {
+  try {
+    
+    const response = await fetch(`/api/users/remove-certificate/${userId}/${fileName}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    console.error(error);
+  }
+};

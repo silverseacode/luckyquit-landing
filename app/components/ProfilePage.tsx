@@ -4,6 +4,7 @@ import {
   getRatingsBE,
   getUser,
   getUserByUserNameBE,
+  removeCertificatesBE,
   udpdateAvailableForQuittersBE,
   updateAboutProfileBE,
   updateBackgroundPictureBE,
@@ -41,6 +42,7 @@ import {
   sendPushNotificationAndroid,
 } from "@/helpers/notifications";
 import mixpanel from "mixpanel-browser";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface IProps {
   id: string;
@@ -105,7 +107,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
 
     getRatings();
   }, []);
-  const [followersConnections, setFollowersConnections] = useState<User[]>([])
+  const [followersConnections, setFollowersConnections] = useState<User[]>([]);
 
   useEffect(() => {
     async function getFollowers() {
@@ -116,10 +118,9 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
       const data = res.response;
       setFollowers(data.users);
 
-      const idLocal1 = id !== UUID ? id : UUID ;
+      const idLocal1 = id !== UUID ? id : UUID;
       const data1 = await getFollowersBE(idLocal1);
-      setFollowersConnections(data1.response.users)
-
+      setFollowersConnections(data1.response.users);
 
       setMyUserId(UUID);
       const isFollowing = data.users.filter(
@@ -144,7 +145,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
       }
     }
     getFollowers();
-  }, [setAlreadyFollowing,id, isUsername, isPlanEndExpire]);
+  }, [setAlreadyFollowing, id, isUsername, isPlanEndExpire]);
 
   const [textStatus, setTextStatus] = useState("Follow");
 
@@ -194,7 +195,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
         setAboutMe(userBE[0].aboutProfile);
         setImageProfileCertificate(userBE[0]?.certificates ?? []);
         setDescriptionAboutMe(userBE[0].descriptionAboutMe);
-        let planEnd = undefined
+        let planEnd = undefined;
         let isPlanEndExpireLocal;
 
         const userLoggedData = await getUser();
@@ -239,9 +240,9 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
 
           setPlanExpire(isPlanEndExpireLocal);
         }
-       
-          getInvitation(userBE[0].userId);
-        
+
+        getInvitation(userBE[0].userId);
+
         setIsLoadingInitial(false);
       }
     }
@@ -303,9 +304,9 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
           }
           setPlanExpire(isPlanEndExpireLocal);
         }
-       
-          getInvitation(userBE[0].userId);
-        
+
+        getInvitation(userBE[0].userId);
+
         //setTimeout(() => {
         setIsLoadingInitial(false);
         //}, 4000);
@@ -434,7 +435,6 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      
     } else {
       setImageBackground(url);
       await axios.post(
@@ -442,12 +442,11 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      
     }
   };
 
   const [imagesCertificate, setImageProfileCertificate] = useState<
-    { image: string }[]
+    { image: string, fileName: string }[]
   >([]);
 
   const [isUploadingCertificate, setIsUploadingCertificate] = useState(false);
@@ -467,7 +466,6 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
       { headers: { "Content-Type": "multipart/form-data" } }
     );
     setIsUploadingCertificate(false);
-    mixpanel.track("Upload certificate Web");
   };
 
   useEffect(() => {
@@ -597,6 +595,17 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
     }
   }, [user]);
 
+  const removeCertificate = async (fileName: string, index: number) => {
+    setIsUploadingCertificate(true);
+    const newCertificates = imagesCertificate.filter(
+      (item, indexItem) => item.fileName !== fileName
+    );
+    setImageProfileCertificate(newCertificates);
+
+    await removeCertificatesBE(myUserId, fileName);
+    setIsUploadingCertificate(false);
+  };
+
   return (
     <>
       {isLoadingInitial ? (
@@ -623,7 +632,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
             >
               <Image
                 fill
-                style={{objectFit: "cover"}}
+                style={{ objectFit: "cover" }}
                 src={
                   imageBackground ? imageBackground : user?.backgroundPicture
                 }
@@ -762,22 +771,21 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                           <TouchableOpacity
                             onPress={() => {
                               if (textStatus === "Pending invitation") return;
-                                if (isPlanEndExpire === false) {
-                                  return;
-                                }
-                                if (!alreadyFollowing) {
-                                  setTextStatus("Pending invitation");
-                                  createInvitation("normal");
-                                } else if (alreadyFollowing) {
-                                  setTextStatus("Follow");
-                                  stopFollowing();
-                                }
+                              if (isPlanEndExpire === false) {
+                                return;
+                              }
+                              if (!alreadyFollowing) {
+                                setTextStatus("Pending invitation");
+                                createInvitation("normal");
+                              } else if (alreadyFollowing) {
+                                setTextStatus("Follow");
+                                stopFollowing();
+                              }
                             }}
                           >
                             {!isLoadingInitial && (
                               <View
                                 style={{
-
                                   borderRadius: 50,
                                   backgroundColor:
                                     textStatus === "Pending invitation" ||
@@ -805,18 +813,18 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                                   }}
                                 >
                                   {textStatus !== "Pending invitation" &&
-                                      isPlanEndExpire === true &&
-                                      alreadyFollowing &&
-                                      textStatus}
-                                    {textStatus !== "Pending invitation" &&
-                                      isPlanEndExpire === false &&
-                                      alreadyFollowing &&
-                                      textStatus}
-                                    {textStatus !== "Pending invitation" &&
-                                      !alreadyFollowing &&
-                                      textStatus}
-                                    {textStatus === "Pending invitation" &&
-                                      "Pending invitation"}
+                                    isPlanEndExpire === true &&
+                                    alreadyFollowing &&
+                                    textStatus}
+                                  {textStatus !== "Pending invitation" &&
+                                    isPlanEndExpire === false &&
+                                    alreadyFollowing &&
+                                    textStatus}
+                                  {textStatus !== "Pending invitation" &&
+                                    !alreadyFollowing &&
+                                    textStatus}
+                                  {textStatus === "Pending invitation" &&
+                                    "Pending invitation"}
                                 </span>
                               </View>
                             )}
@@ -1086,38 +1094,44 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                   }}
                 >
                   {quittersNoExpire !== undefined &&
-                  quittersNoExpire?.length > 0 && (
-                    <View
-                      style={{
-                        backgroundColor: Colors.primary,
-                        padding: 5,
-                        borderRadius: 50,
-                        flexDirection: "row",
-                        width: "auto",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        marginTop: 10,
-                        marginLeft: 23,
-                        paddingLeft: 10,
-                        paddingRight: 10
-                      }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => setOpenModalInfoQuitters(true)}
-                        style={{width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", display: "flex" }}
+                    quittersNoExpire?.length > 0 && (
+                      <View
+                        style={{
+                          backgroundColor: Colors.primary,
+                          padding: 5,
+                          borderRadius: 50,
+                          flexDirection: "row",
+                          width: "auto",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          marginTop: 10,
+                          marginLeft: 23,
+                          paddingLeft: 10,
+                          paddingRight: 10,
+                        }}
                       >
-                        <span style={{ color: Colors.white, marginRight: 5 }}>
-                          {quittersNoExpire?.length} Coaching
-                        </span>
+                        <TouchableOpacity
+                          onPress={() => setOpenModalInfoQuitters(true)}
+                          style={{
+                            width: "100%",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            display: "flex",
+                          }}
+                        >
+                          <span style={{ color: Colors.white, marginRight: 5 }}>
+                            {quittersNoExpire?.length} Coaching
+                          </span>
 
-                        {quittersNoExpire?.length > 0 && (
-                          <OpenInNewIcon
-                            style={{ color: Colors.white, fontSize: 25 }}
-                          />
-                        )}
-                      </TouchableOpacity>
-                    </View>
-                  )}
+                          {quittersNoExpire?.length > 0 && (
+                            <OpenInNewIcon
+                              style={{ color: Colors.white, fontSize: 25 }}
+                            />
+                          )}
+                        </TouchableOpacity>
+                      </View>
+                    )}
                   <View
                     style={{
                       flexDirection: "row",
@@ -1190,7 +1204,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                   value={aboutMe}
                   readOnly={!isEnableAbout}
                   maxLength={1000}
-                  rows={isEnableAbout ? 30 :2}
+                  rows={isEnableAbout ? 30 : 2}
                   onChange={(e) => setAboutMe(e.target.value)}
                   placeholder={`Tell us a little about yourself and your interests.`}
                   style={{
@@ -1376,29 +1390,51 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                 {imagesCertificate.map((image, index) => {
                   return (
                     <View key={index}>
-                      <TouchableOpacity
-                        onPress={() => handleOpenFullScreen(index)}
+                      <View
+                        key={index}
+                        style={{
+                          marginRight: 30,
+                          marginBottom:
+                            index === imagesCertificate.length - 1 ? -20 : 30,
+                          flexBasis: "60%",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
                       >
-                        <View
-                          key={index}
-                          style={{
-                            marginRight: 30,
-                            marginBottom:
-                              index === imagesCertificate.length - 1 ? -20 : 30,
-                            flexBasis: "60%",
-                            justifyContent: "center",
-                            alignItems: "center",
+                        <Image
+                          height={400}
+                          width={500}
+                          style={{ height: 400, width: 500 }}
+                          src={image.image}
+                          alt="image"
+                        />
+                      </View>
+                      <View
+                        style={{
+                          elevation: 4,
+                          zIndex: 4,
+                          position: "absolute",
+                          top: 60,
+                          right: -50,
+                          backgroundColor: Colors.lightGray,
+                          height: 40,
+                          width: 40,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          borderRadius: 50,
+                        }}
+                      >
+                        <TouchableOpacity
+                          onPress={() => {
+                            if (isUploadingCertificate) return;
+                            removeCertificate(image.fileName, index);
                           }}
                         >
-                          <Image
-                            height={400}
-                            width={500}
-                            style={{ height: 400, width: 500 }}
-                            src={image.image}
-                            alt="image"
+                          <DeleteIcon
+                            style={{ fontSize: 24, color: Colors.red }}
                           />
-                        </View>
-                      </TouchableOpacity>
+                        </TouchableOpacity>
+                      </View>
                     </View>
                   );
                 })}
@@ -1425,7 +1461,10 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                   }}
                 >
                   Connections
-                  <span style={{ fontSize: 19 }}> ({followersConnections?.length})</span>
+                  <span style={{ fontSize: 19 }}>
+                    {" "}
+                    ({followersConnections?.length})
+                  </span>
                 </span>
               </View>
               <View>
