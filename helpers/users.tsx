@@ -1,5 +1,6 @@
 import { API_URL, NEXT_URL } from "@/config";
 import { getTokenExpired } from "@/globals";
+import { Post } from "@/models";
 //import { getTokenExpired, useTokenExpired } from "../pages/globals";
 
 export const login = async (
@@ -529,4 +530,17 @@ export const removeCertificatesBE = async (
   } catch (error) {
     console.error(error);
   }
+};
+
+export const savePostIdLucky = async (post: Post, userId: string) => {
+  
+  const response = await fetch(`/api/users/savePostId/${userId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({post}),
+  });
+  const res = await response.json();
+  return res;
 };

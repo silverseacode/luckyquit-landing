@@ -8,7 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { Post, User } from "@/models";
-import { getUser } from "@/helpers/users";
+import { getUser, savePostIdLucky } from "@/helpers/users";
 import { Colors } from "@/app/colors";
 import ShareIcon from "@mui/icons-material/Share";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -26,9 +26,8 @@ import {
   sendPushNotification,
   sendPushNotificationAndroid,
 } from "@/helpers/notifications";
-import { useSocket } from "../Context/store";
 import { v4 as uuidv4 } from "uuid";
-
+import CloseIcon from '@mui/icons-material/Close';
 interface IProps {
   post: Post;
   index: number;
@@ -40,7 +39,8 @@ interface IProps {
   usersRecommendation: User[];
   user: User | undefined;
   followers: User[];
-  socket: any
+  socket: any;
+  deletePostLuckyLocal: (id: string) => void;
 }
 
 const CardPost = ({
@@ -54,7 +54,8 @@ const CardPost = ({
   usersRecommendation,
   user,
   followers,
-  socket
+  socket,
+  deletePostLuckyLocal
 }: IProps) => {
   const router = useRouter();
   let totalNumberOfReplies = 0;
@@ -231,6 +232,11 @@ console.log("ENTA SHARE OON APP")
     setOpenModalShare(false);
   };
 
+  const deletePostLucky = async (id: string) => {
+    deletePostLuckyLocal(id);
+    await savePostIdLucky(post, user?.userId);
+  };
+
   return (
     <>
       <View
@@ -250,7 +256,11 @@ console.log("ENTA SHARE OON APP")
         >
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Pressable
-              onPress={() => router.push(`/profile/${post.userId}/false`)}
+              onPress={() => {
+                if(post.userName !== "12345-lucky-12345") {
+                  router.push(`/profile/${post.userId}/false`)
+                }
+              }}
             >
               {post.pictureUser !== "" && !regexUser.test(post.pictureUser) ? (
                 <View style={{ borderRadius: 50, height: 70, width: 70 }}>
@@ -286,7 +296,11 @@ console.log("ENTA SHARE OON APP")
             <View style={{ marginLeft: 15 }}>
               <View>
                 <Pressable
-                  onPress={() => router.push(`/profile/${post.userId}/false`)}
+                  onPress={() => {
+                    if (post.userName !== "12345-lucky-12345") {
+                      router.push(`/profile/${post.userId}/false`)
+                    }
+                  }}
                 >
                   <View>
                     <span
@@ -298,7 +312,9 @@ console.log("ENTA SHARE OON APP")
                 </Pressable>
                 <View style={{ marginBottom: 10, marginTop: 5 }}>
                   <span style={{ fontSize: 13, color: Colors.darkGray }}>
-                    {timeAgo}
+                  {post.userId === "12345-lucky-12345"
+                      ? "Official Account"
+                      : timeAgo}
                   </span>
                 </View>
               </View>
@@ -313,7 +329,16 @@ console.log("ENTA SHARE OON APP")
                   marginLeft: 79,
                 }}
               >
-                <ShareIcon />
+                {post.userId !== "12345-lucky-12345" ? (
+                <TouchableOpacity onPress={() => share(post)}>
+                   <ShareIcon />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity onPress={() => deletePostLucky(post._id)}>
+                  <CloseIcon style={{fontSize: 26}} />
+                </TouchableOpacity>
+              )}
+               
               </View>
             </TouchableOpacity>
           )}
@@ -523,7 +548,7 @@ console.log("ENTA SHARE OON APP")
                 </span>
               </Pressable>
             )}
-            {post.comments?.length === 0 && post.allowComments && (
+            {post.comments?.length === 0 && post.allowComments && post.userId !== "12345-lucky-12345" && (
               <Pressable onPress={() => goToCommentsScreen()}>
                 <span style={{ color: Colors.darkGray }}>Add a comment</span>
               </Pressable>

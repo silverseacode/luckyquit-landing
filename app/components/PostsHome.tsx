@@ -163,20 +163,79 @@ interface IProps {
   console.log("SHOWc", showHomework);
   useEffect(() => {
     async function fetchData() {
+      if(user !== undefined) {
+
       if (page <= totalPages && isLoading) {
         const posts = await getAllPosts(page);
         console.log("111 ,posts", posts)
         if(posts !== undefined && posts.length !== 0) {
           setTotalPages(posts?.response.totalPages);
           const newData = [...data, ...posts.response.posts];
-          setData(newData);
+
+          const copyData1: Post[] = _.cloneDeep(newData);
+          const copyData2: Post[] = _.cloneDeep(newData);
+          const postsLucky = copyData1.filter((item) => {
+            if (item.userId === "12345-lucky-12345") {
+              return item;
+            }
+          });
+    
+          const postsWithoutLucky = copyData2.filter((item) => {
+            if (item.userId !== "12345-lucky-12345") return item;
+          });
+    
+          const today = new Date();
+          if (user?.idsPostLucky !== undefined && user?.idsPostLucky?.length > 0) {
+            const filteredPosts = postsLucky.filter((item) => {
+              return !user?.idsPostLucky.some((post) => post._id === item._id);
+            });
+    
+            filteredPosts.map((item) => {
+              if (item.expirationDate !== undefined) {
+                const expirationDate = item.expirationDate;
+                const dateParts = expirationDate.split("/");
+                const year = parseInt(dateParts[2], 10);
+                const month = parseInt(dateParts[0], 10) - 1; // Months in JavaScript are zero-based
+                const day = parseInt(dateParts[1], 10);
+                const convertedDate = new Date(year, month, day);
+                if (convertedDate > today) {
+                  //aca deberia poner id que va a ser el post completo
+                  /// no solo el id
+                  postsWithoutLucky.unshift(item);
+                }
+              } else {
+                postsWithoutLucky.unshift(item);
+              }
+            });
+          } else {
+            postsLucky.map((item) => {
+              if (item.expirationDate !== undefined) {
+                const expirationDate = item.expirationDate;
+                const dateParts = expirationDate.split("/");
+                const year = parseInt(dateParts[2], 10);
+                const month = parseInt(dateParts[0], 10) - 1; // Months in JavaScript are zero-based
+                const day = parseInt(dateParts[1], 10);
+    
+                const convertedDate = new Date(year, month, day);
+                if (convertedDate > today) {
+                }
+              } else {
+                postsWithoutLucky.unshift(item);
+              }
+            });
+          }
+
+
+          setData(postsWithoutLucky);
           setIsLoading(false);
         }
         
       }
     }
+  }
+
     fetchData();
-  }, [page]);
+  }, [page, user]);
 
   useEffect(() => {
     const handleScroll = (e: any) => {
@@ -285,6 +344,12 @@ interface IProps {
   }, []);
 
 
+  const deletePostLuckyLocal = (id: string) => {
+    let dataCopy: Post[] = _.cloneDeep(data);
+    dataCopy = dataCopy.filter((post) => String(post._id) !== id);
+    setData(dataCopy);
+  };
+
 
   return (
     <div className={styles.container}>
@@ -337,6 +402,7 @@ interface IProps {
                 user={user}
                 followers={followers}
                 socket={socket}
+                deletePostLuckyLocal={deletePostLuckyLocal}
               />
             ))}
             {isLoading && (

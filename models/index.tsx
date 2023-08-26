@@ -50,6 +50,7 @@ export type User = {
     userId: string;
     fullName: string;
   }[];
+  idsPostLucky: Post[]
 };
 
 export type Post = {
@@ -79,6 +80,7 @@ export type Post = {
       likes: { userName: string }[];
     }[];
   }[];
+  expirationDate: string;
 };
 
 export type Module = {
