@@ -1,5 +1,5 @@
  export const API_URL =
-`${process.env.NEXT_PUBLIC_API_URL}:3002`
+`${process.env.NEXT_PUBLIC_API_URL}`
 
 //export const API_URL = "https://luckyquit.online:3002"
 
