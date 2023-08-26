@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { View } from "react-native";
 import _ from "lodash";
 import { Post, User } from "@/models";
-import { addLike, getPostsUserById, removeLike } from "@/helpers/posts";
+import { addLike, deletePostBE, getPostsUserById, removeLike } from "@/helpers/posts";
 import { Colors } from "@/app/colors";
 import CardPost  from "./CardPost";
 import { DatabaseOutlined } from "@ant-design/icons";
@@ -71,12 +71,11 @@ const ProfilePosts = ({ user }: IProps) => {
       }
     }
   };
-  const deletePost = async (postId: number) => {
-    // let dataCopy = _.cloneDeep(data);
-    // dataCopy = dataCopy.filter((post) => post._id !== postId);
-    // setData(dataCopy);
-    // //TODO
-    // await deletePostBE(postId);
+  const deletePost = async (postId: string) => {
+    let dataCopy:Post[] = _.cloneDeep(data);
+    dataCopy = dataCopy.filter((post) => post.idv4 !== postId);
+    setData(dataCopy);
+    await deletePostBE(postId);
   };
   return (
     <>
@@ -103,6 +102,7 @@ const ProfilePosts = ({ user }: IProps) => {
                 sendLikeUpdated={sendLikeUpdated}
                 isChecked
                 deletePost={deletePost}
+                user={user}
                 timezone={user.timezone[0]}
               />
             );

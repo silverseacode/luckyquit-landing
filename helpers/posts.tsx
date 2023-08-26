@@ -425,7 +425,7 @@ export const deleteReplyBE = async (
   return res;
 };
 
-export const deletePostBE = async (postId: number) => {
+export const deletePostBE = async (postId: number | string) => {
   const itemToken = localStorage.getItem("jwtToken");
   let token = itemToken ? itemToken : false;
 

@@ -57,6 +57,7 @@ export type Post = {
   _id: number;
   userId: string;
   userName: string;
+  idv4:string;
   firstName: string;
   lastName: string;
   timeAgo: string;

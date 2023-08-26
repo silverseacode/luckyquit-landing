@@ -236,7 +236,6 @@ console.log("ENTA SHARE OON APP")
     deletePostLuckyLocal(id);
     await savePostIdLucky(post, user?.userId);
   };
-
   return (
     <>
       <View
@@ -342,7 +341,24 @@ console.log("ENTA SHARE OON APP")
               </View>
             </TouchableOpacity>
           )}
-          {post.userName === userName && (
+          {post.userName === userName && !isFromProfile && (
+            <TouchableOpacity
+              onPress={() => {
+                deletePost(post.idv4);
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 16,
+                }}
+              >
+                <DeleteIcon style={{ fontSize: 30, color: Colors.red }} />
+              </View>
+            </TouchableOpacity>
+          )}
+          {user?.userId === myUserId && isFromProfile && (
             <TouchableOpacity
               onPress={() => {
                 deletePost(post.idv4);
