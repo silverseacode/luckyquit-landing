@@ -1093,16 +1093,18 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                         padding: 5,
                         borderRadius: 50,
                         flexDirection: "row",
-                        width: 130,
+                        width: "auto",
                         alignItems: "center",
                         justifyContent: "center",
                         marginTop: 10,
                         marginLeft: 23,
+                        paddingLeft: 10,
+                        paddingRight: 10
                       }}
                     >
                       <TouchableOpacity
                         onPress={() => setOpenModalInfoQuitters(true)}
-                        style={{ flexDirection: "row", alignItems: "center" }}
+                        style={{width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", display: "flex" }}
                       >
                         <span style={{ color: Colors.white, marginRight: 5 }}>
                           {quittersNoExpire?.length} Coaching
@@ -1295,7 +1297,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
             </View>
           )}
 
-          {myUserId === user?.userId && (
+          {myUserId === user?.userId && user?.type === "coach" && (
             <View
               style={{
                 marginTop: 10,
