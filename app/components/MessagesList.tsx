@@ -36,11 +36,7 @@ const MessagesList = ({
     
     const copyChats: Message[] = _.cloneDeep(chats);
 
-    const filteredChats = copyChats.filter((chat) => {
-      if (chat._id === idChat) {
-        return chat;
-      }
-    });
+    const filteredChats = copyChats
     let countMarkAsRead = 0
     const modifiedChats = filteredChats.map((chat) => {
       chat.messages.forEach((item) => {
@@ -121,6 +117,15 @@ const MessagesList = ({
   }, []);
 
   useEffect(() => {
+    async function getInitialData() {
+      console.log("ENTRA123")
+      await getData();
+    }
+
+    getInitialData();
+  }, [messageSend]);
+
+  useEffect(() => {
     if (triggerChange === true) {
       console.log("111 message send", messageSend)
       // let chatsFiltered = chats.filter(
@@ -173,7 +178,7 @@ const MessagesList = ({
         }
 
         const dateItem = moment(
-          item?.messages[item?.messages.length - 1]?.date,
+          item?.messages?.[item?.messages?.length - 1]?.date,
           "M/D/YYYY, h:mm:ss A"
         );
         const date = moment(dateItem);
@@ -251,14 +256,14 @@ const MessagesList = ({
               <span
                 style={{
                   fontWeight:
-                    item?.messages[item?.messages.length - 1]?.isRead === false
+                    item?.messages?.[item?.messages?.length - 1]?.isRead === false
                       ? "600"
                       : "normal",
                 }}
               >
-                {item?.messages[item?.messages.length - 1]?.message}
+                {item?.messages?.[item?.messages?.length - 1]?.message}
               </span>
-              {item?.messages[item?.messages.length - 1]?.senderFullName !== currentUserFullName && count > 0 && (
+              {item?.messages?.[item?.messages?.length - 1]?.senderFullName !== currentUserFullName && count > 0 && (
                 <View
                   style={{
                     height: count < 10 ? 25 : 28,

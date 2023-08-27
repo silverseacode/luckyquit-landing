@@ -60,7 +60,7 @@ const ChatMessage = ({
     const copyChats: Message = _.cloneDeep(messages);
 
     let countMarkAsRead = 0;
-    copyChats.messages.map((item) => {
+    copyChats?.messages?.map((item) => {
       if (item.isRead === false) {
         countMarkAsRead++;
       }
