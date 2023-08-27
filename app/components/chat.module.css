@@ -1,17 +1,10 @@
 
-.parentContainer::-webkit-scrollbar {
-    display: none;
-  }
 
 
   .childContainer {
     overflow-x: auto;
     white-space: nowrap;
-  }
-
-  .childContainer::-webkit-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;
+    display: flex;
   }
 
   .containerEmptyState {
