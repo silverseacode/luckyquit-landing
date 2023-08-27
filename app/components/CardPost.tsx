@@ -170,12 +170,12 @@ console.log("ENTA SHARE OON APP")
       message: messageRamdomToGenerateNewMessage, ///TODO COMPLETE
       date: dateTimezone,
       profilePicture:
-        userSender.profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? "",
+        userSender.profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
       isNotification: false,
       senderFullName: `${userSender?.firstName} ${userSender?.lastName}`,
       receiverFullName: `${activeUserToShare?.firstName} ${activeUserToShare?.lastName}`,
       receiverProfilePicture:
-        activeUserToShare?.profilePicture.split?.("/")?.[3]?.split?.("?")[0] ??
+        activeUserToShare?.profilePicture.split?.("/")?.[3]?.split?.("?")?.[0] ??
         "",
       initialsSender: `${userSender?.firstName[0]} ${userSender?.lastName[0]}`,
       backgroundColorSender: userSender?.backgroundColor,

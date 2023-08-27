@@ -27,16 +27,16 @@ export const getChatsBE = async (sender: string | null) => {
 export const saveMessageBE = async (message: MessageBody) => {
   const data = { message };
   const itemToken = localStorage.getItem("jwtToken");
-    let token = itemToken ? itemToken : false;
+  let token = itemToken ? itemToken : false;
 
-    const itemEmail = localStorage.getItem("email");
-    const email = itemEmail ? itemEmail : "";
+  const itemEmail = localStorage.getItem("email");
+  const email = itemEmail ? itemEmail : "";
 
-    const tokenBE = await getTokenExpired(token, email);
-    if (tokenBE.isNew) {
-      localStorage.setItem("jwtToken", tokenBE.token);
-      token = tokenBE.token;
-    }
+  const tokenBE = await getTokenExpired(token, email);
+  if (tokenBE.isNew) {
+    localStorage.setItem("jwtToken", tokenBE.token);
+    token = tokenBE.token;
+  }
   const response = await fetch(`/api/chats/messages`, {
     method: "POST",
     headers: {
@@ -48,6 +48,32 @@ export const saveMessageBE = async (message: MessageBody) => {
   const res = await response.json();
   return res;
 };
+
+export const saveMessageBETrue = async (message: MessageBody) => {
+  const data = { message };
+  const itemToken = localStorage.getItem("jwtToken");
+  let token = itemToken ? itemToken : false;
+
+  const itemEmail = localStorage.getItem("email");
+  const email = itemEmail ? itemEmail : "";
+
+  const tokenBE = await getTokenExpired(token, email);
+  if (tokenBE.isNew) {
+    localStorage.setItem("jwtToken", tokenBE.token);
+    token = tokenBE.token;
+  }
+  const response = await fetch(`/api/chats/messagesTrue`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
+    body: JSON.stringify(data),
+  });
+  const res = await response.json();
+  return res;
+};
+
 export function debounce(func: Function, delay = 4000) {
   let timeoutId: ReturnType<typeof setTimeout>;
 
@@ -70,15 +96,12 @@ export const getMessagesBE = async (sender: string, receiver: string) => {
     token = tokenBE.token;
   }
   console.log(44);
-  const response = await fetch(
-    `/api/chats/messages/${sender}/${receiver}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    }
-  );
+  const response = await fetch(`/api/chats/messages/${sender}/${receiver}`, {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
   const data = await response.json();
   return data;
 };

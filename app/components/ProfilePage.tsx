@@ -361,7 +361,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
       firstName: userCurrent?.firstName ?? "",
       lastName: userCurrent?.lastName ?? "",
       pictureFrom:
-        userCurrent?.profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? "",
+        userCurrent?.profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
       description: userCurrent?.descriptionAboutMe ?? "",
       aboutMe: "",
       profilePicture: "",
@@ -553,7 +553,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
       firstName: user?.firstName,
       lastName: user?.lastName,
       profilePicture:
-        user?.profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? "",
+        user?.profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
       date: "",
       initials: user?.initials ?? "",
       backgroundColor: user?.backgroundColor ?? "",

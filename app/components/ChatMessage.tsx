@@ -1,5 +1,5 @@
 import { Colors } from "@/app/colors";
-import { getMessagesBE, saveMessageBE } from "@/helpers/chats";
+import { getMessagesBE, saveMessageBE, saveMessageBETrue } from "@/helpers/chats";
 import {
   sendNotification,
   sendPushNotification,
@@ -290,7 +290,11 @@ const ChatMessage = ({
                           fontSize: 12,
                         }}
                       >
-                        {"\u2022"} {convertTimeMsg(item.date.split(",")[1])}
+                        {"\u2022"} {item.date?.split?.(",")[1] === undefined
+                        ? item.date?.split?.(" ")[1] +
+                          " " +
+                          item.date?.split?.(" ")[2]
+                        : convertTimeMsg(item.date?.split?.(",")[1])}
                       </span>
                     </View>
                   )}
@@ -465,28 +469,28 @@ const ChatMessage = ({
       let copyMessages = _.cloneDeep(prevMessages);
 
       if (copyMessages?.messages !== undefined) {
-        const lastMessage =
-          copyMessages.messages[copyMessages.messages.length - 1];
-        if (lastMessage?.message === messageSocket.message) {
-          // Update the existing message
-          lastMessage.profilePicture = messageSocket.profilePicture;
-          lastMessage.senderFullName = messageSocket.senderFullName;
-          lastMessage.date = messageSocket.date;
-          lastMessage.message = messageSocket.message;
-          lastMessage.isNotification = messageSocket.isNotification;
-          lastMessage.initialsSender = messageSocket.initialsSender;
-          lastMessage.backgroundColorSender =
-            messageSocket.backgroundColorSender;
+        // const lastMessage =
+        //   copyMessages.messages[copyMessages.messages.length - 1];
+        // if (lastMessage?.message === messageSocket.message) {
+        //   // Update the existing message
+        //   lastMessage.profilePicture = messageSocket.profilePicture;
+        //   lastMessage.senderFullName = messageSocket.senderFullName;
+        //   lastMessage.date = messageSocket.date;
+        //   lastMessage.message = messageSocket.message;
+        //   lastMessage.isNotification = messageSocket.isNotification;
+        //   lastMessage.initialsSender = messageSocket.initialsSender;
+        //   lastMessage.backgroundColorSender =
+        //     messageSocket.backgroundColorSender;
 
-          lastMessage.receiverFullName = messageSocket.receiverFullName;
-          lastMessage.receiverProfilePicture =
-            messageSocket.receiverProfilePicture;
-          lastMessage.initialsReceiver = messageSocket.initialsReceiver;
-          lastMessage.backgroundColorReceiver =
-            messageSocket.backgroundColorReceiver;
-          setMessageSend({ isNew: false, messages: lastMessage });
-        } else {
-          // Add a new message
+        //   lastMessage.receiverFullName = messageSocket.receiverFullName;
+        //   lastMessage.receiverProfilePicture =
+        //     messageSocket.receiverProfilePicture;
+        //   lastMessage.initialsReceiver = messageSocket.initialsReceiver;
+        //   lastMessage.backgroundColorReceiver =
+        //     messageSocket.backgroundColorReceiver;
+        //   setMessageSend({ isNew: false, messages: lastMessage });
+        // } else {
+        //   // Add a new message
           copyMessages.messages.push({
             profilePicture: messageSocket.profilePicture,
             senderFullName: messageSocket.senderFullName,
@@ -517,7 +521,7 @@ const ChatMessage = ({
           console.log("111 existing", existingMessage);
 
           setMessageSend({ isNew: false, messages: existingMessage });
-        }
+        //}
       } else {
         // Create a new message object
         const newMessage: Message = {
@@ -568,23 +572,27 @@ const ChatMessage = ({
       receiver: receiver?.userId,
       message: messageToSend,
       date: dateTimezone,
-      profilePicture: profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? '' ?? "",
+      profilePicture: profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
       isNotification: false,
       senderFullName,
       receiverFullName: `${receiver?.firstName} ${receiver?.lastName}`,
       receiverProfilePicture:
-        receiver?.profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? '' ?? "",
+        receiver?.profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0]  ?? "",
       initialsSender: `${user?.firstName[0]} ${user?.lastName[0]}`,
       backgroundColorSender: user?.backgroundColor ?? "",
       initialsReceiver: `${receiver?.firstName[0]} ${receiver?.lastName[0]}`,
       backgroundColorReceiver: receiver?.backgroundColor,
     };
 
+    const dateItem = moment(dateTimezone, "M/D/YYYY, h:mm:ss A");
+    const date = moment(dateItem).toDate();
+
+
     const newMessageLocal = {
       sender: sender,
       receiver: receiver?.userId,
       message: messageToSend,
-      date: dateTimezone,
+      date: formatDateAndTime(date),
       profilePicture: profilePicture,
       isNotification: false,
       senderFullName,
@@ -601,20 +609,27 @@ const ChatMessage = ({
     socket?.emit("send_message", newMessageBE);
     setMessageToSend("");
     await saveMessageBE(newMessageBE);
-    if (isAllowNotificationChats) {
+
+    const userId = receiverParam.hasOwnProperty("userId")
+    ? receiverParam.userId
+    : receiverParam;
+  const receiverBE = await getUser(userId);
+
+  const isAllowNotificationChatsLocal = receiverBE.reponse?.[0]?.isChats;
+    if (isAllowNotificationChatsLocal) {
       if (os !== "") {
         if (os !== "android") {
           const data = {
             token: pushTokenReceiver,
             title: `New message`,
-            body: `@${receiver?.userName} write you a message`,
+            body: `@${senderFullName} write you a message`,
             data: { isFrom: "Message", receiver: user?.userId },
           };
           await sendPushNotification(data);
         } else {
           const pushNotification = {
             title: `New message`,
-            body: `@${receiver?.userName} write you a message`,
+            body: `@${senderFullName} write you a message`,
             data: { isFrom: "Message", receiver: user?.userId },
             token: pushTokenReceiver,
           };
@@ -628,17 +643,21 @@ const ChatMessage = ({
 
   useEffect(() => {
     socket?.on("new_message", async function (socketData: MessageBody) {
+      const data = await getUser();
+      const user = data.response[0];
       const currentDatetime = new Date();
-      const validTimezone = timezone === "" ? "America/Los_Angeles" : timezone;
-      const options = { timeZone: validTimezone };
 
+      const options = { timeZone: user?.timezone[0] };
       const dateTimezone = currentDatetime.toLocaleString("en-US", options);
+
+      const dateItem = moment(dateTimezone, "M/D/YYYY, h:mm:ss A");
+      const date = moment(dateItem).toDate();
 
       const newMessage = {
         sender: socketData.sender,
         receiver: socketData.receiver,
         message: socketData.message,
-        date: socketData.date,
+        date: formatDateAndTime(date),
         profilePicture: socketData.profilePicture,
         isNotification: socketData.isNotification,
         senderFullName: socketData.senderFullName,
@@ -649,13 +668,13 @@ const ChatMessage = ({
         initialsReceiver: socketData.initialsReceiver,
         backgroundColorReceiver: socketData.backgroundColorReceiver,
       };
-      const dataBE = await saveMessageBE(newMessage);
-      console.log("NEW_MESSAGE BE!!", dataBE);
+      const dataBE = await saveMessageBETrue(newMessage);
+      console.log("NEW_MESSAGE BE123!!", dataBE);
 
       const messageBE = dataBE.response.res;
       handleMessages(messageBE);
     });
-  }, [socket, timezone]);
+  }, [socket]);
 
   const [isPlanModalOpen, showPlanModal] = useState(false);
   const [active, setActive] = useState("months");
@@ -702,12 +721,12 @@ const ChatMessage = ({
       receiver: receiver?.userId,
       message: messageNotification,
       date: dateTimezone,
-      profilePicture: profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? '' ?? "",
+      profilePicture: profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
       isNotification: true,
       senderFullName,
       receiverFullName: `${receiver?.firstName} ${receiver?.lastName}`,
       receiverProfilePicture:
-        receiver?.profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? '' ?? "",
+        receiver?.profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
       initialsSender: `${user?.firstName[0]} ${user?.lastName[0]}`,
       backgroundColorSender: user?.backgroundColor ?? "",
       initialsReceiver: `${receiver?.firstName[0]} ${receiver?.lastName[0]}`,
@@ -742,7 +761,7 @@ const ChatMessage = ({
       receiver: receiver?.userId,
       date: dateTimezone,
       profilePictureSender:
-        profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? '' ?? "",
+        profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
       body,
       type: "payment",
       isRead: false,
@@ -821,7 +840,7 @@ const ChatMessage = ({
       receiver: receiver?.userId,
       date: dateTimezone,
       profilePictureSender:
-        profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? '' ?? "",
+        profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
       body: `Save in calendar video call ${senderFullName} and ${
         receiver?.firstName
       } ${
@@ -1777,6 +1796,7 @@ export function debounce(func: Function, delay = 4000) {
     timeoutId = setTimeout(() => func.apply(this, args), delay);
   };
 }
+
 
 export const formatDateAndTime = (now: Date) => {
   const month =

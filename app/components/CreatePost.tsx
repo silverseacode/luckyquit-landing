@@ -46,7 +46,7 @@ const CreatePost = ({ user, setNewPostAdded }: IProps) => {
         userId: myUserId,
         firstName: user?.firstName ?? "",
         lastName: user?.lastName ?? "",
-        pictureUser: user?.profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? '',
+        pictureUser: user?.profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? '',
         picturePost: "",
         description: text,
         allowComments: valueSwitch,

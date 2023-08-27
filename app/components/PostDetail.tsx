@@ -167,7 +167,7 @@ export default function PostDetail({ postId }: any) {
         backgroundColor: backgroundColorMySelf,
         likes: [],
         profilePicture:
-          user?.profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? "",
+          user?.profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
         idv4,
       };
       const copyCommments = _.cloneDeep(comments);
@@ -185,7 +185,7 @@ export default function PostDetail({ postId }: any) {
           receiver: postInfo?.userId,
           date: dateTimezone,
           profilePictureSender:
-            profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? "",
+            profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
           body: `New reply from ${fullNameSender} in your post`,
           type: "reply",
           postId: postId,
@@ -241,7 +241,7 @@ export default function PostDetail({ postId }: any) {
         userName: userName,
         timeAgo: dateTimezone,
         profilePicture:
-          user?.profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? "",
+          user?.profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
         comment: comment,
         likes: [],
         replies: [],
@@ -261,7 +261,7 @@ export default function PostDetail({ postId }: any) {
           receiver: postInfo?.userId,
           date: dateTimezone,
           profilePictureSender:
-            profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? "",
+            profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
           body: `New commment from ${fullNameSender} in your post`,
           type: "comment",
           postId: postId,
@@ -429,7 +429,7 @@ export default function PostDetail({ postId }: any) {
     const likeDb = {
       userName: user?.userName,
       profilePicture:
-        user?.profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? "",
+        user?.profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
     };
 
     if (isLiked) {
@@ -446,7 +446,7 @@ export default function PostDetail({ postId }: any) {
           receiver: postInfo?.userId,
           date: dateTimezone,
           profilePictureSender:
-            profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? "",
+            profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
           body: `New like from ${fullNameSender} in your post`,
           type: "like",
           postId: postId,
@@ -581,12 +581,12 @@ export default function PostDetail({ postId }: any) {
       message: messageRamdomToGenerateNewMessage,
       date: dateTimezone,
       profilePicture:
-        userSender.profilePicture?.split?.("/")?.[3]?.split?.("?")[0] ?? "",
+        userSender.profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
       isNotification: false,
       senderFullName: `${userSender?.firstName} ${userSender?.lastName}`,
       receiverFullName: `${activeUserToShare?.firstName} ${activeUserToShare?.lastName}`,
       receiverProfilePicture:
-        activeUserToShare?.profilePicture.split?.("/")?.[3]?.split?.("?")[0] ??
+        activeUserToShare?.profilePicture.split?.("/")?.[3]?.split?.("?")?.[0] ??
         "",
       initialsSender: `${userSender?.firstName[0]} ${userSender?.lastName[0]}`,
       backgroundColorSender: userSender?.backgroundColor,
