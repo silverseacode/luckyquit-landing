@@ -117,7 +117,8 @@ export default function Notifications() {
             notif.type === "like" ||
             notif.type === "payment" ||
             notif.type === "homework" ||
-            notif.type === "event"
+            notif.type === "event" ||
+            notif.type === "connect" 
           ) {
             const postId = notif.postId;
             const type = notif.type;
@@ -139,7 +140,7 @@ export default function Notifications() {
             }
             let newNotif = notif;
             // Check if we've already added a notification for this post
-            if (notif.type === "payment" || notif.type === "event") {
+            if (notif.type === "payment" || notif.type === "event" || notif.type === "connect" || notif.type === "homework") {
               finalNotif.push(newNotif);
             } else {
               if (!uniquePosts.has(type + postId)) {
