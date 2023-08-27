@@ -1,5 +1,9 @@
 import { Colors } from "@/app/colors";
-import { getMessagesBE, saveMessageBE, saveMessageBETrue } from "@/helpers/chats";
+import {
+  getMessagesBE,
+  saveMessageBE,
+  saveMessageBETrue,
+} from "@/helpers/chats";
 import {
   sendNotification,
   sendPushNotification,
@@ -32,7 +36,7 @@ import Image from "next/image";
 import axios from "axios";
 import { API_URL } from "@/config";
 import mixpanel from "mixpanel-browser";
-import NoPhotographyIcon from '@mui/icons-material/NoPhotography';
+import NoPhotographyIcon from "@mui/icons-material/NoPhotography";
 import moment from "moment";
 import ShareIcon from "@mui/icons-material/Share";
 
@@ -290,171 +294,172 @@ const ChatMessage = ({
                           fontSize: 12,
                         }}
                       >
-                        {"\u2022"} {item.date?.split?.(",")[1] === undefined
-                        ? item.date?.split?.(" ")[1] +
-                          " " +
-                          item.date?.split?.(" ")[2]
-                        : convertTimeMsg(item.date?.split?.(",")[1])}
+                        {"\u2022"}{" "}
+                        {item.date?.split?.(",")[1] === undefined
+                          ? item.date?.split?.(" ")[1] +
+                            " " +
+                            item.date?.split?.(" ")[2]
+                          : convertTimeMsg(item.date?.split?.(",")[1])}
                       </span>
                     </View>
                   )}
                   {item.isShare !== true && (
-                  <View style={{ marginLeft: 40, marginBottom: 20 }}>
-                    <span
-                      style={{
-                        color: item.isNotification
-                          ? Colors.darkGray
-                          : Colors.blackDefault,
-                        fontWeight: item.isNotification ? "600" : "normal",
-                      }}
-                    >
-                      {item.message}
-                    </span>
-                  </View>
-                  )}
-                  {/* share post messae */}
-                {item.isShare === true && (
-                  <TouchableOpacity
-                    onPress={() => {
-                      router.push(`/comments/${item.postIdOwnerPost}`);
-                    }}
-                  >
-                    <View
-                      style={{
-                        margin: 20,
-                        borderColor: Colors.darkGray,
-                        borderWidth: 1,
-                        padding: 15,
-                        borderRadius: 6,
-                      }}
-                    >
-                      <View style={{ flexDirection: "row", marginBottom: 15 }}>
-                        <ShareIcon
-                          style={{fontSize: 20}}
-                        />
-                        <span
-                          style={{
-                            marginLeft: 10,
-                          }}
-                        >
-                          Shared with you:
-                        </span>
-                      </View>
-                      <View style={{ flexDirection: "row" }}>
-                        {item.profilePictureOwnerPost !== "" &&
-                        !regexUser.test(item.profilePictureOwnerPost) &&
-                        item.profilePictureOwnerPost !== undefined ? (
-                          <View>
-                            <Image
-                            alt="onwer post pic"
-                            width={45}
-                            height={45}
-                              style={{
-                                width: 45,
-                                height: 45,
-                                borderRadius: 24,
-                              }}
-                              src={item.profilePictureOwnerPost}
-                            />
-                          </View>
-                        ) : (
-                          <View
-                            style={{
-                              height: 45,
-                              width: 45,
-                              borderRadius: 50,
-                              backgroundColor: item.backgroundColorOwnerPost,
-                              justifyContent: "center",
-                              alignItems: "center",
-                            }}
-                          >
-                            <span
-                              style={{
-                                color: Colors.blackDefault,
-                                fontSize: 15,
-                              }}
-                            >
-                              {item.initialsOwnerPost}
-                            </span>
-                          </View>
-                        )}
-                        <View
-                          style={{ flexDirection: "column", marginLeft: 15 }}
-                        >
-                          <View>
-                            <span
-                              style={{
-                                fontSize: 16,
-                                fontWeight: "600",
-                                marginTop: 5,
-                                maxWidth: 160,
-                              }}
-                            >
-                              {item.fullNameOwnerPost}
-                            </span>
-                          </View>
-                          <View style={{ marginBottom: 10, marginTop: 5 }}>
-                            <span
-                              style={{
-                                fontSize: 13,
-                                color: Colors.darkGray,
-                              }}
-                            >
-                              {timeAgo}
-                            </span>
-                          </View>
-                        </View>
-                      </View>
+                    <View style={{ marginLeft: 40, marginBottom: 20 }}>
                       <span
                         style={{
-                          color: Colors.blackCardDarkMode,
-                          fontWeight: "600",
-                          marginLeft: 15,
-                          marginTop: 15,
-                          marginBottom: 15
+                          color: item.isNotification
+                            ? Colors.darkGray
+                            : Colors.blackDefault,
+                          fontWeight: item.isNotification ? "600" : "normal",
                         }}
                       >
-                        {item.descriptionOwnerPost}
+                        {item.message}
                       </span>
-                      <>
-                        {item.postPictureOwnerPost !== undefined &&
-                        item.postPictureOwnerPost !== "" &&
-                        !regex.test(item.postPictureOwnerPost) ? (
-                          <>
-                            <Image
-                              src={item.postPictureOwnerPost}
-                              width={300}
-                              height={300}
-                              alt="shared pic"
-                              style={{
-                                width: "100%",
-                                height: 300,
-                                borderRadius: 20,
-                              }}
-                            />
-                          </>
-                        ) : (
-                          <View
+                    </View>
+                  )}
+                  {/* share post messae */}
+                  {item.isShare === true && (
+                    <TouchableOpacity
+                      onPress={() => {
+                        router.push(`/comments/${item.postIdOwnerPost}`);
+                      }}
+                    >
+                      <View
+                        style={{
+                          margin: 20,
+                          borderColor: Colors.darkGray,
+                          borderWidth: 1,
+                          padding: 15,
+                          borderRadius: 6,
+                        }}
+                      >
+                        <View
+                          style={{ flexDirection: "row", marginBottom: 15 }}
+                        >
+                          <ShareIcon style={{ fontSize: 20 }} />
+                          <span
                             style={{
-                              flexDirection: "column",
-                              justifyContent: "center",
-                              alignItems: "center",
+                              marginLeft: 10,
                             }}
                           >
-                            <NoPhotographyIcon style={{fontSize: 100}}/>
-                            <span
+                            Shared with you:
+                          </span>
+                        </View>
+                        <View style={{ flexDirection: "row" }}>
+                          {item.profilePictureOwnerPost !== "" &&
+                          !regexUser.test(item.profilePictureOwnerPost) &&
+                          item.profilePictureOwnerPost !== undefined ? (
+                            <View>
+                              <Image
+                                alt="onwer post pic"
+                                width={45}
+                                height={45}
+                                style={{
+                                  width: 45,
+                                  height: 45,
+                                  borderRadius: 24,
+                                }}
+                                src={item.profilePictureOwnerPost}
+                              />
+                            </View>
+                          ) : (
+                            <View
                               style={{
-                                margin: "10px 0px",
+                                height: 45,
+                                width: 45,
+                                borderRadius: 50,
+                                backgroundColor: item.backgroundColorOwnerPost,
+                                justifyContent: "center",
+                                alignItems: "center",
                               }}
                             >
-                              This post doesn't have picture.
-                            </span>
+                              <span
+                                style={{
+                                  color: Colors.blackDefault,
+                                  fontSize: 15,
+                                }}
+                              >
+                                {item.initialsOwnerPost}
+                              </span>
+                            </View>
+                          )}
+                          <View
+                            style={{ flexDirection: "column", marginLeft: 15 }}
+                          >
+                            <View>
+                              <span
+                                style={{
+                                  fontSize: 16,
+                                  fontWeight: "600",
+                                  marginTop: 5,
+                                  maxWidth: 160,
+                                }}
+                              >
+                                {item.fullNameOwnerPost}
+                              </span>
+                            </View>
+                            <View style={{ marginBottom: 10, marginTop: 5 }}>
+                              <span
+                                style={{
+                                  fontSize: 13,
+                                  color: Colors.darkGray,
+                                }}
+                              >
+                                {timeAgo}
+                              </span>
+                            </View>
                           </View>
-                        )}
-                      </>
-                    </View>
-                  </TouchableOpacity>
-                )}
+                        </View>
+                        <span
+                          style={{
+                            color: Colors.blackCardDarkMode,
+                            fontWeight: "600",
+                            marginLeft: 15,
+                            marginTop: 15,
+                            marginBottom: 15,
+                          }}
+                        >
+                          {item.descriptionOwnerPost}
+                        </span>
+                        <>
+                          {item.postPictureOwnerPost !== undefined &&
+                          item.postPictureOwnerPost !== "" &&
+                          !regex.test(item.postPictureOwnerPost) ? (
+                            <>
+                              <Image
+                                src={item.postPictureOwnerPost}
+                                width={300}
+                                height={300}
+                                alt="shared pic"
+                                style={{
+                                  width: "100%",
+                                  height: 300,
+                                  borderRadius: 20,
+                                }}
+                              />
+                            </>
+                          ) : (
+                            <View
+                              style={{
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                              }}
+                            >
+                              <NoPhotographyIcon style={{ fontSize: 100 }} />
+                              <span
+                                style={{
+                                  margin: "10px 0px",
+                                }}
+                              >
+                                This post doesn't have picture.
+                              </span>
+                            </View>
+                          )}
+                        </>
+                      </View>
+                    </TouchableOpacity>
+                  )}
                 </View>
               );
             })}
@@ -491,36 +496,36 @@ const ChatMessage = ({
         //   setMessageSend({ isNew: false, messages: lastMessage });
         // } else {
         //   // Add a new message
-          copyMessages.messages.push({
-            profilePicture: messageSocket.profilePicture,
-            senderFullName: messageSocket.senderFullName,
-            date: messageSocket.date,
-            message: messageSocket.message,
-            isNotification: messageSocket.isNotification,
-            initialsSender: messageSocket.initialsSender,
-            backgroundColorSender: messageSocket.backgroundColorSender,
-            receiverFullName: messageSocket.receiverFullName,
-            receiverProfilePicture: messageSocket.receiverProfilePicture,
-            initialsReceiver: messageSocket.initialsReceiver,
-            backgroundColorReceiver: messageSocket.backgroundColorReceiver,
-          });
+        copyMessages.messages.push({
+          profilePicture: messageSocket.profilePicture,
+          senderFullName: messageSocket.senderFullName,
+          date: messageSocket.date,
+          message: messageSocket.message,
+          isNotification: messageSocket.isNotification,
+          initialsSender: messageSocket.initialsSender,
+          backgroundColorSender: messageSocket.backgroundColorSender,
+          receiverFullName: messageSocket.receiverFullName,
+          receiverProfilePicture: messageSocket.receiverProfilePicture,
+          initialsReceiver: messageSocket.initialsReceiver,
+          backgroundColorReceiver: messageSocket.backgroundColorReceiver,
+        });
 
-          const existingMessage = {
-            profilePicture: messageSocket.profilePicture,
-            senderFullName: messageSocket.senderFullName,
-            date: messageSocket.date,
-            message: messageSocket.message,
-            isNotification: messageSocket.isNotification,
-            initialsSender: messageSocket.initialsSender,
-            backgroundColorSender: messageSocket.backgroundColorSender,
-            receiverFullName: messageSocket.receiverFullName,
-            receiverProfilePicture: messageSocket.receiverProfilePicture,
-            initialsReceiver: messageSocket.initialsReceiver,
-            backgroundColorReceiver: messageSocket.backgroundColorReceiver,
-          };
-          console.log("111 existing", existingMessage);
+        const existingMessage = {
+          profilePicture: messageSocket.profilePicture,
+          senderFullName: messageSocket.senderFullName,
+          date: messageSocket.date,
+          message: messageSocket.message,
+          isNotification: messageSocket.isNotification,
+          initialsSender: messageSocket.initialsSender,
+          backgroundColorSender: messageSocket.backgroundColorSender,
+          receiverFullName: messageSocket.receiverFullName,
+          receiverProfilePicture: messageSocket.receiverProfilePicture,
+          initialsReceiver: messageSocket.initialsReceiver,
+          backgroundColorReceiver: messageSocket.backgroundColorReceiver,
+        };
+        console.log("111 existing", existingMessage);
 
-          setMessageSend({ isNew: false, messages: existingMessage });
+        setMessageSend({ isNew: false, messages: existingMessage });
         //}
       } else {
         // Create a new message object
@@ -572,12 +577,13 @@ const ChatMessage = ({
       receiver: receiver?.userId,
       message: messageToSend,
       date: dateTimezone,
-      profilePicture: profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
+      profilePicture:
+        profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
       isNotification: false,
       senderFullName,
       receiverFullName: `${receiver?.firstName} ${receiver?.lastName}`,
       receiverProfilePicture:
-        receiver?.profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0]  ?? "",
+        receiver?.profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
       initialsSender: `${user?.firstName[0]} ${user?.lastName[0]}`,
       backgroundColorSender: user?.backgroundColor ?? "",
       initialsReceiver: `${receiver?.firstName[0]} ${receiver?.lastName[0]}`,
@@ -586,7 +592,6 @@ const ChatMessage = ({
 
     const dateItem = moment(dateTimezone, "M/D/YYYY, h:mm:ss A");
     const date = moment(dateItem).toDate();
-
 
     const newMessageLocal = {
       sender: sender,
@@ -611,11 +616,11 @@ const ChatMessage = ({
     await saveMessageBE(newMessageBE);
 
     const userId = receiverParam.hasOwnProperty("userId")
-    ? receiverParam.userId
-    : receiverParam;
-  const receiverBE = await getUser(userId);
+      ? receiverParam.userId
+      : receiverParam;
+    const receiverBE = await getUser(userId);
 
-  const isAllowNotificationChatsLocal = receiverBE.reponse?.[0]?.isChats;
+    const isAllowNotificationChatsLocal = receiverBE.reponse?.[0]?.isChats;
     if (isAllowNotificationChatsLocal) {
       if (os !== "") {
         if (os !== "android") {
@@ -721,7 +726,8 @@ const ChatMessage = ({
       receiver: receiver?.userId,
       message: messageNotification,
       date: dateTimezone,
-      profilePicture: profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
+      profilePicture:
+        profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
       isNotification: true,
       senderFullName,
       receiverFullName: `${receiver?.firstName} ${receiver?.lastName}`,
@@ -789,6 +795,31 @@ const ChatMessage = ({
     };
 
     socket?.emit("send_notification_request", dataSocket);
+    if (pushTokenReceiver !== "" && pushTokenReceiver !== undefined) {
+      if (os !== "android") {
+        const data = {
+          token: pushTokenReceiver,
+          title: `New payment link of coach`,
+          body: `${senderFullName} sent you a payment link`,
+          data: {
+            isFrom: "ChatRoom",
+            notification: "redirect to notification",
+          },
+        };
+        await sendPushNotification(data);
+      } else {
+        const pushNotification = {
+          title: `New payment link of coach`,
+          body: `${senderFullName} sent you a payment link`,
+          data: {
+            isFrom: "ChatRoom",
+            notification: "redirect to notification",
+          },
+          token: pushTokenReceiver,
+        };
+        sendPushNotificationAndroid(pushNotification);
+      }
+    }
     mixpanel.track("Payment web", {
       amountPayment: Number(price),
       payment: {
@@ -866,22 +897,30 @@ const ChatMessage = ({
     };
 
     socket?.emit("send_notification_request", dataSocket);
-    if (os !== "android") {
-      const data = {
-        token: pushTokenReceiver,
-        title: `New invitation to videocall`,
-        body: `${senderFullName} schedule a videocall with you`,
-        data: { isFrom: "ChatRoom", notification: "redirect to notification" },
-      };
-      await sendPushNotification(data);
-    } else {
-      const pushNotification = {
-        title: `New invitation to videocall`,
-        body: `${senderFullName} schedule a videocall with you`,
-        data: { isFrom: "ChatRoom", notification: "redirect to notification" },
-        token: pushTokenReceiver,
-      };
-      sendPushNotificationAndroid(pushNotification);
+    if (pushTokenReceiver !== "" && pushTokenReceiver !== undefined) {
+      if (os !== "android") {
+        const data = {
+          token: pushTokenReceiver,
+          title: `New invitation to videocall`,
+          body: `${senderFullName} schedule a videocall with you`,
+          data: {
+            isFrom: "ChatRoom",
+            notification: "redirect to notification",
+          },
+        };
+        await sendPushNotification(data);
+      } else {
+        const pushNotification = {
+          title: `New invitation to videocall`,
+          body: `${senderFullName} schedule a videocall with you`,
+          data: {
+            isFrom: "ChatRoom",
+            notification: "redirect to notification",
+          },
+          token: pushTokenReceiver,
+        };
+        sendPushNotificationAndroid(pushNotification);
+      }
     }
   };
 
@@ -1243,7 +1282,13 @@ const ChatMessage = ({
                   />
                 </View>
               </View>
-              <View style={{ flexDirection: "row", marginTop: 20, alignItems: "center" }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  marginTop: 20,
+                  alignItems: "center",
+                }}
+              >
                 <InfoIcon style={{ color: "orange", fontSize: 30 }} />
                 <span style={{ maxWidth: 400, textAlign: "center" }}>
                   Take in consideration that it is a one time payment{" "}
@@ -1271,7 +1316,8 @@ const ChatMessage = ({
               >
                 <InfoIcon style={{ color: "grey", fontSize: 25 }} />
                 <span style={{ textAlign: "center", marginLeft: 10 }}>
-                Also take into consideration PayPal fees for the price you put.
+                  Also take into consideration PayPal fees for the price you
+                  put.
                 </span>
               </View>
               {errorMessage.length > 0 && (
@@ -1796,7 +1842,6 @@ export function debounce(func: Function, delay = 4000) {
     timeoutId = setTimeout(() => func.apply(this, args), delay);
   };
 }
-
 
 export const formatDateAndTime = (now: Date) => {
   const month =
