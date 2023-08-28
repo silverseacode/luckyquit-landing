@@ -786,6 +786,7 @@ const ChatMessage = ({
       },
       initials: user?.initials,
       backgroundColor: user?.backgroundColor,
+      expirationDate: textDatePlan
     };
 
     await sendNotification(newNotification);
@@ -889,6 +890,7 @@ const ChatMessage = ({
       roomId: roomId,
       initials: user?.initials,
       backgroundColor: user?.backgroundColor,
+      expirationDate: datePickDay,
     };
 
     await sendNotification(newNotification);
@@ -943,6 +945,22 @@ const ChatMessage = ({
   const canBeOpen = open && Boolean(anchorEl);
   const id = canBeOpen ? "transition-popper" : undefined;
 
+  const [datePickerVisiblePlan, showDatePickerPlan] = useState(false);
+  const [dateTimeChoosedPlan, saveDateTimeChoosedPlan] = useState();
+  const [textDatePlan, setTextDatePlan] = useState("");
+  const [datePlanWithoutFormat, setDateWithoutFormat] = useState();
+  const handleConfirmDatePickerPlan = () => {
+    if (dateTimeChoosedPlan !== undefined) {
+      setDateWithoutFormat(new Date(dateTimeChoosedPlan));
+      const date = new Date(dateTimeChoosedPlan);
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const year = date.getFullYear();
+      const formattedResult = `${month}/${day}/${year}`;
+      setTextDatePlan(formattedResult);
+      showDatePickerPlan(false);
+    }
+  };
   return (
     <View style={{ backgroundColor: Colors.lightGray }}>
       <View
@@ -1179,75 +1197,6 @@ const ChatMessage = ({
                     textAlign: "center",
                   }}
                 >
-                  What is the duration of the plan in:
-                </span>
-              </View>
-              <View
-                style={{
-                  marginTop: 20,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginLeft: 50,
-                }}
-              >
-                <TouchableOpacity onPress={() => setActive("months")}>
-                  <RadioButton
-                    hasBorder={false}
-                    active={active === "months"}
-                    label={"Months"}
-                    width={120}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setActive("days")}>
-                  <RadioButton
-                    hasBorder={false}
-                    active={active === "days"}
-                    label={"Days"}
-                    width={120}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setActive("hours")}>
-                  <RadioButton
-                    hasBorder={false}
-                    active={active === "hours"}
-                    label={"Hours"}
-                    width={120}
-                  />
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  marginTop: 20,
-                }}
-              >
-                <span style={{ fontSize: 16, fontWeight: "600" }}>
-                  How many?:
-                </span>
-                <View style={{ marginLeft: 15 }}>
-                  <TextInput
-                    value={quantity}
-                    onChangeText={handleQuantity}
-                    ref={inputHowMany}
-                    style={{
-                      borderRadius: 8,
-                      width: 30,
-                      backgroundColor: Colors.lightGray,
-                      height: 20,
-                    }}
-                  />
-                </View>
-              </View>
-              <View style={{ marginTop: 20 }}>
-                <span
-                  style={{
-                    color: Colors.blackDefault,
-                    fontSize: 16,
-                    textAlign: "center",
-                  }}
-                >
                   How much will be the{" "}
                   <span style={{ fontWeight: "600" }}>total</span> price in USD?
                 </span>
@@ -1282,6 +1231,50 @@ const ChatMessage = ({
                   />
                 </View>
               </View>
+              <View
+                style={{
+                  marginTop: 20,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <View>
+                  <span
+                    style={{
+                      textAlign: "center",
+                      fontSize: 17,
+                      marginBottom: 20,
+                    }}
+                  >
+                    What is the expiration date of this plan?
+                  </span>
+                </View>
+              </View>
+
+              <div onClick={() => showDatePickerPlan(true)}>
+                <div
+                  style={{
+                    backgroundColor: Colors.primary,
+                    margin: "0px auto",
+                    padding: 10,
+                    borderRadius: 8,
+                    width: 150,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                  }}
+                >
+                  <span
+                    style={{
+                      color: Colors.white,
+                      textAlign: "center",
+                      borderRadius: 8,
+                    }}
+                  >
+                    {textDatePlan === "" ? "Pick a date" : textDatePlan}
+                  </span>
+                </div>
+              </div>
               <View
                 style={{
                   flexDirection: "row",
@@ -1360,15 +1353,37 @@ const ChatMessage = ({
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    if (quantity.trim() === "") {
+                    setErrorMessage("");
+                    if (textDatePlan.trim() === "") {
                       setErrorMessage(
-                        "You must complete how many months/hours will the plan be"
+                        "You must complete the expiration date of the plan."
+                      );
+                      return;
+                    }
+                    const today = new Date();
+                    today.setDate(today.getDate() + 1);
+                    today.setHours(0, 0, 0);
+                    today.setMilliseconds(0);
+                    console.log(
+                      2,
+                      datePlanWithoutFormat.getTime() > today.getTime()
+                    );
+                    console.log(3, datePlanWithoutFormat.getTime());
+                    console.log(4, today.getTime());
+                    if (datePlanWithoutFormat.getTime() >= today.getTime()) {
+                      // setErrorMessage(
+                      //   "The selected date cannot be less than tomorrow"
+                      // );
+                      // return;
+                    } else {
+                      setErrorMessage(
+                        "The selected date cannot be less than tomorrow"
                       );
                       return;
                     }
                     if (price.trim() === "") {
                       setErrorMessage(
-                        "You must complete how much will be the price"
+                        "You must complete how much will be the price."
                       );
                       return;
                     }
@@ -1790,6 +1805,55 @@ const ChatMessage = ({
             <TouchableOpacity
               onPress={() => {
                 handleConfirmDatePicker();
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: Colors.primary,
+                  borderRadius: 8,
+                  paddingVertical: 10,
+                  paddingHorizontal: 40,
+                }}
+              >
+                <span style={{ color: Colors.white }}>Accept</span>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </div>
+      </Modal>
+      <Modal open={datePickerVisiblePlan} className={styles.modalPicker}>
+        <div className={styles.containerModalPicker}>
+          <p>Pick a date of expiration for the plan</p>
+          <Datetime onChange={saveDateTimeChoosedPlan} />
+
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: 40,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                showDatePickerPlan(false);
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: Colors.darkGray,
+                  borderRadius: 8,
+                  paddingVertical: 10,
+                  paddingHorizontal: 40,
+                  marginRight: 10,
+                }}
+              >
+                <span style={{ color: Colors.white }}>Cancel</span>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                handleConfirmDatePickerPlan();
               }}
             >
               <View

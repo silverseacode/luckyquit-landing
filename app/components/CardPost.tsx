@@ -272,6 +272,7 @@ console.log("ENTA SHARE OON APP")
                       width: 70,
                       height: 70,
                       borderRadius: 50,
+                      objectFit: "cover"
                     }}
                   />
                 </View>
@@ -388,6 +389,7 @@ console.log("ENTA SHARE OON APP")
                   width: "100%",
                   height: 300,
                   borderRadius: 20,
+                  objectFit: "cover"
                 }}
               />
 
