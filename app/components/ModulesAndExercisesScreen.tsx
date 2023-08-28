@@ -125,6 +125,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
     index: number,
     isEx: boolean
   ) => {
+    console.log("INDE", index)
     if (!isEx) {
       const newValues = _.cloneDeep(inputValues) ?? {};
       newValues[currentDay][index].title = text;
@@ -1299,7 +1300,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                                   onPress={() => {
                                     setOpenFull(true);
                                     showFullModule(true);
-                                    saveValueEx({ value, index });
+                                    saveValueModule({ value, index });
                                   }}
                                 >
                                   <OpenInNewIcon

@@ -3,9 +3,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Colors } from "@/app/colors";
 import { CameraFilled } from "@ant-design/icons";
 import styles from "./modulesAndExercises.module.css";
-import YouTube from 'react-youtube';
+import YouTube from "react-youtube";
 import Image from "next/image";
-
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 interface IProps {
   title: string;
   short: string;
@@ -71,14 +72,14 @@ const ModulesAndExercisesFullScreen = ({
       const videoId = getYouTubeVideoId(link);
       setImage("");
       setVideo("");
-      handleRemoveVideo()
+      handleRemoveVideo();
       setLink("");
       setVideoId(videoId);
       handleSaveVideoId(videoId, index, isEx);
     } else {
       setLink("");
       setVideo("");
-      handleRemoveVideo()
+      handleRemoveVideo();
       setImage(link);
       handleSaveUploadedImage(link, index, isEx);
     }
@@ -95,7 +96,7 @@ const ModulesAndExercisesFullScreen = ({
   }, []);
 
   useEffect(() => {
-    console.log("UPLOADED IMAGE", uploadedImage)
+    console.log("UPLOADED IMAGE", uploadedImage);
     if (uploadedImage !== "") {
       let uploadedImageLocal = uploadedImage;
       if (uploadedImage instanceof File) {
@@ -105,7 +106,6 @@ const ModulesAndExercisesFullScreen = ({
       setImage(uploadedImageLocal);
     }
     if (videoUploaded !== "") {
-
       let videoLocal = videoUploaded;
       if (videoUploaded instanceof File) {
         videoLocal = URL.createObjectURL(videoUploaded);
@@ -128,19 +128,19 @@ const ModulesAndExercisesFullScreen = ({
   };
 
   const opts = {
-    height: '290',
-    width: '520',
+    height: "290",
+    width: "520",
     playerVars: {
       // Add any additional player parameters here
     },
   };
-  let textForFullDescription = ""
-  if(isExerciseShow) {
-    textForFullDescription = "exercise"
+  let textForFullDescription = "";
+  if (isExerciseShow) {
+    textForFullDescription = "exercise";
   }
 
-  if(isModuleShow) {
-    textForFullDescription = "module"
+  if (isModuleShow) {
+    textForFullDescription = "module";
   }
   return (
     <View style={{ backgroundColor: Colors.white, height: "100%" }}>
@@ -164,20 +164,20 @@ const ModulesAndExercisesFullScreen = ({
                 />
               </View>
             )}
-          {image !== undefined && image !== "" && !image.includes("youtube") && (
-            <View style={{
-              backgroundColor: Colors.darkGray,
-              width: "100%",
-              height: 300,
-            }}>
-              <Image
-              fill
-              alt="uploaded image"
-                src={ image }
-              />
-            </View>
-          )}
-          
+          {image !== undefined &&
+            image !== "" &&
+            !image.includes("youtube") && (
+              <View
+                style={{
+                  backgroundColor: Colors.darkGray,
+                  width: "100%",
+                  height: 300,
+                }}
+              >
+                <Image fill alt="uploaded image" src={image} />
+              </View>
+            )}
+
           {videoIdYouTube !== "" && image === "" && video == "" && (
             <>
               {/* <YoutubePlayer
@@ -186,13 +186,12 @@ const ModulesAndExercisesFullScreen = ({
                   videoId={videoIdYouTube}
                   onChangeState={onStateChange}
                 /> */}
-                <YouTube videoId={videoIdYouTube} opts={opts} />
-             
+              <YouTube videoId={videoIdYouTube} opts={opts} />
             </>
           )}
           {video !== "" && image === "" && (
             <View style={{ backgroundColor: Colors.lightGray }}>
-              <video style={{width: "100%", height: "300px"}} controls>
+              <video style={{ width: "100%", height: "300px" }} controls>
                 <source src={video} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
@@ -232,10 +231,8 @@ const ModulesAndExercisesFullScreen = ({
                           const file = event.target.files[0];
                           const url = URL.createObjectURL(file);
                           setImage(url);
-                          handleRemoveVideo()
+                          handleRemoveVideo();
                           handleSaveUploadedImage(event, index, isEx);
-                          
-                          
                         }}
                         id="file"
                         accept="image/jpeg,image/png"
@@ -257,7 +254,7 @@ const ModulesAndExercisesFullScreen = ({
                   >
                     <label className={styles.label}>
                       <input
-                      ref={fileInputRef}
+                        ref={fileInputRef}
                         onChange={(event) => {
                           let isEx = false;
                           if (isExerciseShow) {
@@ -268,12 +265,10 @@ const ModulesAndExercisesFullScreen = ({
                           }
                           const file = event.target.files[0];
                           const url = URL.createObjectURL(file);
-                        console.log("URL VIDEO", url)
+                          console.log("URL VIDEO", url);
                           setVideo(url);
-                          setImage("")
+                          setImage("");
                           handleSaveVideo(event, index, isEx);
-                          
-
                         }}
                         id="fileVideo"
                         accept="video/mp4"
@@ -293,7 +288,7 @@ const ModulesAndExercisesFullScreen = ({
           <span style={{ fontSize: 25, marginTop: 20 }}>{"\u2022"} Title</span>
         )}
         <View style={{ padding: 20, marginTop: -10 }}>
-          <TextInput
+          {/* <TextInput
             editable={isViewFromHomeWork ? false : true}
             style={{ fontSize: 25, width: "90%" }}
             value={textTitle}
@@ -312,6 +307,37 @@ const ModulesAndExercisesFullScreen = ({
               setTextTitle(text);
               handleInputChangeTitle(text, index, isEx);
             }}
+          /> */}
+          <ReactQuill
+            theme="snow"
+            value={textTitle}
+            onChange={(value) => {
+              let isEx = false;
+              if (isExerciseShow) {
+                isEx = true;
+              }
+              if (isModuleShow) {
+                isEx = false;
+              }
+              setTextTitle(value);
+              handleInputChangeTitle(value, index, isEx);
+            }}
+            modules={{
+              toolbar: [
+                [{ 'header': [1, 2, false] }],
+                ['bold', 'italic', 'underline','strike', 'blockquote'],
+                [{ 'color': ["#000000", "#e60000", "#ff9900", "#ffff00", "#008a00", "#0066cc", "#9933ff", "#ffffff", "#facccc", "#ffebcc", "#ffffcc", "#cce8cc", "#cce0f5", "#ebd6ff", "#bbbbbb", "#f06666", "#ffc266", "#ffff66", "#66b966", "#66a3e0", "#c285ff", "#888888", "#a10000", "#b26b00", "#b2b200", "#006100", "#0047b2", "#6b24b2", "#444444", "#5c0000", "#663d00", "#666600", "#003700", "#002966", "#3d1466", 'custom-color'] }],
+                [{'list': 'ordered'}, {'list': 'bullet'}],
+                ['link'],
+                ['clean']
+              ],
+            }}
+            formats={[
+              'header',
+              'bold', 'italic', 'underline', 'strike', 'blockquote',
+              'list', 'bullet',
+              'link', 'image', 'color'
+            ]}
           />
         </View>
         {!isViewFromHomeWork && (
@@ -322,14 +348,18 @@ const ModulesAndExercisesFullScreen = ({
         <View style={{ padding: 20, marginTop: -10 }}>
           <textarea
             readOnly={isViewFromHomeWork ? true : false}
-            style={{ fontSize: 20, width: "90%", border:"none", resize:"none" }}
+            style={{
+              fontSize: 20,
+              width: "90%",
+              border: "none",
+              resize: "none",
+            }}
             value={fullDescription}
             rows={fullDescription === "" ? 2 : 40}
             placeholder={
               isViewFromHomeWork
                 ? ""
-                : `Enter the full description of the ${
-                  textForFullDescription}`
+                : `Enter the full description of the ${textForFullDescription}`
             }
             onChange={(e) => {
               let isEx = false;
@@ -349,4 +379,4 @@ const ModulesAndExercisesFullScreen = ({
   );
 };
 
-export default ModulesAndExercisesFullScreen
+export default ModulesAndExercisesFullScreen;
