@@ -1482,7 +1482,7 @@ const ChatMessage = ({
                       borderRadius: 8,
                       borderColor: Colors.primary,
                       borderWidth: 1,
-                      width: "100%",
+                      width: 400,
                       padding: 8,
                       height: 45,
                     }}

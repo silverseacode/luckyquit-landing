@@ -1,13 +1,15 @@
 "use client";
-import { Container, Modal } from "@mui/material";
+import { Alert, Container, Modal, Snackbar } from "@mui/material";
 import styles from "../components/notifications.module.css";
 import Layout from "../../app/components/Layout";
 import { View, TouchableOpacity, span, Pressable } from "react-native";
 import { Colors } from "@/app/colors";
 import { useEffect, useRef, useState } from "react";
-import { NotificationType } from "@/models";
+import { NotificationType, User } from "@/models";
 import {
   getNotificationsByUserId,
+  sendPushNotification,
+  sendPushNotificationAndroid,
   updateIsRejectedCalendar,
   updateIsRejectedPayment,
   updateToRead,
@@ -22,34 +24,34 @@ import Image from "next/image";
 import Header from "@/globals/Header";
 import { useRouter } from "next/navigation";
 import { API_URL } from "@/config";
+import { saveMessageBE } from "@/helpers/chats";
 
 export default function Notifications() {
   const router = useRouter();
   const [allNotifications, setAllNotifications] =
-  useState<NotificationType[]>();
+    useState<NotificationType[]>();
   const [isCheckingUserId, setCheckingUserId] = useState(true);
-  const [isPlan, setPlan] = useState([])
+  const [isPlan, setPlan] = useState([]);
   useEffect(() => {
-    let isPlan: any = []
+    let isPlan: any = [];
     async function checkIfHasPlan() {
       const itemUUID = localStorage.getItem("UUID");
-    const UUID = itemUUID ? itemUUID : null;
+      const UUID = itemUUID ? itemUUID : null;
       const res = await getUser(UUID);
       const user = res.response[0];
       allNotifications?.map((item) => {
         user.coaches.map((coach: any) => {
-          if(coach.userId === item.sender) {
-            isPlan[item.sender] = true
+          if (coach.userId === item.sender) {
+            isPlan[item.sender] = true;
           }
-        })
-      })
-      console.log("iisPLan",isPlan)
-      setPlan(isPlan)
+        });
+      });
+      console.log("iisPLan", isPlan);
+      setPlan(isPlan);
     }
 
-    checkIfHasPlan()
-   
-  },[allNotifications])
+    checkIfHasPlan();
+  }, [allNotifications]);
 
   useEffect(() => {
     const itemUUID = localStorage.getItem("UUID");
@@ -79,7 +81,7 @@ export default function Notifications() {
       const UUID = itemUUID ? itemUUID : "";
       const data = await getNotificationsByUserId(UUID);
       const notifications = data.response.notifications;
-      console.log('notif', notifications)
+      console.log("notif", notifications);
       setAllNotifications(notifications);
       const groupedNotifications = notifications.reduce((acc, notification) => {
         const key = `${
@@ -118,7 +120,7 @@ export default function Notifications() {
             notif.type === "payment" ||
             notif.type === "homework" ||
             notif.type === "event" ||
-            notif.type === "connect" 
+            notif.type === "connect"
           ) {
             const postId = notif.postId;
             const type = notif.type;
@@ -140,20 +142,24 @@ export default function Notifications() {
             }
             let newNotif = notif;
             // Check if we've already added a notification for this post
-            if (notif.type === "payment" || notif.type === "event" || notif.type === "connect" || notif.type === "homework") {
+            if (
+              notif.type === "payment" ||
+              notif.type === "event" ||
+              notif.type === "connect" ||
+              notif.type === "homework"
+            ) {
               finalNotif.push(newNotif);
             } else {
               if (!uniquePosts.has(type + postId)) {
                 // Create a new notification for this post
 
-                if(newNotif.type !== "homework") {
-
-                 if (numOthers !== 0) {
-                  newNotif.body = `${senderName} and ${numOthers} more people ${action} on your post`;
-                } else {
-                  newNotif.body = `${senderName} ${action} on your post`;
+                if (newNotif.type !== "homework") {
+                  if (numOthers !== 0) {
+                    newNotif.body = `${senderName} and ${numOthers} more people ${action} on your post`;
+                  } else {
+                    newNotif.body = `${senderName} ${action} on your post`;
+                  }
                 }
-              }
 
                 finalNotif.push(newNotif);
 
@@ -166,9 +172,8 @@ export default function Notifications() {
       });
       setNotifications(finalNotif);
     }
-    if(!isCheckingUserId) {
+    if (!isCheckingUserId) {
       getNotifications();
-
     }
   }, [isCheckingUserId]);
 
@@ -216,11 +221,19 @@ export default function Notifications() {
     notif: NotificationType;
     index: number;
   }>();
-  const emailMySelf = process.env.NEXT_PUBLIC_MY_PAYPAL_EMAIL
-
+  //const emailMySelf = process.env.NEXT_PUBLIC_MY_PAYPAL_EMAIL
+  const emailMySelf = "sb-2l5c625357871@business.example.com";
   const [nameCurrentUser, setNameCurrentUser] = useState("");
+  const [timezone, setTimezone] = useState("");
+  const [quitterDataVar, setQuitterData] = useState<User>();
+  const [coachDetails, setCoachDetails] = useState<User>();
+  const [amountToPay, setAmountToPay] = useState<string | number>(0);
 
+  const [expirationDate, setExpirationDate] = useState<string>("");
+  const [startPlanDate, setStartPlanDate] = useState<string>("");
+  const [currentNotif, setCurrentNotif] = useState()
   const seeDetails = async (notification: NotificationType) => {
+    setCurrentNotif(notification)
     const itemUUID = localStorage.getItem("UUID");
     const UUID = itemUUID ? itemUUID : "";
 
@@ -237,27 +250,31 @@ export default function Notifications() {
       setNameCurrentUser(
         `${quitterData[0].firstName} ${quitterData[0].lastName}`
       );
+      setTimezone(quitterData[0].timezone[0]);
+      setQuitterData(quitterData[0]);
     } else {
+      setCoachDetails(coachData[0]);
       setNameCurrentUser(`${coachData[0].firstName} ${coachData[0].lastName}`);
     }
 
     const quitterTimezone = quitterData[0].timezone[0];
     const quantity = notification.payment?.quantity;
     const type = notification.payment?.type;
-    const currentDate = new Date();
-    /// make calculation then convert to timezone
+    // const currentDate = new Date();
+    // /// make calculation then convert to timezone
 
-    if (type === "months") {
-      currentDate.setMonth(currentDate.getMonth() + quantity);
-    }
+    // if (type === "months") {
+    //   currentDate.setMonth(currentDate.getMonth() + quantity);
+    // }
 
-    if (type === "days") {
-      currentDate.setDate(currentDate.getDate() + quantity);
-    }
+    // if (type === "days") {
+    //   currentDate.setDate(currentDate.getDate() + quantity);
+    // }
 
-    if (type === "hours") {
-      currentDate.setHours(currentDate.getHours() + quantity);
-    }
+    // if (type === "hours") {
+    //   currentDate.setHours(currentDate.getHours() + quantity);
+    // }
+    setAmountToPay(notification.amountPayment);
     const options = { timeZone: quitterTimezone };
 
     const today = new Date();
@@ -266,15 +283,12 @@ export default function Notifications() {
       "en-US",
       options
     );
-    //setStartPlanDate(dateTimezoneStart);
-    const currentDatetime = currentDate;
-    const dateTimezone = currentDatetime.toLocaleString("en-US", options);
-    console.log("EXPIRATION DATE", dateTimezone);
-    //setExpirationDate(dateTimezone);
-
-    const message = `${notification.body}, this plan will expire ${
-      dateTimezone.split(",")[0]
-    }`;
+    // const currentDatetime = currentDate;
+    // const dateTimezone = currentDatetime.toLocaleString("en-US", options);
+    // console.log("EXPIRATION DATE", dateTimezone);
+    setStartPlanDate(dateTimezoneStart);
+    setExpirationDate(notification.expirationDate);
+    const message = `${notification.body}`;
 
     //setMessage(message);
     setTimeout(() => {
@@ -282,14 +296,16 @@ export default function Notifications() {
       setTimeout(() => {
         if (iframeRef.current) {
           const data = {
-            clientId: process.env.NEXT_PUBLIC_CLIENT_ID_PAYPAL,
+            //clientId: process.env.NEXT_PUBLIC_CLIENT_ID_PAYPAL,
+            clientId:
+              "AaMMsWryLKfjq6scSA9wm-Yy-cdM1_hTFf-89tHvMpJJVg2-NgOkHMFe03DoMLmY5Zav3X0Gm1T-0DNp",
             emailMySelf,
             emailCoach: coachData[0].email,
             emailCoachPayPal: coachData[0].emailPaypal,
             emailQuitter: quitterData[0].email,
             amountToPay: notification.amountPayment,
             startPlanDate: dateTimezoneStart,
-            expirationDate: dateTimezone,
+            expirationDate: notification.expirationDate,
             message,
             userIdQuitter: quitterData[0].userId,
             userIdCoach: coachData[0].userId,
@@ -329,10 +345,9 @@ export default function Notifications() {
     if (type === "homework") {
       router.push(`/home`);
     }
-    if(type === "comment" || type === "reply" || type === "like") {
+    if (type === "comment" || type === "reply" || type === "like") {
       router.push(`/comments/${postId}`);
     }
-    
   };
 
   const [token, setToken] = useState("");
@@ -347,12 +362,12 @@ export default function Notifications() {
       const tokenBE = await getTokenExpired(token, email);
       if (tokenBE.isNew) {
         localStorage.setItem("jwtToken", tokenBE.token);
-        token = tokenBE.token
+        token = tokenBE.token;
       }
       setToken(token);
     }
     getToken();
-  });
+  }, []);
 
   const iframeRef = useRef(null);
   useEffect(() => {
@@ -360,6 +375,7 @@ export default function Notifications() {
       //if (event.origin !== 'https://your-iframe-origin.com') return; // Validate the origin of the message
       if (event.data === "success") {
         showCreditCardModal(false);
+        await addToQuitterAndCoach();
         const data = {
           _id: notifToBeUpdated?.notif._id,
           isRejectedPayment: false,
@@ -391,8 +407,153 @@ export default function Notifications() {
     return () => {
       window.removeEventListener("message", handleIframeMessage);
     };
-  }, []);
-  if(isCheckingUserId) return null
+  }, [currentNotif]);
+
+  const sendMessageAlreadyPaid = async () => {
+    const currentDatetime = new Date();
+    const options = { timeZone: timezone };
+    const dateTimezone = currentDatetime.toLocaleString("en-US", options);
+    const newMessageBE = {
+      sender: notifToBeUpdated?.notif.receiver,
+      receiver: notifToBeUpdated?.notif.sender,
+      message: `The quitter has payed the amount sent by ${notifToBeUpdated?.notif.senderFullName}`,
+      date: dateTimezone,
+      isRead: false,
+      profilePicture: quitterDataVar?.profilePicture,
+      senderFullName: `${quitterDataVar?.firstName} ${quitterDataVar?.lastName}`,
+      receiverFullName: `${notifToBeUpdated?.notif.senderFullName}`,
+      receiverProfilePicture: notifToBeUpdated?.notif.profilePictureSender,
+      initialsSender: quitterDataVar?.initials,
+      backgroundColorSender: quitterDataVar?.backgroundColor,
+      initialsReceiver: notifToBeUpdated?.notif.initials,
+      backgroundColorReceiver: notifToBeUpdated?.notif.backgroundColor,
+    };
+
+    socket.emit("send_message", newMessageBE);
+    await saveMessageBE(newMessageBE);
+
+    if (coachDetails?.os !== "") {
+      if (coachDetails?.os !== "android") {
+        const data = {
+          token: coachDetails?.pushToken,
+          title: `New message`,
+          body: `${quitterDataVar?.firstName} ${quitterDataVar?.lastName} has payed your plan`,
+          data: {
+            isFrom: "Message",
+            receiver: notifToBeUpdated?.notif.receiver,
+          },
+        };
+        await sendPushNotification(data);
+      } else {
+        const pushNotification = {
+          title: `New message`,
+          body: `${quitterDataVar?.firstName} ${quitterDataVar?.lastName} has payed your plan`,
+          data: {
+            isFrom: "Message",
+            receiver: notifToBeUpdated?.notif.receiver,
+          },
+          token: coachDetails?.pushToken,
+        };
+        await sendPushNotificationAndroid(pushNotification);
+      }
+    }
+  };
+  const [openToast, setOpenToast] = useState(false);
+  const addToQuitterAndCoach = async () => {
+    const itemToken = localStorage.getItem("jwtToken");
+    let tokenLocal = itemToken ? itemToken : "";
+
+    const itemEmail = localStorage.getItem("email");
+    const email = itemEmail ? itemEmail : "";
+
+    const tokenBE = await getTokenExpired(token, email);
+    if (tokenBE.isNew) {
+      localStorage.setItem("jwtToken", tokenBE.token);
+      tokenLocal = tokenBE.token;
+    }
+
+    const res = await getUser(currentNotif.sender);
+    const coachData = res.response[0];
+
+    const res1 = await getUser(currentNotif.receiver);
+    const quitterData = res1.response[0];
+
+    const today = new Date();
+    const options = { timeZone: quitterData.timezone[0] };
+
+    const currentDatetimeStart = today;
+    const dateTimezoneStart = currentDatetimeStart.toLocaleString(
+      "en-US",
+      options
+    );
+
+
+    const valuesFromRN = {
+      emailMySelf,
+      emailCoach: coachData?.email,
+      emailCoachPayPal: coachData?.emailPaypal,
+      emailQuitter: quitterData?.email,
+      amountToPay: currentNotif?.amountPayment, //get this one
+      startPlanDate: dateTimezoneStart, //put in state
+      expirationDate: currentNotif?.expirationDate, //put in state
+      userIdQuitter: quitterData?.userId,
+      userIdCoach: coachData?.userId,
+      fullNameCoach: `${coachData?.firstName} ${coachData?.lastName}`,
+      fullNameQuitter: `${quitterData?.firstName} ${quitterData?.lastName}`,
+      token: tokenLocal,
+    };
+    console.log("VALUES RN",valuesFromRN)
+    try {
+      const data = {
+        user: {
+          //este objeto va en el coach
+          quitter: {
+            planStart: valuesFromRN.startPlanDate.split(",")[0],
+            planEnd: valuesFromRN.expirationDate,
+            email: valuesFromRN.emailQuitter,
+            amount: valuesFromRN.amountToPay,
+            amountForUs: Number(valuesFromRN.amountToPay) * 0.1,
+            userId: valuesFromRN.userIdQuitter,
+            fullName: valuesFromRN.fullNameQuitter,
+          },
+          ///este objeto va en el quitter
+          coach: {
+            planStart: valuesFromRN.startPlanDate.split(",")[0],
+            planEnd: valuesFromRN.expirationDate,
+            email: valuesFromRN.emailCoach,
+            amount: valuesFromRN.amountToPay,
+            amountForUs: Number(valuesFromRN.amountToPay) * 0.1,
+            userId: valuesFromRN.userIdCoach,
+            fullName: valuesFromRN.fullNameCoach,
+          },
+        },
+      };
+      //http://52.53.194.42
+      fetch(`http://192.168.100.50:3002/user/save-coach-quitter-info`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + valuesFromRN.token,
+        },
+        body: JSON.stringify({ data }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          sendMessageAlreadyPaid();
+          setOpenToast(true)
+          // Toast.show({
+          //   type: "success",
+          //   text1: "Payment Successfull",
+          //   text2: `Now ${notifToBeUpdated?.notif.senderFullName} is your coach!`,
+          //   visibilityTime: 5000,
+          // });
+        });
+    } catch (err) {
+      console.log("FALLO SAVE COACH EMAl", err);
+    }
+  };
+
+  if (isCheckingUserId) return null;
 
   return (
     <Layout title={"Lucky Quit - Quit smoking for life"}>
@@ -415,7 +576,7 @@ export default function Notifications() {
                   >
                     {/* #E2F0FE */}
                     <div
-                    style={{cursor: "pointer"}}
+                      style={{ cursor: "pointer" }}
                       onClick={() =>
                         handlePressNotification(item.type, item.postId)
                       }
@@ -463,7 +624,8 @@ export default function Notifications() {
                     </div>
                     {item.type === "payment" && (
                       <View style={{ flexDirection: "row" }}>
-                        {item.isRejectedPayment === undefined && !isPlan[item.sender] ? (
+                        {item.isRejectedPayment === undefined &&
+                        !isPlan[item.sender] ? (
                           <>
                             <TouchableOpacity
                               onPress={() => rejectPayment(item, index)}
@@ -518,7 +680,8 @@ export default function Notifications() {
                           </>
                         ) : (
                           <>
-                            {(item.isRejectedPayment === false || isPlan[item.sender]) && (
+                            {(item.isRejectedPayment === false ||
+                              isPlan[item.sender]) && (
                               <View
                                 style={{
                                   marginLeft: 70,
@@ -715,6 +878,19 @@ export default function Notifications() {
           </View>
         </div>
       </Modal>
+      <Snackbar
+            open={openToast}
+            autoHideDuration={6000}
+            onClose={() => setOpenToast(false)}
+          >
+            <Alert
+              onClose={() => setOpenToast(false)}
+              severity="success"
+              sx={{ width: "100%" }}
+            >
+            {`${coachDetails?.firstName} ${coachDetails?.lastName} is now your coach!`}
+            </Alert>
+          </Snackbar>
     </Layout>
   );
 }

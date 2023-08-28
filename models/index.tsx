@@ -171,6 +171,7 @@ export type NotificationType = {
   roomId?: string;
   initials: string;
   backgroundColor: string;
+  expirationDate: string
 };
 
 export type MessageBody = {
