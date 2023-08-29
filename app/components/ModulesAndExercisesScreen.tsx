@@ -1,3 +1,4 @@
+"use client"
 import { Colors } from "@/app/colors";
 import {
   View,
@@ -39,7 +40,8 @@ import axios from "axios";
 import { useSocket } from "../Context/store";
 import Image from "next/image";
 import mixpanel from "mixpanel-browser";
-import ReactQuill from "react-quill";
+import dynamic from 'next/dynamic'
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 interface IProps {
   user: User | undefined;
@@ -831,6 +833,15 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
     if (unprivilegedEditor.getLength() > 50 && event.key !== "Backspace")
       event.preventDefault();
   };
+
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+  
+  if (!isMounted) return null
+  
   
   return (
     <>

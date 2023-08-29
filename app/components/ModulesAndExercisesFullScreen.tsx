@@ -1,3 +1,4 @@
+"use client"
 import { View, TextInput, Pressable } from "react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Colors } from "@/app/colors";
@@ -5,7 +6,8 @@ import { CameraFilled } from "@ant-design/icons";
 import styles from "./modulesAndExercises.module.css";
 import YouTube from "react-youtube";
 import Image from "next/image";
-import ReactQuill from "react-quill";
+import dynamic from 'next/dynamic'
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import "react-quill/dist/quill.snow.css";
 interface IProps {
   title: string;
@@ -142,6 +144,9 @@ const ModulesAndExercisesFullScreen = ({
   if (isModuleShow) {
     textForFullDescription = "module";
   }
+
+  
+
   const reactQuillRef = useRef();
   const reactQuillRefFull = useRef();
 
@@ -156,6 +161,15 @@ const ModulesAndExercisesFullScreen = ({
     if (unprivilegedEditor.getLength() > 1500 && event.key !== 'Backspace')
       event.preventDefault();
   };
+
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+  
+  if (!isMounted) return null
+  
 
   return (
     <View style={{ backgroundColor: Colors.white, height: "100%" }}>
@@ -323,6 +337,7 @@ const ModulesAndExercisesFullScreen = ({
               handleInputChangeTitle(text, index, isEx);
             }}
           /> */}
+          {!isViewFromHomeWork ?
           <ReactQuill
             onKeyDown={checkCharacterCount}
             ref={reactQuillRef}
@@ -354,7 +369,9 @@ const ModulesAndExercisesFullScreen = ({
               'list', 'bullet',
                'image', 'color'
             ]}
-          />
+          />:
+          <div dangerouslySetInnerHTML={{ __html: textTitle }} />
+          }
         </View>
         {!isViewFromHomeWork && (
           <span style={{ fontSize: 25, marginTop: 20 }}>
@@ -389,6 +406,7 @@ const ModulesAndExercisesFullScreen = ({
               handleInputChangeFull(e.target.value, index, isEx);
             }}
           /> */}
+          {!isViewFromHomeWork ? 
           <ReactQuill
           onKeyDown={checkCharacterCountFull}
           ref={reactQuillRefFull}
@@ -422,7 +440,10 @@ const ModulesAndExercisesFullScreen = ({
               'list', 'bullet',
                'image', 'color'
             ]}
-          />
+          />:
+          
+          <div dangerouslySetInnerHTML={{ __html:fullDescription }} />
+          }
         </View>
       </View>
     </View>
