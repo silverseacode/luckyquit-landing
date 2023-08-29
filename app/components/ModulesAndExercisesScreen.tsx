@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import RadioButton from "../components/RadioButton";
 import { Module, TypeUser, User } from "@/models";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getUser } from "@/helpers/users";
 import {
   sendNotification,
@@ -39,6 +39,7 @@ import axios from "axios";
 import { useSocket } from "../Context/store";
 import Image from "next/image";
 import mixpanel from "mixpanel-browser";
+import ReactQuill from "react-quill";
 
 interface IProps {
   user: User | undefined;
@@ -125,7 +126,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
     index: number,
     isEx: boolean
   ) => {
-    console.log("INDE", index)
+    console.log("INDE", index);
     if (!isEx) {
       const newValues = _.cloneDeep(inputValues) ?? {};
       newValues[currentDay][index].title = text;
@@ -822,6 +823,14 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
   });
   console.log("inputValuesEx,", inputValuesEx);
   console.log("inputValues,", inputValues);
+
+  const reactQuillRef = useRef();
+
+  const checkCharacterCount = (event: any) => {
+    const unprivilegedEditor = reactQuillRef.current.unprivilegedEditor;
+    if (unprivilegedEditor.getLength() > 50 && event.key !== "Backspace")
+      event.preventDefault();
+  };
   return (
     <>
       <View
@@ -1258,11 +1267,11 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                                 marginTop: 20,
                                 flexDirection: "row",
                                 justifyContent: "space-between",
-                                width: "80%",
-                                height: 80,
+                                width: "90%",
+                                height: 140,
                               }}
                             >
-                              <textarea
+                              {/* <textarea
                                 style={{
                                   fontSize: 20,
                                   width: "90%",
@@ -1281,8 +1290,86 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                                     false
                                   )
                                 }
+                              /> */}
+                              <ReactQuill
+                                onKeyDown={checkCharacterCount}
+                                ref={reactQuillRef}
+                                theme="snow"
+                                value={value.title}
+                                onChange={(value) => {
+                                  handleInputChangeTitle(value, index, false);
+                                }}
+                                style={{width: "100%", height:100}}
+                                modules={{
+                                  toolbar: [
+                                    [{ header: [1, 2, false] }],
+                                    [
+                                      "bold",
+                                      "italic",
+                                      "underline",
+                                      "strike",
+                                      "blockquote",
+                                    ],
+                                    [
+                                      {
+                                        color: [
+                                          "#000000",
+                                          "#e60000",
+                                          "#ff9900",
+                                          "#ffff00",
+                                          "#008a00",
+                                          "#0066cc",
+                                          "#9933ff",
+                                          "#ffffff",
+                                          "#facccc",
+                                          "#ffebcc",
+                                          "#ffffcc",
+                                          "#cce8cc",
+                                          "#cce0f5",
+                                          "#ebd6ff",
+                                          "#bbbbbb",
+                                          "#f06666",
+                                          "#ffc266",
+                                          "#ffff66",
+                                          "#66b966",
+                                          "#66a3e0",
+                                          "#c285ff",
+                                          "#888888",
+                                          "#a10000",
+                                          "#b26b00",
+                                          "#b2b200",
+                                          "#006100",
+                                          "#0047b2",
+                                          "#6b24b2",
+                                          "#444444",
+                                          "#5c0000",
+                                          "#663d00",
+                                          "#666600",
+                                          "#003700",
+                                          "#002966",
+                                          "#3d1466",
+                                          "custom-color",
+                                        ],
+                                      },
+                                    ],
+                                    [{ list: "ordered" }, { list: "bullet" }],
+                                    ["clean"],
+                                  ],
+                                }}
+                                formats={[
+                                  "header",
+                                  "bold",
+                                  "italic",
+                                  "underline",
+                                  "strike",
+                                  "blockquote",
+                                  "list",
+                                  "bullet",
+                                  "image",
+                                  "color",
+                                ]}
                               />
-                              <View>
+                              <View style={{marginLeft: 40}}>
                                 <Pressable
                                   style={{ marginBottom: 10 }}
                                   onPress={() => removeModule(index, false)}
@@ -1481,11 +1568,11 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                               marginTop: 20,
                               flexDirection: "row",
                               justifyContent: "space-between",
-                              width: "80%",
-                              height: 80,
+                              width: "90%",
+                              height: 140,
                             }}
                           >
-                            <textarea
+                            {/* <textarea
                               style={{
                                 fontSize: 20,
                                 width: "90%",
@@ -1504,8 +1591,86 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                                   true
                                 )
                               }
-                            />
-                            <View>
+                            /> */}
+                            <ReactQuill
+                                onKeyDown={checkCharacterCount}
+                                ref={reactQuillRef}
+                                theme="snow"
+                                value={value.title}
+                                onChange={(value) => {
+                                  handleInputChangeTitle(value, index, true);
+                                }}
+                                style={{width: "100%", height:100}}
+                                modules={{
+                                  toolbar: [
+                                    [{ header: [1, 2, false] }],
+                                    [
+                                      "bold",
+                                      "italic",
+                                      "underline",
+                                      "strike",
+                                      "blockquote",
+                                    ],
+                                    [
+                                      {
+                                        color: [
+                                          "#000000",
+                                          "#e60000",
+                                          "#ff9900",
+                                          "#ffff00",
+                                          "#008a00",
+                                          "#0066cc",
+                                          "#9933ff",
+                                          "#ffffff",
+                                          "#facccc",
+                                          "#ffebcc",
+                                          "#ffffcc",
+                                          "#cce8cc",
+                                          "#cce0f5",
+                                          "#ebd6ff",
+                                          "#bbbbbb",
+                                          "#f06666",
+                                          "#ffc266",
+                                          "#ffff66",
+                                          "#66b966",
+                                          "#66a3e0",
+                                          "#c285ff",
+                                          "#888888",
+                                          "#a10000",
+                                          "#b26b00",
+                                          "#b2b200",
+                                          "#006100",
+                                          "#0047b2",
+                                          "#6b24b2",
+                                          "#444444",
+                                          "#5c0000",
+                                          "#663d00",
+                                          "#666600",
+                                          "#003700",
+                                          "#002966",
+                                          "#3d1466",
+                                          "custom-color",
+                                        ],
+                                      },
+                                    ],
+                                    [{ list: "ordered" }, { list: "bullet" }],
+                                    ["clean"],
+                                  ],
+                                }}
+                                formats={[
+                                  "header",
+                                  "bold",
+                                  "italic",
+                                  "underline",
+                                  "strike",
+                                  "blockquote",
+                                  "list",
+                                  "bullet",
+                                  "image",
+                                  "color",
+                                ]}
+                              />
+                              <View style={{marginLeft: 40}}>
                               <Pressable
                                 style={{ marginBottom: 10 }}
                                 onPress={() => removeModule(index, true)}

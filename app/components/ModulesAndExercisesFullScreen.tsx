@@ -142,6 +142,21 @@ const ModulesAndExercisesFullScreen = ({
   if (isModuleShow) {
     textForFullDescription = "module";
   }
+  const reactQuillRef = useRef();
+  const reactQuillRefFull = useRef();
+
+  const checkCharacterCount = (event: any) => {
+    const unprivilegedEditor = reactQuillRef.current.unprivilegedEditor;
+    if (unprivilegedEditor.getLength() > 50 && event.key !== 'Backspace')
+      event.preventDefault();
+  };
+
+  const checkCharacterCountFull = (event: any) => {
+    const unprivilegedEditor = reactQuillRefFull.current.unprivilegedEditor;
+    if (unprivilegedEditor.getLength() > 1500 && event.key !== 'Backspace')
+      event.preventDefault();
+  };
+
   return (
     <View style={{ backgroundColor: Colors.white, height: "100%" }}>
       <View style={{ backgroundColor: Colors.white, height: "100%" }}>
@@ -309,6 +324,8 @@ const ModulesAndExercisesFullScreen = ({
             }}
           /> */}
           <ReactQuill
+            onKeyDown={checkCharacterCount}
+            ref={reactQuillRef}
             theme="snow"
             value={textTitle}
             onChange={(value) => {
@@ -373,6 +390,8 @@ const ModulesAndExercisesFullScreen = ({
             }}
           /> */}
           <ReactQuill
+          onKeyDown={checkCharacterCountFull}
+          ref={reactQuillRefFull}
             theme="snow"
             value={fullDescription}
             style={{height: 500}}
