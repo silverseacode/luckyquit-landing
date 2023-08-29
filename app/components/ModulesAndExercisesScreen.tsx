@@ -831,6 +831,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
     if (unprivilegedEditor.getLength() > 50 && event.key !== "Backspace")
       event.preventDefault();
   };
+  
   return (
     <>
       <View
@@ -1175,6 +1176,23 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                   if (value.thumbLocal instanceof File) {
                     valueThumbLocal = URL.createObjectURL(value.thumbLocal);
                   }
+
+                  let imageUrl = "";
+                  if (isValueThumbFile) {
+                    imageUrl = valueThumb;
+                  } else {
+                    const matches = value.thumb.match(/https/g);
+
+                    // Verificamos si hay al menos dos ocurrencias
+                    if (matches && matches.length >= 2) {
+                      imageUrl = value.thumbLocal;
+                    } else if (matches?.length === 1) {
+                      imageUrl = value.thumb;
+                    } else {
+                      imageUrl = value.thumbLocal;
+                    }
+                  }
+
                   return (
                     <>
                       {!isOpenFull && (
@@ -1222,9 +1240,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                           ) : (
                             <div className={styles.containerImage}>
                               <Image
-                                src={
-                                  isValueThumbFile ? valueThumb : value.thumb
-                                }
+                                src={imageUrl}
                                 height={100}
                                 width={100}
                                 alt="Image"
@@ -1299,7 +1315,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                                 onChange={(value) => {
                                   handleInputChangeTitle(value, index, false);
                                 }}
-                                style={{width: "100%", height:100}}
+                                style={{ width: "100%", height: 100 }}
                                 modules={{
                                   toolbar: [
                                     [{ header: [1, 2, false] }],
@@ -1369,7 +1385,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                                   "color",
                                 ]}
                               />
-                              <View style={{marginLeft: 40}}>
+                              <View style={{ marginLeft: 40 }}>
                                 <Pressable
                                   style={{ marginBottom: 10 }}
                                   onPress={() => removeModule(index, false)}
@@ -1483,6 +1499,21 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                   valueThumbLocal = URL.createObjectURL(value.thumbLocal);
                 }
 
+                let imageUrl = "";
+                if (isValueThumbFile) {
+                  imageUrl = valueThumb;
+                } else {
+                  const matches = value.thumb.match(/https/g);
+
+                  if (matches && matches.length >= 2) {
+                    imageUrl = value.thumbLocal;
+                  } else if (matches?.length === 1) {
+                    imageUrl = value.thumb;
+                  } else {
+                    imageUrl = value.thumbLocal;
+                  }
+                }
+
                 return (
                   <>
                     {!isOpenFull && (
@@ -1532,7 +1563,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                         ) : (
                           <div className={styles.containerImage}>
                             <Image
-                              src={isValueThumbFile ? valueThumb : value.thumb}
+                              src={isValueThumbFile ? valueThumb : imageUrl}
                               height={100}
                               width={100}
                               alt="Image"
@@ -1593,84 +1624,84 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                               }
                             /> */}
                             <ReactQuill
-                                onKeyDown={checkCharacterCount}
-                                ref={reactQuillRef}
-                                theme="snow"
-                                value={value.title}
-                                onChange={(value) => {
-                                  handleInputChangeTitle(value, index, true);
-                                }}
-                                style={{width: "100%", height:100}}
-                                modules={{
-                                  toolbar: [
-                                    [{ header: [1, 2, false] }],
-                                    [
-                                      "bold",
-                                      "italic",
-                                      "underline",
-                                      "strike",
-                                      "blockquote",
-                                    ],
-                                    [
-                                      {
-                                        color: [
-                                          "#000000",
-                                          "#e60000",
-                                          "#ff9900",
-                                          "#ffff00",
-                                          "#008a00",
-                                          "#0066cc",
-                                          "#9933ff",
-                                          "#ffffff",
-                                          "#facccc",
-                                          "#ffebcc",
-                                          "#ffffcc",
-                                          "#cce8cc",
-                                          "#cce0f5",
-                                          "#ebd6ff",
-                                          "#bbbbbb",
-                                          "#f06666",
-                                          "#ffc266",
-                                          "#ffff66",
-                                          "#66b966",
-                                          "#66a3e0",
-                                          "#c285ff",
-                                          "#888888",
-                                          "#a10000",
-                                          "#b26b00",
-                                          "#b2b200",
-                                          "#006100",
-                                          "#0047b2",
-                                          "#6b24b2",
-                                          "#444444",
-                                          "#5c0000",
-                                          "#663d00",
-                                          "#666600",
-                                          "#003700",
-                                          "#002966",
-                                          "#3d1466",
-                                          "custom-color",
-                                        ],
-                                      },
-                                    ],
-                                    [{ list: "ordered" }, { list: "bullet" }],
-                                    ["clean"],
+                              onKeyDown={checkCharacterCount}
+                              ref={reactQuillRef}
+                              theme="snow"
+                              value={value.title}
+                              onChange={(value) => {
+                                handleInputChangeTitle(value, index, true);
+                              }}
+                              style={{ width: "100%", height: 100 }}
+                              modules={{
+                                toolbar: [
+                                  [{ header: [1, 2, false] }],
+                                  [
+                                    "bold",
+                                    "italic",
+                                    "underline",
+                                    "strike",
+                                    "blockquote",
                                   ],
-                                }}
-                                formats={[
-                                  "header",
-                                  "bold",
-                                  "italic",
-                                  "underline",
-                                  "strike",
-                                  "blockquote",
-                                  "list",
-                                  "bullet",
-                                  "image",
-                                  "color",
-                                ]}
-                              />
-                              <View style={{marginLeft: 40}}>
+                                  [
+                                    {
+                                      color: [
+                                        "#000000",
+                                        "#e60000",
+                                        "#ff9900",
+                                        "#ffff00",
+                                        "#008a00",
+                                        "#0066cc",
+                                        "#9933ff",
+                                        "#ffffff",
+                                        "#facccc",
+                                        "#ffebcc",
+                                        "#ffffcc",
+                                        "#cce8cc",
+                                        "#cce0f5",
+                                        "#ebd6ff",
+                                        "#bbbbbb",
+                                        "#f06666",
+                                        "#ffc266",
+                                        "#ffff66",
+                                        "#66b966",
+                                        "#66a3e0",
+                                        "#c285ff",
+                                        "#888888",
+                                        "#a10000",
+                                        "#b26b00",
+                                        "#b2b200",
+                                        "#006100",
+                                        "#0047b2",
+                                        "#6b24b2",
+                                        "#444444",
+                                        "#5c0000",
+                                        "#663d00",
+                                        "#666600",
+                                        "#003700",
+                                        "#002966",
+                                        "#3d1466",
+                                        "custom-color",
+                                      ],
+                                    },
+                                  ],
+                                  [{ list: "ordered" }, { list: "bullet" }],
+                                  ["clean"],
+                                ],
+                              }}
+                              formats={[
+                                "header",
+                                "bold",
+                                "italic",
+                                "underline",
+                                "strike",
+                                "blockquote",
+                                "list",
+                                "bullet",
+                                "image",
+                                "color",
+                              ]}
+                            />
+                            <View style={{ marginLeft: 40 }}>
                               <Pressable
                                 style={{ marginBottom: 10 }}
                                 onPress={() => removeModule(index, true)}

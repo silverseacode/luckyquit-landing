@@ -203,6 +203,10 @@ const Homework = () => {
     setAllInputValuesEx(allInputValuesEx);
   }, [inputValuesEx]);
 
+  function stripHtmlTags(html: any) {
+    return html.replace(/<[^>]*>/g, "");
+  }
+
   return (
     <div className={styles.container}>
       {!showFull && (
@@ -227,7 +231,8 @@ const Homework = () => {
                           marginLeft: 10,
                         }}
                       >
-                        This plan has {days} {Number(days) > 1 ? "tasks" : "task"}
+                        This plan has {days}{" "}
+                        {Number(days) > 1 ? "tasks" : "task"}
                       </span>
                     </View>
                     {coachs.length > 0 && (
@@ -284,7 +289,7 @@ const Homework = () => {
                       }}
                     >
                       <span style={{ fontSize: 20, fontWeight: "600" }}>
-                      Task Nº {currentDay}
+                        Task Nº {currentDay}
                       </span>
                     </View>
                     {inputValues?.[currentDay]?.length > 0 && (
@@ -301,6 +306,17 @@ const Homework = () => {
                           }
                         })
                         .map((value, index) => {
+                          let imageUrl = "";
+                      const matches = value.thumb.match(/https/g);
+
+                      // Verificamos si hay al menos dos ocurrencias
+                      if (matches && matches.length >= 2) {
+                        imageUrl = value.thumbLocal;
+                      } else if(matches?.length === 1) {
+                        imageUrl = value.thumb;
+                      } else {
+                        imageUrl = value.thumbLocal;
+                      }
                           return (
                             <>
                               <View
@@ -311,10 +327,10 @@ const Homework = () => {
                                   borderColor: Colors.darkGray,
                                 }}
                               >
-                                {value.thumb !== "" &&
-                                value.thumb !== undefined ? (
+                                {imageUrl !== "" &&
+                                imageUrl !== undefined ? (
                                   <Image
-                                    src={value.thumb}
+                                    src={imageUrl}
                                     height={100}
                                     width={100}
                                     style={{
@@ -352,7 +368,7 @@ const Homework = () => {
                                     <TextInput
                                       editable={false}
                                       style={{ fontSize: 20, width: "90%" }}
-                                      value={value.title}
+                                      value={ stripHtmlTags(value.title)}
                                       numberOfLines={1}
                                     />
                                   </View>
@@ -407,6 +423,17 @@ const Homework = () => {
                           }
                         })
                         .map((value, index) => {
+                          let imageUrl = "";
+                          const matches = value.thumb.match(/https/g);
+
+                          // Verificamos si hay al menos dos ocurrencias
+                          if (matches && matches.length >= 2) {
+                            imageUrl = value.thumbLocal;
+                          } else if (matches?.length === 1) {
+                            imageUrl = value.thumb;
+                          } else {
+                            imageUrl = value.thumbLocal;
+                          }
                           return (
                             <>
                               <View
@@ -417,10 +444,9 @@ const Homework = () => {
                                   borderColor: Colors.darkGray,
                                 }}
                               >
-                                {value.thumb !== "" &&
-                                value.thumb !== undefined ? (
+                                {imageUrl !== "" && imageUrl !== undefined ? (
                                   <Image
-                                    src={value.thumb}
+                                    src={imageUrl}
                                     width={100}
                                     height={100}
                                     alt="thumb"
@@ -458,7 +484,7 @@ const Homework = () => {
                                     <TextInput
                                       editable={false}
                                       style={{ fontSize: 20, width: "90%" }}
-                                      value={value.title}
+                                      value={ stripHtmlTags(value.title)}
                                       numberOfLines={1}
                                     />
                                   </View>
@@ -565,7 +591,9 @@ const Homework = () => {
                             }}
                             onPress={() => setCurrentDay(currentDay + 1)}
                           >
-                            <span style={{ fontSize: 16 }}>Go to next task</span>
+                            <span style={{ fontSize: 16 }}>
+                              Go to next task
+                            </span>
                             <ArrowRightOutlined
                               style={{
                                 color: Colors.blackCardDarkMode,
