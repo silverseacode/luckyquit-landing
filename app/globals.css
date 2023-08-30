@@ -2,7 +2,7 @@ body {
     margin: 0 !important;
     padding: 0 !important;
     height: 100%;
-    font-family: var(--font-montserrat) !important;
+    font-family: "Montserrat" !important;
   }
 
   button {

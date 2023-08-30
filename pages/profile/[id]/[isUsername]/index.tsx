@@ -1,8 +1,8 @@
 "use client";
-import Layout from "../../../components/Layout";
+import Layout from "../../../../app/components/Layout";
 import { Container, Grid } from "@mui/material";
-import styles from "../../../components/profile.module.css";
-import RecommendationSidebar from "../../../components/RecommendationSidebar";
+import styles from "../../../../app/components/profile.module.css";
+import RecommendationSidebar from "../../../../app/components/RecommendationSidebar";
 import {
   getUser,
   getUsersLookingForCoachBE,
@@ -10,11 +10,13 @@ import {
 } from "@/helpers/users";
 import { useEffect, useState } from "react";
 import { User } from "@/models";
-import ProfilePage from "../../../components/ProfilePage";
+import ProfilePage from "../../../../app/components/ProfilePage";
 import { useRouter } from "next/navigation";
 import Header from "@/globals/Header";
+import axios from "axios";
+import { API_URL } from "@/config";
 
-export default function Profile({ params }: any) {
+export default function Profile(props: any) {
   const router = useRouter();
 
   const [isCheckingUserId, setCheckingUserId] = useState(true);
@@ -26,8 +28,8 @@ export default function Profile({ params }: any) {
     }
     setCheckingUserId(false);
   }, [router]);
-  const id = params.id;
-  const isUserName = params.isUsername;
+  const id = props.id;
+  const isUserName = props.isUserName;
   const [user, setUser] = useState<User>();
   const [usersRecommendation, setUsersRecommendation] = useState<User[]>([]);
 
@@ -82,3 +84,53 @@ export default function Profile({ params }: any) {
     </Layout>
   );
 }
+
+export const getStaticPaths = async () => {
+  const res = await fetch(`${API_URL}/user/getAllUserIds/now`);
+  const data = await res.json()
+  const userIds = data.userIds
+  const paths = userIds.map((id: string) => {
+      return { params: { id: id, isUsername: false } };
+  });
+
+  return { 
+      paths: paths,
+      fallback: false,
+  };
+};
+
+export const getStaticProps = async (
+  context: any
+) => {
+
+  console.log("CONTEXT", context)
+//  const params = context.params!;
+
+  //try {
+      //const data = await getCustomer(params.id);
+      //console.log('!!!', data);
+
+      // if (!data) {
+      //     return {
+      //         notFound: true,
+      //         revalidate: 60,
+      //     };
+      // }
+
+      return {
+          props: {
+              id: context.params.id,
+              isUserName:context.params.isUsername
+          },
+          //revalidate: 60,
+      };
+  // } catch (err) {
+  //     console.log(err);
+  //     if (err instanceof BSONTypeError) {
+  //         return {
+  //             notFound: true,
+  //         };
+  //     }
+  //     throw err;
+  // }
+};

@@ -43,7 +43,7 @@ import {
 } from "@/helpers/notifications";
 import mixpanel from "mixpanel-browser";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import '../../app/globals.css';
 interface IProps {
   id: string;
   isUsername: boolean;
