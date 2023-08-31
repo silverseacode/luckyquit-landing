@@ -1,3 +1,4 @@
+"use client";
 import { Colors } from "@/app/colors";
 import { View, TouchableOpacity, TextInput } from "react-native";
 import {
@@ -25,7 +26,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Modal, Switch } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import Connections from "./Connections";
-import styles from "../components/profile.module.css";
+import styles from "../../app/components/profile.module.css";
 import _ from "lodash";
 import ProfilePosts from "./ProfilePosts";
 import Rating from "./Rating";
@@ -47,9 +48,10 @@ import '../../app/globals.css';
 interface IProps {
   id: string;
   isUsername: boolean;
+  userContext: User
 }
 
-const ProfilePage = ({ id, isUsername }: IProps) => {
+const ProfilePage = ({ id, isUsername, userContext }: IProps) => {
   const router = useRouter();
   const socket = useSocket();
 
@@ -57,6 +59,9 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
 
   const [user, setUser] = useState<User>();
 
+  useEffect(() => {
+    setUser(userContext)
+  },[userContext])
   const [alreadyFollowing, setAlreadyFollowing] = useState(false);
   const [userCurrentType, setCurrentUserType] = useState("");
   const [userCurrent, setCurrentUser] = useState<User>();
@@ -68,6 +73,8 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
       const res = await getUser(UUID);
       const user = res.response;
       setCurrentUserType(user[0].type);
+      console.log("ACAA123", user[0])
+      alert(user[0])
       setCurrentUser(user[0]);
     }
     getCurrentUser();
@@ -189,7 +196,8 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
         const userBE = res.response;
         console.log(11, userBE);
         userLocal = userBE[0];
-        setUser(userBE[0]);
+        //TODO UN COMMET
+        //setUser(userBE[0]);
         setEmailPaypal(userBE[0].emailPaypal);
         getRatings(userBE[0].userId);
         setAboutMe(userBE[0].aboutProfile);
@@ -259,8 +267,8 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
         setImageProfileCertificate(userBE[0]?.certificates ?? []);
         setDescriptionAboutMe(userBE[0].descriptionAboutMe);
         userLocal = userBE[0];
-
-        setUser(userBE[0]);
+        // TOOD UN COMMNET
+        //setUser(userBE[0]);
         const user = userBE[0];
 
         const itemUUID = localStorage.getItem("UUID");

@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-  generateEtags: false,
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -19,23 +18,6 @@ module.exports = {
       ]
       return config
     },
-    headers: () => [
-      {
-        source: "/api/:path*",
-        headers: [
-          { key: "Access-Control-Allow-Origin", value: "*" },
-          {
-            key: "Access-Control-Allow-Methods",
-            value: "GET,OPTIONS,PATCH,DELETE,POST,PUT",
-          },
-          {
-            key: "Access-Control-Allow-Headers",
-            value:
-              "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
-          },
-        ]
-      },
-    ],
     images: {
       domains: ['lucky-quit-bucket.s3.us-west-1.amazonaws.com','lucky-quit-bucket.s3.amazonaws.com'],
     },
