@@ -28,7 +28,7 @@ export default async function Profile(params: any) {
   console.log("PARAMS12345", params.params.id);
   const userContext = await fetchUser(params.params.id);
   console.log("USER", userContext);
-
+console.log("PUSH")
   //const [isCheckingUserId, setCheckingUserId] = useState(true);
   // useEffect(() => {
   //   const itemUUID = localStorage.getItem("UUID");
