@@ -529,7 +529,7 @@ export default function Notifications() {
         },
       };
       //http://52.53.194.42
-      fetch(`http://192.168.100.50:3002/user/save-coach-quitter-info`, {
+      fetch(`${API_URL}/user/save-coach-quitter-info`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
