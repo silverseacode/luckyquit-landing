@@ -48,10 +48,10 @@ import '../../app/globals.css';
 interface IProps {
   id: string;
   isUsername: boolean;
-  userContext: User
+  //userContext: User
 }
 
-const ProfilePage = ({ id, isUsername, userContext }: IProps) => {
+const ProfilePage = ({ id, isUsername }: IProps) => {
   const router = useRouter();
   const socket = useSocket();
 
@@ -59,9 +59,9 @@ const ProfilePage = ({ id, isUsername, userContext }: IProps) => {
 
   const [user, setUser] = useState<User>();
 
-  useEffect(() => {
-    setUser(userContext)
-  },[userContext])
+  // useEffect(() => {
+  //   setUser(userContext)
+  // },[userContext])
   const [alreadyFollowing, setAlreadyFollowing] = useState(false);
   const [userCurrentType, setCurrentUserType] = useState("");
   const [userCurrent, setCurrentUser] = useState<User>();
@@ -73,8 +73,6 @@ const ProfilePage = ({ id, isUsername, userContext }: IProps) => {
       const res = await getUser(UUID);
       const user = res.response;
       setCurrentUserType(user[0].type);
-      console.log("ACAA123", user[0])
-      alert(user[0])
       setCurrentUser(user[0]);
     }
     getCurrentUser();
@@ -196,8 +194,7 @@ const ProfilePage = ({ id, isUsername, userContext }: IProps) => {
         const userBE = res.response;
         console.log(11, userBE);
         userLocal = userBE[0];
-        //TODO UN COMMET
-        //setUser(userBE[0]);
+        setUser(userBE[0]);
         setEmailPaypal(userBE[0].emailPaypal);
         getRatings(userBE[0].userId);
         setAboutMe(userBE[0].aboutProfile);
@@ -267,8 +264,7 @@ const ProfilePage = ({ id, isUsername, userContext }: IProps) => {
         setImageProfileCertificate(userBE[0]?.certificates ?? []);
         setDescriptionAboutMe(userBE[0].descriptionAboutMe);
         userLocal = userBE[0];
-        // TOOD UN COMMNET
-        //setUser(userBE[0]);
+        setUser(userBE[0]);
         const user = userBE[0];
 
         const itemUUID = localStorage.getItem("UUID");
