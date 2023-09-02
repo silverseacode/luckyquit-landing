@@ -79,3 +79,31 @@
   justify-content: center;
   border-radius: 8px;
 }
+
+
+.spinnerOverlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #EDEFF0;
+  height: 100px;
+  width: 100px;
+}
+
+.spinnerContainer {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 4px solid #FFF;
+  border-top-color: #000000;
+  animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

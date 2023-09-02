@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Colors } from "@/app/colors";
 import {
   View,
@@ -40,8 +40,10 @@ import axios from "axios";
 import { useSocket } from "../Context/store";
 import Image from "next/image";
 import mixpanel from "mixpanel-browser";
-import dynamic from 'next/dynamic'
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+import dynamic from "next/dynamic";
+import { v4 as uuidv4 } from "uuid";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 interface IProps {
   user: User | undefined;
@@ -236,30 +238,43 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
       setInputValuesEx(newValues);
     }
   };
+
+  const [isLoadingIn, setIsLoadingIn] = useState({
+    key: -1,
+    index: -1,
+    isExercise: false,
+  });
+
   const handleSaveImage = async (event: any, index: number, isEx: boolean) => {
+    setIsLoadingIn({ key: currentDay, index, isExercise: isEx });
     const file = event.target.files[0];
     const url = URL.createObjectURL(file);
 
     console.log("333 is ex thumb", isEx);
+    const newFileName = uuidv4();
 
     if (!isEx) {
       const newValues = _.cloneDeep(inputValues) ?? {};
-      newValues[currentDay][index].thumb = file;
-      newValues[currentDay][index].thumbLocal = url;
-      console.log(
-        "333 newValues[currentDay][index].thumbLocal",
-        newValues[currentDay][index].thumbLocal
-      );
-
+      //checkeamos function de get modulos y en thumb hace el validation de url s3
+      newValues[currentDay][index].thumb = url;
+      newValues[currentDay][index].thumbLocal = newFileName;
       newValues[currentDay][index].day = currentDay;
       setInputValues(newValues);
     } else {
       const newValues = _.cloneDeep(inputValuesEx) ?? {};
-      newValues[currentDay][index].thumb = file;
-      newValues[currentDay][index].thumbLocal = url;
+      newValues[currentDay][index].thumb = url;
+      newValues[currentDay][index].thumbLocal = newFileName;
       newValues[currentDay][index].day = currentDay;
       setInputValuesEx(newValues);
     }
+    const formData = new FormData();
+    formData.append("image", file);
+    await axios.post(
+      `${API_URL}/modules/uploadFileToS3/${newFileName}`,
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+    setIsLoadingIn({ key: -1, index: -1, isExercise: false });
   };
 
   const [quitterSelected, setSelectedQuitter] = useState("");
@@ -834,15 +849,14 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
       event.preventDefault();
   };
 
-  const [isMounted, setIsMounted] = useState(false)
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true)
-  }, [])
-  
-  if (!isMounted) return null
-  
-  
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
+
   return (
     <>
       <View
@@ -1200,7 +1214,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                     } else if (matches?.length === 1) {
                       imageUrl = value.thumb;
                     } else {
-                      imageUrl = value.thumbLocal;
+                      imageUrl = value.thumb;
                     }
                   }
 
@@ -1215,80 +1229,104 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                             borderColor: Colors.darkGray,
                           }}
                         >
-                          {value.thumb === "" ? (
-                            <Pressable>
-                              <View
-                                style={{
-                                  height: 100,
-                                  width: 100,
-                                  backgroundColor: Colors.lightGray,
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                }}
-                              >
-                                <label className={styles.label}>
-                                  <input
-                                    onChange={(event) => {
-                                      handleSaveImage(event, index, false);
-                                    }}
-                                    id="file"
-                                    accept="image/jpeg,image/png"
-                                    name="fileToUpload"
-                                    type="file"
-                                  />
-                                  <div
-                                    style={{
-                                      textAlign: "center",
-                                      fontSize: 15,
-                                      padding: "0px 20px",
-                                    }}
-                                  >
-                                    <span>Choose a file</span>
-                                  </div>
-                                </label>
-                              </View>
-                            </Pressable>
-                          ) : (
-                            <div className={styles.containerImage}>
-                              <Image
-                                src={imageUrl}
-                                height={100}
-                                width={100}
-                                alt="Image"
-                                style={{
-                                  height: 100,
-                                  width: 100,
-                                  backgroundColor: Colors.lightGray,
-                                  zIndex: 1,
-                                }}
-                              />
-                              <div className={styles.overlay}>
-                                <label className={styles.label}>
-                                  <input
-                                    onChange={(event) => {
-                                      handleSaveImage(event, index, false);
-                                    }}
-                                    id="file"
-                                    accept="image/jpeg,image/png"
-                                    name="fileToUpload"
-                                    type="file"
-                                  />
-                                  <div
-                                    style={{
-                                      textAlign: "center",
-                                      fontSize: 15,
-                                      padding: "0px 20px",
-                                    }}
-                                    className={styles.chooseFile}
-                                  >
-                                    <span>Choose a file</span>
-                                  </div>
-                                </label>
+                          {isLoadingIn.key === currentDay &&
+                          isLoadingIn.index === index &&
+                          isLoadingIn.isExercise === false ? (
+                            <View
+                              style={{
+                                height: 100,
+                                width: 100,
+                                backgroundColor: Colors.lightGray,
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <div className={styles.spinnerOverlay}>
+                                <div className={styles.spinnerContainer}></div>
                               </div>
-                            </div>
+                            </View>
+                          ) : (
+                            <>
+                              {value.thumb === "" ? (
+                                <Pressable>
+                                  <View
+                                    style={{
+                                      height: 100,
+                                      width: 100,
+                                      backgroundColor: Colors.lightGray,
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                    }}
+                                  >
+                                    <label className={styles.label}>
+                                      <input
+                                        onChange={(event) => {
+                                          handleSaveImage(event, index, false);
+                                        }}
+                                        id="file"
+                                        accept="image/jpeg,image/png"
+                                        name="fileToUpload"
+                                        type="file"
+                                      />
+                                      <div
+                                        style={{
+                                          textAlign: "center",
+                                          fontSize: 15,
+                                          padding: "0px 20px",
+                                        }}
+                                      >
+                                        <span>Choose a file</span>
+                                      </div>
+                                    </label>
+                                  </View>
+                                </Pressable>
+                              ) : (
+                                <div className={styles.containerImage}>
+                                  <Image
+                                    src={imageUrl}
+                                    height={100}
+                                    width={100}
+                                    alt="Image"
+                                    style={{
+                                      height: 100,
+                                      width: 100,
+                                      backgroundColor: Colors.lightGray,
+                                      zIndex: 1,
+                                    }}
+                                  />
+                                  <div className={styles.overlay}>
+                                    <label className={styles.label}>
+                                      <input
+                                        onChange={(event) => {
+                                          handleSaveImage(event, index, false);
+                                        }}
+                                        id="file"
+                                        accept="image/jpeg,image/png"
+                                        name="fileToUpload"
+                                        type="file"
+                                      />
+                                      <div
+                                        style={{
+                                          textAlign: "center",
+                                          fontSize: 15,
+                                          padding: "0px 20px",
+                                        }}
+                                        className={styles.chooseFile}
+                                      >
+                                        <span>Choose a file</span>
+                                      </div>
+                                    </label>
+                                  </div>
+                                </div>
+                              )}
+                            </>
                           )}
-
-                          <View style={{ marginLeft: 15, width: "95%" }}>
+                          <View
+                            style={{
+                              marginLeft: 15,
+                              width: "90%",
+                            }}
+                          >
                             <View
                               style={{
                                 marginTop: 20,
@@ -1521,7 +1559,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                   } else if (matches?.length === 1) {
                     imageUrl = value.thumb;
                   } else {
-                    imageUrl = value.thumbLocal;
+                    imageUrl = value.thumb;
                   }
                 }
 
@@ -1536,74 +1574,93 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                           borderColor: Colors.darkGray,
                         }}
                       >
-                        {(value?.thumbLocal === "" ||
-                          value.thumbLocal === undefined) &&
-                        value.thumb === "" ? (
-                          <Pressable>
-                            <View
-                              style={{
-                                height: 100,
-                                width: 100,
-                                backgroundColor: Colors.lightGray,
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                            >
-                              <label className={styles.label}>
-                                <input
-                                  onChange={(event) => {
-                                    handleSaveImage(event, index, true);
-                                  }}
-                                  id="file"
-                                  accept="image/jpeg,image/png"
-                                  name="fileToUpload"
-                                  type="file"
-                                />
-                                <div
+                        {isLoadingIn.key === currentDay &&
+                        isLoadingIn.index === index &&
+                        isLoadingIn.isExercise === true ? (
+                          <View
+                            style={{
+                              height: 100,
+                              width: 100,
+                              backgroundColor: Colors.lightGray,
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <div className={styles.spinnerOverlay}>
+                              <div className={styles.spinnerContainer}></div>
+                            </div>
+                          </View>
+                        ) : (
+                          <>
+                            {(value?.thumbLocal === "" ||
+                              value.thumbLocal === undefined) &&
+                            value.thumb === "" ? (
+                              <Pressable>
+                                <View
                                   style={{
-                                    textAlign: "center",
-                                    fontSize: 15,
-                                    padding: "0px 20px",
+                                    height: 100,
+                                    width: 100,
+                                    backgroundColor: Colors.lightGray,
+                                    alignItems: "center",
+                                    justifyContent: "center",
                                   }}
                                 >
-                                  <span>Choose a file</span>
-                                </div>
-                              </label>
-                            </View>
-                          </Pressable>
-                        ) : (
-                          <div className={styles.containerImage}>
-                            <Image
-                              src={isValueThumbFile ? valueThumb : imageUrl}
-                              height={100}
-                              width={100}
-                              alt="Image"
-                              style={{
-                                height: 100,
-                                width: 100,
-                                backgroundColor: Colors.lightGray,
-                                zIndex: 1,
-                              }}
-                            />
-                            <div className={styles.overlay}>
-                              <label className={styles.label}>
-                                <input
-                                  onChange={(event) => {
-                                    handleSaveImage(event, index, true);
+                                  <label className={styles.label}>
+                                    <input
+                                      onChange={(event) => {
+                                        handleSaveImage(event, index, true);
+                                      }}
+                                      id="file"
+                                      accept="image/jpeg,image/png"
+                                      name="fileToUpload"
+                                      type="file"
+                                    />
+                                    <div
+                                      style={{
+                                        textAlign: "center",
+                                        fontSize: 15,
+                                        padding: "0px 20px",
+                                      }}
+                                    >
+                                      <span>Choose a file</span>
+                                    </div>
+                                  </label>
+                                </View>
+                              </Pressable>
+                            ) : (
+                              <div className={styles.containerImage}>
+                                <Image
+                                  src={isValueThumbFile ? valueThumb : imageUrl}
+                                  height={100}
+                                  width={100}
+                                  alt="Image"
+                                  style={{
+                                    height: 100,
+                                    width: 100,
+                                    backgroundColor: Colors.lightGray,
+                                    zIndex: 1,
                                   }}
-                                  id="file"
-                                  accept="image/jpeg,image/png"
-                                  name="fileToUpload"
-                                  type="file"
                                 />
-                                <div className={styles.chooseFile}>
-                                  <span>Choose a file</span>
+                                <div className={styles.overlay}>
+                                  <label className={styles.label}>
+                                    <input
+                                      onChange={(event) => {
+                                        handleSaveImage(event, index, true);
+                                      }}
+                                      id="file"
+                                      accept="image/jpeg,image/png"
+                                      name="fileToUpload"
+                                      type="file"
+                                    />
+                                    <div className={styles.chooseFile}>
+                                      <span>Choose a file</span>
+                                    </div>
+                                  </label>
                                 </div>
-                              </label>
-                            </div>
-                          </div>
+                              </div>
+                            )}
+                          </>
                         )}
-
                         <View style={{ marginLeft: 15, width: "95%" }}>
                           <View
                             style={{
