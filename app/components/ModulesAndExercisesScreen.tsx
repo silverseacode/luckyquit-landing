@@ -221,7 +221,7 @@ const [isSavingMainAsset, setSavingMainAsset] = useState(false)
     console.log("FILE123", newFileName)
     
     await axios.post(
-      `http://192.168.100.50:3002/modules/uploadVideoToS3/${newFileName}`,
+      `${API_URL}/modules/uploadVideoToS3/${newFileName}`,
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );
