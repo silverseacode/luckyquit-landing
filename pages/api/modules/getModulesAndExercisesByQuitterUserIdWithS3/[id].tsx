@@ -5,7 +5,7 @@ export default async (req, res) => {
   try {
     const token = req.headers.authorization?.replace("Bearer ", "");
     const response = await fetch(
-      `${API_URL}/modules/quitter/${req.query.id}/withS3`,
+      `http://192.168.100.50:3002/modules/quitter/${req.query.id}/withS3`,
       {
         method: "GET",
         headers: {

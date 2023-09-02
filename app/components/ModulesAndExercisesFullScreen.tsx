@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { View, TextInput, Pressable } from "react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Colors } from "@/app/colors";
@@ -6,8 +6,8 @@ import { CameraFilled } from "@ant-design/icons";
 import styles from "./modulesAndExercises.module.css";
 import YouTube from "react-youtube";
 import Image from "next/image";
-import dynamic from 'next/dynamic'
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
 interface IProps {
   title: string;
@@ -26,6 +26,7 @@ interface IProps {
   fullDescripion: string;
   youTubeId: string;
   isViewFromHomeWork: boolean;
+  isSavingMainAsset: boolean;
 }
 
 const ModulesAndExercisesFullScreen = ({
@@ -45,6 +46,7 @@ const ModulesAndExercisesFullScreen = ({
   title,
   short,
   index,
+  isSavingMainAsset,
 }: IProps) => {
   const [textTitle, setTextTitle] = useState(title);
   const [textShort, setTextShort] = useState(short);
@@ -145,173 +147,190 @@ const ModulesAndExercisesFullScreen = ({
     textForFullDescription = "module";
   }
 
-  
-
   const reactQuillRef = useRef();
   const reactQuillRefFull = useRef();
 
   const checkCharacterCount = (event: any) => {
     const unprivilegedEditor = reactQuillRef.current.unprivilegedEditor;
-    if (unprivilegedEditor.getLength() > 50 && event.key !== 'Backspace')
+    if (unprivilegedEditor.getLength() > 50 && event.key !== "Backspace")
       event.preventDefault();
   };
 
   const checkCharacterCountFull = (event: any) => {
     const unprivilegedEditor = reactQuillRefFull.current.unprivilegedEditor;
-    if (unprivilegedEditor.getLength() > 1500 && event.key !== 'Backspace')
+    if (unprivilegedEditor.getLength() > 1500 && event.key !== "Backspace")
       event.preventDefault();
   };
 
-  const [isMounted, setIsMounted] = useState(false)
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true)
-  }, [])
-  
-  if (!isMounted) return null
-  
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
 
   return (
     <View style={{ backgroundColor: Colors.white, height: "100%" }}>
       <View style={{ backgroundColor: Colors.white, height: "100%" }}>
-        <>
-          {!isViewFromHomeWork &&
-            image === "" &&
-            video == "" &&
-            videoIdYouTube === "" && (
-              <View
-                style={{
-                  width: "100%",
-                  height: 300,
-                  backgroundColor: Colors.lightGray,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <CameraFilled
-                  style={{ color: Colors.blackCardDarkMode, fontSize: 40 }}
-                />
-              </View>
-            )}
-          {image !== undefined &&
-            image !== "" &&
-            !image.includes("youtube") && (
-              <View
-                style={{
-                  backgroundColor: Colors.darkGray,
-                  width: "100%",
-                  height: 300,
-                }}
-              >
-                <Image fill alt="uploaded image" src={image} />
-              </View>
-            )}
+        {isSavingMainAsset ? (
+          <View
+            style={{
+              width: "100%",
+              height: 300,
+              backgroundColor: Colors.lightGray,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div className={styles.spinnerOverlay}>
+              <div className={styles.spinnerContainer}></div>
+            </div>
+          </View>
+        ) : (
+          <>
+            {!isViewFromHomeWork &&
+              image === "" &&
+              video == "" &&
+              videoIdYouTube === "" && (
+                <View
+                  style={{
+                    width: "100%",
+                    height: 300,
+                    backgroundColor: Colors.lightGray,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <CameraFilled
+                    style={{ color: Colors.blackCardDarkMode, fontSize: 40 }}
+                  />
+                </View>
+              )}
+            {image !== undefined &&
+              image !== "" &&
+              !image.includes("youtube") && (
+                <View
+                  style={{
+                    backgroundColor: Colors.darkGray,
+                    width: "100%",
+                    height: 300,
+                  }}
+                >
+                  <Image fill alt="uploaded image" src={image} />
+                </View>
+              )}
 
-          {videoIdYouTube !== "" && image === "" && video == "" && (
-            <>
-              {/* <YoutubePlayer
+            {videoIdYouTube !== "" && image === "" && video == "" && (
+              <>
+                {/* <YoutubePlayer
                   height={300}
                   play={playing}
                   videoId={videoIdYouTube}
                   onChangeState={onStateChange}
                 /> */}
-              <YouTube videoId={videoIdYouTube} opts={opts} />
-            </>
-          )}
-          {video !== "" && image === "" && (
-            <View style={{ backgroundColor: Colors.lightGray }}>
-              <video style={{ width: "100%", height: "300px" }} controls>
-                <source src={video} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </View>
-          )}
-          {!isViewFromHomeWork && (
-            <>
-              <View
-                style={{
-                  alignItems: "center",
-                  marginTop: 20,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  width: "100%",
-                }}
-              >
-                <Pressable>
-                  <View
-                    style={{
-                      backgroundColor: Colors.darkGray,
-                      borderRadius: 50,
-                      padding: 15,
-                      marginTop: 20,
-                      marginRight: 15,
-                    }}
-                  >
-                    <label className={styles.label}>
-                      <input
-                        onChange={(event) => {
-                          let isEx = false;
-                          if (isExerciseShow) {
-                            isEx = true;
-                          }
-                          if (isModuleShow) {
-                            isEx = false;
-                          }
-                          const file = event.target.files[0];
-                          const url = URL.createObjectURL(file);
-                          setImage(url);
-                          handleRemoveVideo();
-                          handleSaveUploadedImage(event, index, isEx);
-                        }}
-                        id="file"
-                        accept="image/jpeg,image/png"
-                        name="fileToUpload"
-                        type="file"
-                      />
-                      <span style={{ color: Colors.white }}>Upload Image</span>
-                    </label>
-                  </View>
-                </Pressable>
-                <Pressable>
-                  <View
-                    style={{
-                      backgroundColor: Colors.darkGray,
-                      borderRadius: 50,
-                      padding: 15,
-                      marginTop: 20,
-                    }}
-                  >
-                    <label className={styles.label}>
-                      <input
-                        ref={fileInputRef}
-                        onChange={(event) => {
-                          let isEx = false;
-                          if (isExerciseShow) {
-                            isEx = true;
-                          }
-                          if (isModuleShow) {
-                            isEx = false;
-                          }
-                          const file = event.target.files[0];
-                          const url = URL.createObjectURL(file);
-                          console.log("URL VIDEO", url);
-                          setVideo(url);
-                          setImage("");
-                          handleSaveVideo(event, index, isEx);
-                        }}
-                        id="fileVideo"
-                        accept="video/mp4"
-                        name="fileToUploadVideo"
-                        type="file"
-                      />
-                      <span style={{ color: Colors.white }}>Upload Video</span>
-                    </label>
-                  </View>
-                </Pressable>
+                <YouTube videoId={videoIdYouTube} opts={opts} />
+              </>
+            )}
+            {video !== "" && image === "" && (
+              <View style={{ backgroundColor: Colors.lightGray }}>
+                <video style={{ width: "100%", height: "300px" }} controls>
+                  <source src={video} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
               </View>
-            </>
-          )}
-        </>
+            )}
+            {!isViewFromHomeWork && (
+              <>
+                <View
+                  style={{
+                    alignItems: "center",
+                    marginTop: 20,
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Pressable>
+                    <View
+                      style={{
+                        backgroundColor: Colors.darkGray,
+                        borderRadius: 50,
+                        padding: 15,
+                        marginTop: 20,
+                        marginRight: 15,
+                      }}
+                    >
+                      <label className={styles.label}>
+                        <input
+                          onChange={(event) => {
+                            let isEx = false;
+                            if (isExerciseShow) {
+                              isEx = true;
+                            }
+                            if (isModuleShow) {
+                              isEx = false;
+                            }
+                            const file = event.target.files[0];
+                            const url = URL.createObjectURL(file);
+                            setImage(url);
+                            handleRemoveVideo();
+                            handleSaveUploadedImage(event, index, isEx);
+                          }}
+                          id="file"
+                          accept="image/jpeg,image/png"
+                          name="fileToUpload"
+                          type="file"
+                        />
+                        <span style={{ color: Colors.white }}>
+                          Upload Image
+                        </span>
+                      </label>
+                    </View>
+                  </Pressable>
+                  <Pressable>
+                    <View
+                      style={{
+                        backgroundColor: Colors.darkGray,
+                        borderRadius: 50,
+                        padding: 15,
+                        marginTop: 20,
+                      }}
+                    >
+                      <label className={styles.label}>
+                        <input
+                          ref={fileInputRef}
+                          onChange={(event) => {
+                            let isEx = false;
+                            if (isExerciseShow) {
+                              isEx = true;
+                            }
+                            if (isModuleShow) {
+                              isEx = false;
+                            }
+                            const file = event.target.files[0];
+                            const url = URL.createObjectURL(file);
+                            console.log("URL VIDEO", url);
+                            setVideo(url);
+                            setImage("");
+                            handleSaveVideo(event, index, isEx);
+                          }}
+                          id="fileVideo"
+                          accept="video/mp4"
+                          name="fileToUploadVideo"
+                          type="file"
+                        />
+                        <span style={{ color: Colors.white }}>
+                          Upload Video
+                        </span>
+                      </label>
+                    </View>
+                  </Pressable>
+                </View>
+              </>
+            )}
+          </>
+        )}
 
         {!isViewFromHomeWork && (
           <span style={{ fontSize: 25, marginTop: 20 }}>{"\u2022"} Title</span>
@@ -337,41 +356,89 @@ const ModulesAndExercisesFullScreen = ({
               handleInputChangeTitle(text, index, isEx);
             }}
           /> */}
-          {!isViewFromHomeWork ?
-          <ReactQuill
-            onKeyDown={checkCharacterCount}
-            ref={reactQuillRef}
-            theme="snow"
-            value={textTitle}
-            onChange={(value) => {
-              let isEx = false;
-              if (isExerciseShow) {
-                isEx = true;
-              }
-              if (isModuleShow) {
-                isEx = false;
-              }
-              setTextTitle(value);
-              handleInputChangeTitle(value, index, isEx);
-            }}
-            modules={{
-              toolbar: [
-                [{ 'header': [1, 2, false] }],
-                ['bold', 'italic', 'underline','strike', 'blockquote'],
-                [{ 'color': ["#000000", "#e60000", "#ff9900", "#ffff00", "#008a00", "#0066cc", "#9933ff", "#ffffff", "#facccc", "#ffebcc", "#ffffcc", "#cce8cc", "#cce0f5", "#ebd6ff", "#bbbbbb", "#f06666", "#ffc266", "#ffff66", "#66b966", "#66a3e0", "#c285ff", "#888888", "#a10000", "#b26b00", "#b2b200", "#006100", "#0047b2", "#6b24b2", "#444444", "#5c0000", "#663d00", "#666600", "#003700", "#002966", "#3d1466", 'custom-color'] }],
-                [{'list': 'ordered'}, {'list': 'bullet'}],
-                ['clean']
-              ],
-            }}
-            formats={[
-              'header',
-              'bold', 'italic', 'underline', 'strike', 'blockquote',
-              'list', 'bullet',
-               'image', 'color'
-            ]}
-          />:
-          <div dangerouslySetInnerHTML={{ __html: textTitle }} />
-          }
+          {!isViewFromHomeWork ? (
+            <ReactQuill
+              onKeyDown={checkCharacterCount}
+              ref={reactQuillRef}
+              theme="snow"
+              value={textTitle}
+              onChange={(value) => {
+                let isEx = false;
+                if (isExerciseShow) {
+                  isEx = true;
+                }
+                if (isModuleShow) {
+                  isEx = false;
+                }
+                setTextTitle(value);
+                handleInputChangeTitle(value, index, isEx);
+              }}
+              modules={{
+                toolbar: [
+                  [{ header: [1, 2, false] }],
+                  ["bold", "italic", "underline", "strike", "blockquote"],
+                  [
+                    {
+                      color: [
+                        "#000000",
+                        "#e60000",
+                        "#ff9900",
+                        "#ffff00",
+                        "#008a00",
+                        "#0066cc",
+                        "#9933ff",
+                        "#ffffff",
+                        "#facccc",
+                        "#ffebcc",
+                        "#ffffcc",
+                        "#cce8cc",
+                        "#cce0f5",
+                        "#ebd6ff",
+                        "#bbbbbb",
+                        "#f06666",
+                        "#ffc266",
+                        "#ffff66",
+                        "#66b966",
+                        "#66a3e0",
+                        "#c285ff",
+                        "#888888",
+                        "#a10000",
+                        "#b26b00",
+                        "#b2b200",
+                        "#006100",
+                        "#0047b2",
+                        "#6b24b2",
+                        "#444444",
+                        "#5c0000",
+                        "#663d00",
+                        "#666600",
+                        "#003700",
+                        "#002966",
+                        "#3d1466",
+                        "custom-color",
+                      ],
+                    },
+                  ],
+                  [{ list: "ordered" }, { list: "bullet" }],
+                  ["clean"],
+                ],
+              }}
+              formats={[
+                "header",
+                "bold",
+                "italic",
+                "underline",
+                "strike",
+                "blockquote",
+                "list",
+                "bullet",
+                "image",
+                "color",
+              ]}
+            />
+          ) : (
+            <div dangerouslySetInnerHTML={{ __html: textTitle }} />
+          )}
         </View>
         {!isViewFromHomeWork && (
           <span style={{ fontSize: 25, marginTop: 20 }}>
@@ -406,44 +473,91 @@ const ModulesAndExercisesFullScreen = ({
               handleInputChangeFull(e.target.value, index, isEx);
             }}
           /> */}
-          {!isViewFromHomeWork ? 
-          <ReactQuill
-          onKeyDown={checkCharacterCountFull}
-          ref={reactQuillRefFull}
-            theme="snow"
-            value={fullDescription}
-            style={{height: 500}}
-            onChange={(value) => {
-              console.log(333, value)
-              let isEx = false;
-              if (isExerciseShow) {
-                isEx = true;
-              }
-              if (isModuleShow) {
-                isEx = false;
-              }
-              setFullDescription(value);
-              handleInputChangeFull(value, index, isEx);
-            }}
-            modules={{
-              toolbar: [
-                [{ 'header': [1, 2, false] }],
-                ['bold', 'italic', 'underline','strike', 'blockquote'],
-                [{ 'color': ["#000000", "#e60000", "#ff9900", "#ffff00", "#008a00", "#0066cc", "#9933ff", "#ffffff", "#facccc", "#ffebcc", "#ffffcc", "#cce8cc", "#cce0f5", "#ebd6ff", "#bbbbbb", "#f06666", "#ffc266", "#ffff66", "#66b966", "#66a3e0", "#c285ff", "#888888", "#a10000", "#b26b00", "#b2b200", "#006100", "#0047b2", "#6b24b2", "#444444", "#5c0000", "#663d00", "#666600", "#003700", "#002966", "#3d1466", 'custom-color'] }],
-                [{'list': 'ordered'}, {'list': 'bullet'}],
-                ['clean']
-              ],
-            }}
-            formats={[
-              'header',
-              'bold', 'italic', 'underline', 'strike', 'blockquote',
-              'list', 'bullet',
-               'image', 'color'
-            ]}
-          />:
-          
-          <div dangerouslySetInnerHTML={{ __html:fullDescription }} />
-          }
+          {!isViewFromHomeWork ? (
+            <ReactQuill
+              onKeyDown={checkCharacterCountFull}
+              ref={reactQuillRefFull}
+              theme="snow"
+              value={fullDescription}
+              style={{ height: 500 }}
+              onChange={(value) => {
+                console.log(333, value);
+                let isEx = false;
+                if (isExerciseShow) {
+                  isEx = true;
+                }
+                if (isModuleShow) {
+                  isEx = false;
+                }
+                setFullDescription(value);
+                handleInputChangeFull(value, index, isEx);
+              }}
+              modules={{
+                toolbar: [
+                  [{ header: [1, 2, false] }],
+                  ["bold", "italic", "underline", "strike", "blockquote"],
+                  [
+                    {
+                      color: [
+                        "#000000",
+                        "#e60000",
+                        "#ff9900",
+                        "#ffff00",
+                        "#008a00",
+                        "#0066cc",
+                        "#9933ff",
+                        "#ffffff",
+                        "#facccc",
+                        "#ffebcc",
+                        "#ffffcc",
+                        "#cce8cc",
+                        "#cce0f5",
+                        "#ebd6ff",
+                        "#bbbbbb",
+                        "#f06666",
+                        "#ffc266",
+                        "#ffff66",
+                        "#66b966",
+                        "#66a3e0",
+                        "#c285ff",
+                        "#888888",
+                        "#a10000",
+                        "#b26b00",
+                        "#b2b200",
+                        "#006100",
+                        "#0047b2",
+                        "#6b24b2",
+                        "#444444",
+                        "#5c0000",
+                        "#663d00",
+                        "#666600",
+                        "#003700",
+                        "#002966",
+                        "#3d1466",
+                        "custom-color",
+                      ],
+                    },
+                  ],
+                  [{ list: "ordered" }, { list: "bullet" }],
+                  ["clean"],
+                ],
+              }}
+              formats={[
+                "header",
+                "bold",
+                "italic",
+                "underline",
+                "strike",
+                "blockquote",
+                "list",
+                "bullet",
+                "image",
+                "color",
+              ]}
+            />
+          ) : (
+            <div dangerouslySetInnerHTML={{ __html: fullDescription }} />
+          )}
         </View>
       </View>
     </View>

@@ -193,23 +193,39 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
       setInputValuesEx(newValues);
     }
   };
-
-  const handleSaveVideo = (event: any, index: number, isEx: boolean) => {
+const [isSavingMainAsset, setSavingMainAsset] = useState(false)
+  const handleSaveVideo = async(event: any, index: number, isEx: boolean) => {
+    setSavingMainAsset(true)
     const file = event.target.files[0];
     const url = URL.createObjectURL(file);
+    const newFileName = uuidv4();
     if (!isEx) {
       const newValues = _.cloneDeep(inputValues) ?? {};
-      newValues[currentDay][index].videoLocal = url;
-      newValues[currentDay][index].video = file;
+      newValues[currentDay][index].videoLocal = newFileName;
+      newValues[currentDay][index].video = url;
       newValues[currentDay][index].day = currentDay;
+      newValues[currentDay][index].uploadedImage = "";
+      newValues[currentDay][index].uploadedImageLocal = "";
       setInputValues(newValues);
     } else {
       const newValues = _.cloneDeep(inputValuesEx) ?? {};
-      newValues[currentDay][index].video = file;
-      newValues[currentDay][index].videoLocal = url;
+      newValues[currentDay][index].video = url;
+      newValues[currentDay][index].videoLocal = newFileName;
+      newValues[currentDay][index].uploadedImage = "";
+      newValues[currentDay][index].uploadedImageLocal = "";
       newValues[currentDay][index].day = currentDay;
       setInputValuesEx(newValues);
     }
+    const formData = new FormData();
+    formData.append("video", file);
+    console.log("FILE123", newFileName)
+    
+    await axios.post(
+      `http://192.168.100.50:3002/modules/uploadVideoToS3/${newFileName}`,
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+    setSavingMainAsset(false)
   };
 
   const handleSaveUploadedImage = async (
@@ -217,26 +233,39 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
     index: number,
     isEx: boolean
   ) => {
+    setSavingMainAsset(true)
     const file = event.target.files[0];
     const url = URL.createObjectURL(file);
     console.log("333 is ex upload", isEx);
+    const newFileName = uuidv4();
+
     if (!isEx) {
       const newValues = _.cloneDeep(inputValues) ?? {};
-      newValues[currentDay][index].uploadedImage = file;
-      newValues[currentDay][index].uploadedImageLocal = url;
+      newValues[currentDay][index].uploadedImage = url;
+      newValues[currentDay][index].uploadedImageLocal = newFileName;
       newValues[currentDay][index].day = currentDay;
-      console.log(
-        "333 newValues[currentDay][index].uploadedImageLocal",
-        newValues[currentDay][index].uploadedImageLocal
-      );
+      newValues[currentDay][index].video = "";
+      newValues[currentDay][index].videoLocal = "";
       setInputValues(newValues);
     } else {
       const newValues = _.cloneDeep(inputValuesEx) ?? {};
-      newValues[currentDay][index].uploadedImage = file;
-      newValues[currentDay][index].uploadedImageLocal = url;
+      newValues[currentDay][index].uploadedImage = url;
+      newValues[currentDay][index].uploadedImageLocal = newFileName;
+      newValues[currentDay][index].video = "";
+      newValues[currentDay][index].videoLocal = "";
       newValues[currentDay][index].day = currentDay;
       setInputValuesEx(newValues);
     }
+
+    const formData = new FormData();
+    formData.append("image", file);
+    await axios.post(
+      `${API_URL}/modules/uploadFileToS3/${newFileName}`,
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+
+    setSavingMainAsset(false)
   };
 
   const [isLoadingIn, setIsLoadingIn] = useState({
@@ -766,25 +795,25 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
     setIsSaving(true);
 
     const formData = new FormData();
-    if (inputValues !== undefined) {
-      for (const key in inputValues) {
-        inputValues[key].map((value, index) => {
-          formData.append(`file-module-${index}`, value?.thumb);
-          formData.append(`file-up-${index}`, value?.uploadedImage);
-          formData.append(`file-video-${index}`, value?.video);
-        });
-      }
-    }
+    // if (inputValues !== undefined) {
+    //   for (const key in inputValues) {
+    //     inputValues[key].map((value, index) => {
+    //       formData.append(`file-module-${index}`, value?.thumb);
+    //       formData.append(`file-up-${index}`, value?.uploadedImage);
+    //       formData.append(`file-video-${index}`, value?.video);
+    //     });
+    //   }
+    // }
 
-    if (inputValuesEx !== undefined) {
-      for (const key in inputValuesEx) {
-        inputValuesEx[key].map((value, index) => {
-          formData.append(`file-ex-${index}`, value?.thumb);
-          formData.append(`file-image-${index}`, value?.uploadedImage);
-          formData.append(`file-stream-${index}`, value?.video);
-        });
-      }
-    }
+    // if (inputValuesEx !== undefined) {
+    //   for (const key in inputValuesEx) {
+    //     inputValuesEx[key].map((value, index) => {
+    //       formData.append(`file-ex-${index}`, value?.thumb);
+    //       formData.append(`file-image-${index}`, value?.uploadedImage);
+    //       formData.append(`file-stream-${index}`, value?.video);
+    //     });
+    //   }
+    // }
 
     const data = {
       quitterUserId: quitterSelected,
@@ -1503,6 +1532,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
                 handleInputChangeTitle={handleInputChangeTitle}
                 isModuleShow={isModuleShow}
                 isViewFromHomeWork={false}
+                isSavingMainAsset={isSavingMainAsset}
               />
             )}
           </View>
@@ -1831,6 +1861,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
               handleInputChangeShort={handleInputChangeShort}
               handleInputChangeTitle={handleInputChangeTitle}
               isViewFromHomeWork={false}
+              isSavingMainAsset={isSavingMainAsset}
             />
           )}
 
