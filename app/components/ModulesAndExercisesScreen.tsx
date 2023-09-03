@@ -347,7 +347,7 @@ setChangesWithoutSave(true);
       }
 
       setQuitters(quittersNoExpire);
-      setChangesWithoutSave(true);
+     // setChangesWithoutSave(true);
       const res = await getByQuitterNullAndCoachIdBE(user?.userId);
       const modulesNoQuitterData = res.response;
       console.log("222 modulesNoQuitterData", modulesNoQuitterData);
@@ -890,8 +890,8 @@ setChangesWithoutSave(true);
   const reactQuillRef = useRef();
 
   const checkCharacterCount = (event: any) => {
-    const unprivilegedEditor = reactQuillRef.current.unprivilegedEditor;
-    if (unprivilegedEditor.getLength() > 50 && event.key !== "Backspace")
+    const unprivilegedEditor = reactQuillRef?.current?.unprivilegedEditor;
+    if (unprivilegedEditor?.getLength() > 50 && event?.key !== "Backspace")
       event.preventDefault();
   };
 
@@ -911,7 +911,24 @@ setChangesWithoutSave(true);
 
 
 
-  //if (!isMounted) return null;
+  useEffect(() => {
+    // Add event listener for beforeunload event
+    const handleBeforeUnload = (e: any) => {
+      if (isChangesWithoutSave) {
+        // Display the confirmation message
+        e.preventDefault();
+        e.returnValue = ''; // Required for some browsers
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isChangesWithoutSave]);
+
 
   return (
     <>
