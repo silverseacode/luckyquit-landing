@@ -51,6 +51,7 @@ export type User = {
     fullName: string;
   }[];
   idsPostLucky: Post[]
+  doneTutorialCommunities: boolean
 };
 
 export type Post = {

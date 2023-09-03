@@ -266,11 +266,12 @@ const [isMute, setMute] = useState(false);
   console.log("ismuute", isMute);
   const mute = () => {
     setMute((prev) => !prev);
-    const elements = document.getElementsByClassName("remote-video");
-    const videoElement = elements[0]; // Assuming there is only one element with the given class
-    if (videoElement) {
-      videoElement.muted = !videoElement.muted ? true : false;
-    }
+    // me parece que solo tendria que mutear a el mismo a <video>
+    // const elements = document.getElementsByClassName("remote-video");
+    // const videoElement = elements[0]; // Assuming there is only one element with the given class
+    // if (videoElement) {
+    //   videoElement.muted = !videoElement.muted ? true : false;
+    // }
   };
   return (
     <>

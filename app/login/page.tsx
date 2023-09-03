@@ -54,9 +54,7 @@ export default function Login() {
           userDB.userId !== "" &&
           userDB.userId !== null &&
           userDB.userId !== undefined &&
-          userDB.firstName !== undefined &&
-          userDB.firstName !== "" &&
-          userDB.firstName !== null
+          userDB.doneTutorialCommunities
         ) {
           router.push(`/home`);
           return;
@@ -89,9 +87,7 @@ export default function Login() {
         user?.userId !== "" &&
         user?.userId !== null &&
         user?.userId !== undefined &&
-        user?.firstName !== undefined &&
-        user?.firstName !== "" &&
-        user?.firstName !== null
+        user?.doneTutorialCommunities
       ) {
         console.log("ENRA")
         localStorage.setItem("UUID", user.userId);
@@ -238,9 +234,7 @@ export default function Login() {
         userDB.userId !== "" &&
         userDB.userId !== null &&
         userDB.userId !== undefined &&
-        userDB.firstName !== undefined &&
-        userDB.firstName !== "" &&
-        userDB.firstName !== null
+        userDB.doneTutorialCommunities
       ) {
         router.push(`/home`);
         return;
