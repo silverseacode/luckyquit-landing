@@ -16,26 +16,30 @@ import { Post, User } from "@/models";
 import Layout from "../components/Layout";
 import Header from "@/globals/Header";
 import { useRouter } from "next/navigation";
-import mixpanel from 'mixpanel-browser';
+import mixpanel from "mixpanel-browser";
 interface IProps {
   posts: { totalPages: number; response: { posts: Post[] } };
 }
 
 const Home = ({ posts }: IProps) => {
-const router = useRouter()
-const [isCheckingUserId, setCheckingUserId] = useState(true)
+  const router = useRouter();
+  const [isCheckingUserId, setCheckingUserId] = useState(true);
   useEffect(() => {
     const itemUUID = localStorage.getItem("UUID");
     const UUID = itemUUID ? itemUUID : null;
 
-    mixpanel.init('95299735e5b3e40287e56f4c0373b053', { debug: true, track_pageview: true, persistence: 'localStorage' });
-    mixpanel.identify(UUID)
-    
-    if(UUID === null) {
-      router.replace("/login")
+    mixpanel.init("95299735e5b3e40287e56f4c0373b053", {
+      debug: true,
+      track_pageview: true,
+      persistence: "localStorage",
+    });
+    mixpanel.identify(UUID);
+
+    if (UUID === null) {
+      router.replace("/login");
     }
-    setCheckingUserId(false)
-  },[router])
+    setCheckingUserId(false);
+  }, [router]);
 
   const [user, setUser] = useState<User>();
   const [usersRecommendation, setUsersRecommendation] = useState<User[]>([]);
@@ -43,17 +47,15 @@ const [isCheckingUserId, setCheckingUserId] = useState(true)
   useEffect(() => {
     async function getUsersLookingForCoach() {
       const data = await getUsersLookingForCoachBE();
-      console.log("trae quitters",data)
+      console.log("trae quitters", data);
       if (data !== undefined) {
         setUsersRecommendation(data.response.users);
       }
     }
 
     async function getUsersLookingForQuitters() {
-
-
       const data = await getUsersLookingForQuittersBE();
-      console.log("trae coachs",data)
+      console.log("trae coachs", data);
 
       if (data !== undefined) {
         setUsersRecommendation(data.response.users);
@@ -76,7 +78,7 @@ const [isCheckingUserId, setCheckingUserId] = useState(true)
         setIsLoading(false);
       }
     }
-    if(!isCheckingUserId) {
+    if (!isCheckingUserId) {
       getUserInfo();
     }
   }, [isCheckingUserId]);
@@ -86,14 +88,17 @@ const [isCheckingUserId, setCheckingUserId] = useState(true)
   const [showHomework, setShowHomework] = useState(false);
 
   const [newPostAdded, setNewPostAdded] = useState<Post>();
+  const [isChangesWithoutSave, setChangesWithoutSave] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
-  if(isCheckingUserId) return null
+  if (isCheckingUserId) return null;
 
   return (
     <Layout title={"Lucky Quit - Quit smoking for life"}>
-     
-      
-      <Header />
+      <Header
+        isChangesWithoutSave={isChangesWithoutSave}
+        setShowModal={setShowModal}
+      />
       <div className={styles.container}>
         <Container maxWidth="lg">
           <Grid container direction={"row"} spacing={4}>
@@ -105,6 +110,8 @@ const [isCheckingUserId, setCheckingUserId] = useState(true)
                 setShowHomework={setShowHomework}
                 showButtons={true}
                 isLoading={isLoading}
+                isChangesWithoutSave={isChangesWithoutSave}
+                setShowModal={setShowModal}
               />
             </Grid>
             <Grid item xs={showCalendar || showModules ? 9 : 6}>
@@ -121,6 +128,10 @@ const [isCheckingUserId, setCheckingUserId] = useState(true)
                 setShowHomework={setShowHomework}
                 user={user}
                 posts={posts}
+                setChangesWithoutSave={setChangesWithoutSave}
+                isChangesWithoutSave={isChangesWithoutSave}
+                showModal={showModal}
+                setShowModal={setShowModal}
               />
             </Grid>
             {!showCalendar && !showModules && (
@@ -136,8 +147,6 @@ const [isCheckingUserId, setCheckingUserId] = useState(true)
           </Grid>
         </Container>
       </div>
-      
-
     </Layout>
   );
 };

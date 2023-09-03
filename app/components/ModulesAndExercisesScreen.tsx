@@ -48,9 +48,13 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 interface IProps {
   user: User | undefined;
   setShowModules: (value: boolean) => void;
+  setChangesWithoutSave: (value: boolean) => void;
+  isChangesWithoutSave: boolean
+  showModal: boolean;
+  setShowModal: (value: boolean) => void;
 }
 
-const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
+const ModulesAndExercises = ({ showModal, setShowModal,user, setShowModules, isChangesWithoutSave, setChangesWithoutSave }: IProps) => {
   const socket = useSocket();
   const [days, setDays] = useState("1");
   const [currentDay, setCurrentDay] = useState(1);
@@ -59,6 +63,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
     const sanitizedText = value.replace(/[^0-9]/g, "").replace(regex, "$&");
     setDays(sanitizedText);
     setCurrentDay(1);
+    setChangesWithoutSave(true);
   };
 
   const [openModalSubmit, setOpenModalSubmit] = useState(false);
@@ -142,6 +147,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
       newValues[currentDay][index].day = currentDay;
       setInputValuesEx(newValues);
     }
+    setChangesWithoutSave(true);
   };
 
   const handleInputChangeFull = (
@@ -160,6 +166,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
       newValues[currentDay][index].day = currentDay;
       setInputValuesEx(newValues);
     }
+    setChangesWithoutSave(true);
   };
 
   const handleInputChangeShort = (
@@ -178,6 +185,7 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
       newValues[currentDay][index].day = currentDay;
       setInputValuesEx(newValues);
     }
+    setChangesWithoutSave(true);
   };
 
   const handleSaveVideoId = (text: string, index: number, isEx: boolean) => {
@@ -192,10 +200,12 @@ const ModulesAndExercises = ({ user, setShowModules }: IProps) => {
       newValues[currentDay][index].day = currentDay;
       setInputValuesEx(newValues);
     }
+    setChangesWithoutSave(true);
   };
-const [isSavingMainAsset, setSavingMainAsset] = useState(false)
-  const handleSaveVideo = async(event: any, index: number, isEx: boolean) => {
-    setSavingMainAsset(true)
+  const [isSavingMainAsset, setSavingMainAsset] = useState(false);
+  const handleSaveVideo = async (event: any, index: number, isEx: boolean) => {
+    setSavingMainAsset(true);
+    setChangesWithoutSave(true);
     const file = event.target.files[0];
     const url = URL.createObjectURL(file);
     const newFileName = uuidv4();
@@ -216,16 +226,17 @@ const [isSavingMainAsset, setSavingMainAsset] = useState(false)
       newValues[currentDay][index].day = currentDay;
       setInputValuesEx(newValues);
     }
+    setChangesWithoutSave(true);
     const formData = new FormData();
     formData.append("video", file);
-    console.log("FILE123", newFileName)
-    
+    console.log("FILE123", newFileName);
+
     await axios.post(
       `${API_URL}/modules/uploadVideoToS3/${newFileName}`,
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );
-    setSavingMainAsset(false)
+    setSavingMainAsset(false);
   };
 
   const handleSaveUploadedImage = async (
@@ -233,7 +244,8 @@ const [isSavingMainAsset, setSavingMainAsset] = useState(false)
     index: number,
     isEx: boolean
   ) => {
-    setSavingMainAsset(true)
+    setSavingMainAsset(true);
+    setChangesWithoutSave(true);
     const file = event.target.files[0];
     const url = URL.createObjectURL(file);
     console.log("333 is ex upload", isEx);
@@ -265,7 +277,7 @@ const [isSavingMainAsset, setSavingMainAsset] = useState(false)
       { headers: { "Content-Type": "multipart/form-data" } }
     );
 
-    setSavingMainAsset(false)
+    setSavingMainAsset(false);
   };
 
   const [isLoadingIn, setIsLoadingIn] = useState({
@@ -278,7 +290,7 @@ const [isSavingMainAsset, setSavingMainAsset] = useState(false)
     setIsLoadingIn({ key: currentDay, index, isExercise: isEx });
     const file = event.target.files[0];
     const url = URL.createObjectURL(file);
-
+setChangesWithoutSave(true);
     console.log("333 is ex thumb", isEx);
     const newFileName = uuidv4();
 
@@ -335,6 +347,7 @@ const [isSavingMainAsset, setSavingMainAsset] = useState(false)
       }
 
       setQuitters(quittersNoExpire);
+      setChangesWithoutSave(true);
       const res = await getByQuitterNullAndCoachIdBE(user?.userId);
       const modulesNoQuitterData = res.response;
       console.log("222 modulesNoQuitterData", modulesNoQuitterData);
@@ -563,6 +576,7 @@ const [isSavingMainAsset, setSavingMainAsset] = useState(false)
       headers: { "Content-Type": "multipart/form-data" },
     });
     mixpanel.track("Save Modules and Exercises Web");
+    setChangesWithoutSave(false);
     setIsSaving(false);
     setOpenToastSuccess(true);
   };
@@ -599,6 +613,7 @@ const [isSavingMainAsset, setSavingMainAsset] = useState(false)
 
       setInputValuesEx(filteredValuesEx);
     }
+    setChangesWithoutSave(true);
   };
 
   const [isOpenFull, setOpenFull] = useState(false);
@@ -612,6 +627,7 @@ const [isSavingMainAsset, setSavingMainAsset] = useState(false)
   const resetConfiguration = () => {
     setInputValues({});
     setInputValuesEx({});
+    setChangesWithoutSave(true);
   };
 
   const handleOpenSubmitWork = () => {
@@ -884,6 +900,20 @@ const [isSavingMainAsset, setSavingMainAsset] = useState(false)
     setIsMounted(true);
   }, []);
 
+
+const handleConfirm = () => {
+    // Handle the user's confirmation to leave the page
+    // You can perform any necessary actions here, such as navigating away
+    setShowModal(false);
+  };
+
+  const handleCancel = () => {
+    // Handle the user's cancellation of leaving the page
+    setShowModal(false);
+  };
+
+
+
   if (!isMounted) return null;
 
   return (
@@ -916,6 +946,10 @@ const [isSavingMainAsset, setSavingMainAsset] = useState(false)
               margin: 10,
             }}
             onClick={() => {
+              if(isChangesWithoutSave) {
+                setShowModal(true)
+                return
+              }
               setShowModules(false);
             }}
           >
@@ -2115,6 +2149,59 @@ const [isSavingMainAsset, setSavingMainAsset] = useState(false)
           </Modal>
         </View>
       </View>
+      <Modal
+          className={styles.modalUnsave}
+            open={showModal}
+            onClose={() => setShowModal(false)}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+           <div className={styles.containerModalUnSave}>
+            {/* <TouchableOpacity onPress={() => setShowModal(false)}>
+              <AntDesign name='close' size={24} color={Colors.black} />
+            </TouchableOpacity> */}
+            <View style={{ marginTop: 20 }}>
+              <span
+                style={{
+                  color: Colors.black,
+                  fontSize: 18,
+                  textAlign: "center"
+                }}
+              >
+                You will lost your changes if you leave without saving.
+              </span>
+            </View>
+            <View
+              style={{
+                marginTop: 30,
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <TouchableOpacity onPress={() => handleCancel()}>
+                <View
+                  style={{
+                    width: 170,
+                    paddingVertical: 10,
+                    marginRight: 15,
+                    backgroundColor: Colors.primary,
+                    borderRadius: 50,
+                  }}
+                >
+                  <span
+                    style={{
+                      textAlign: "center",
+                      color: Colors.white,
+                    }}
+                  >
+                    Back to Modules
+                  </span>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </div>
+        </Modal>
     </>
   );
 };

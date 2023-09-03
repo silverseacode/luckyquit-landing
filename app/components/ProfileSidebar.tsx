@@ -19,6 +19,10 @@ interface IProps {
   setShowHomework?: (value: boolean) => void;
   showButtons: boolean;
   isLoading: boolean;
+  isChangesWithoutSave: boolean;
+  setShowModal: (value: boolean) => void;
+
+
 }
 
 const ProfileSidebar = ({
@@ -28,6 +32,8 @@ const ProfileSidebar = ({
   setShowHomework,
   showButtons = true,
   isLoading,
+  isChangesWithoutSave,
+  setShowModal
 }: IProps) => {
   console.log("USER", user);
   const router = useRouter();
@@ -194,6 +200,10 @@ const ProfileSidebar = ({
           <button
             className={styles.button}
             onClick={() => {
+              if(isChangesWithoutSave) {
+                setShowModal(true)
+                return
+              }
               setShowCalendar(true);
               setShowModules(false);
               setShowHomework(false);
@@ -206,7 +216,6 @@ const ProfileSidebar = ({
               style={{ marginLeft: 20 }}
               className={styles.buttonModules}
               onClick={() => {
-                setShowCalendar(false);
                 setShowHomework?.(true);
               }}
             >
@@ -217,6 +226,10 @@ const ProfileSidebar = ({
             <button
               className={styles.buttonModules}
               onClick={() => {
+                if(isChangesWithoutSave) {
+                  setShowModal(true)
+                  return
+                }
                 setShowCalendar(false);
                 setShowModules(true);
               }}

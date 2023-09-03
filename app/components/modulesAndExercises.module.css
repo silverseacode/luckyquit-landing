@@ -107,3 +107,21 @@
     transform: rotate(360deg);
   }
 }
+
+.containerModalUnSave {
+  background-color: #FFF;
+  height: 250px;
+  width:330px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modalUnsave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}

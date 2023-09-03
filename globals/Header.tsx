@@ -19,13 +19,22 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { auth } from "../config/firebase";
 import Image from "next/image";
 
-const Header = () => {
+interface IHeader {
+  isChangesWithoutSave: boolean;
+  setShowModal: (value: boolean) => void;
+}
+
+const Header = ({isChangesWithoutSave,setShowModal}: IHeader) => {
   const pathname = usePathname();
 
   const router = useRouter();
 
   const navigateTo = (url: string) => {
     console.log(1, url);
+    if(isChangesWithoutSave) {
+      setShowModal(true)
+      return
+    }
     router.push(url);
   };
   const [userIdMySelf, setUserIdMySelf] = useState("");

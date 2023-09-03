@@ -1,21 +1,30 @@
-"use client"
+"use client";
 
 import styles from "./posts-home.module.css";
 import { Calendar, Views, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import React, { useMemo } from "react";
-import CardPost  from "./CardPost";
+import CardPost from "./CardPost";
 import { useEffect, useState } from "react";
 import _ from "lodash";
 import { Post, User } from "@/models";
-import { addLike, deletePostBE, getAllPosts, removeLike } from "@/helpers/posts";
-import { sendNotification, sendPushNotification, sendPushNotificationAndroid } from "@/helpers/notifications";
-import ModulesAndExercises  from "./ModulesAndExercisesScreen";
+import {
+  addLike,
+  deletePostBE,
+  getAllPosts,
+  removeLike,
+} from "@/helpers/posts";
+import {
+  sendNotification,
+  sendPushNotification,
+  sendPushNotificationAndroid,
+} from "@/helpers/notifications";
+import ModulesAndExercises from "./ModulesAndExercisesScreen";
 import { getUser } from "@/helpers/users";
 import { getMeetingsBE } from "@/helpers/meetings";
 import { Container } from "@mui/material";
-import Homework  from "./Homework";
+import Homework from "./Homework";
 import { useSocket } from "../Context/store";
 import { getFollowersBE } from "@/helpers/followers";
 
@@ -31,9 +40,13 @@ interface IProps {
   newPostAdded: Post | undefined;
   user: User | undefined;
   posts: { totalPages: number; response: { posts: Post[] } };
+  isChangesWithoutSave: boolean;
+  setChangesWithoutSave: (value: boolean) => void;
+  showModal: boolean;
+  setShowModal: (value: boolean) => void;
 }
 
- const PostsHome = ({
+const PostsHome = ({
   setShowCalendar,
   showCalendar,
   setShowModules,
@@ -43,8 +56,12 @@ interface IProps {
   newPostAdded,
   user,
   posts,
+  isChangesWithoutSave,
+  setChangesWithoutSave,
+  setShowModal,
+  showModal,
 }: IProps) => {
-  const socket = useSocket()
+  const socket = useSocket();
   const [userType, setUserType] = useState("coach");
   const [meetings, setMeetings] = useState([]);
 
@@ -120,7 +137,6 @@ interface IProps {
       const events = newData?.concat(plansDates);
       console.log("events", events);
       setMeetings(events);
-      
     }
     getMeetings();
   }, []);
@@ -163,76 +179,78 @@ interface IProps {
   console.log("SHOWc", showHomework);
   useEffect(() => {
     async function fetchData() {
-      if(user !== undefined) {
+      if (user !== undefined) {
+        if (page <= totalPages && isLoading) {
+          const posts = await getAllPosts(page);
+          console.log("111 ,posts", posts);
+          if (posts !== undefined && posts.length !== 0) {
+            setTotalPages(posts?.response.totalPages);
+            const newData = [...data, ...posts.response.posts];
 
-      if (page <= totalPages && isLoading) {
-        const posts = await getAllPosts(page);
-        console.log("111 ,posts", posts)
-        if(posts !== undefined && posts.length !== 0) {
-          setTotalPages(posts?.response.totalPages);
-          const newData = [...data, ...posts.response.posts];
-
-          const copyData1: Post[] = _.cloneDeep(newData);
-          const copyData2: Post[] = _.cloneDeep(newData);
-          const postsLucky = copyData1.filter((item) => {
-            if (item.userId === "12345-lucky-12345") {
-              return item;
-            }
-          });
-    
-          const postsWithoutLucky = copyData2.filter((item) => {
-            if (item.userId !== "12345-lucky-12345") return item;
-          });
-    
-          const today = new Date();
-          if (user?.idsPostLucky !== undefined && user?.idsPostLucky?.length > 0) {
-            const filteredPosts = postsLucky.filter((item) => {
-              return !user?.idsPostLucky.some((post) => post._id === item._id);
+            const copyData1: Post[] = _.cloneDeep(newData);
+            const copyData2: Post[] = _.cloneDeep(newData);
+            const postsLucky = copyData1.filter((item) => {
+              if (item.userId === "12345-lucky-12345") {
+                return item;
+              }
             });
-    
-            filteredPosts.map((item) => {
-              if (item.expirationDate !== undefined) {
-                const expirationDate = item.expirationDate;
-                const dateParts = expirationDate.split("/");
-                const year = parseInt(dateParts[2], 10);
-                const month = parseInt(dateParts[0], 10) - 1; // Months in JavaScript are zero-based
-                const day = parseInt(dateParts[1], 10);
-                const convertedDate = new Date(year, month, day);
-                if (convertedDate > today) {
-                  //aca deberia poner id que va a ser el post completo
-                  /// no solo el id
+
+            const postsWithoutLucky = copyData2.filter((item) => {
+              if (item.userId !== "12345-lucky-12345") return item;
+            });
+
+            const today = new Date();
+            if (
+              user?.idsPostLucky !== undefined &&
+              user?.idsPostLucky?.length > 0
+            ) {
+              const filteredPosts = postsLucky.filter((item) => {
+                return !user?.idsPostLucky.some(
+                  (post) => post._id === item._id
+                );
+              });
+
+              filteredPosts.map((item) => {
+                if (item.expirationDate !== undefined) {
+                  const expirationDate = item.expirationDate;
+                  const dateParts = expirationDate.split("/");
+                  const year = parseInt(dateParts[2], 10);
+                  const month = parseInt(dateParts[0], 10) - 1; // Months in JavaScript are zero-based
+                  const day = parseInt(dateParts[1], 10);
+                  const convertedDate = new Date(year, month, day);
+                  if (convertedDate > today) {
+                    //aca deberia poner id que va a ser el post completo
+                    /// no solo el id
+                    postsWithoutLucky.unshift(item);
+                  }
+                } else {
                   postsWithoutLucky.unshift(item);
                 }
-              } else {
-                postsWithoutLucky.unshift(item);
-              }
-            });
-          } else {
-            postsLucky.map((item) => {
-              if (item.expirationDate !== undefined) {
-                const expirationDate = item.expirationDate;
-                const dateParts = expirationDate.split("/");
-                const year = parseInt(dateParts[2], 10);
-                const month = parseInt(dateParts[0], 10) - 1; // Months in JavaScript are zero-based
-                const day = parseInt(dateParts[1], 10);
-    
-                const convertedDate = new Date(year, month, day);
-                if (convertedDate > today) {
+              });
+            } else {
+              postsLucky.map((item) => {
+                if (item.expirationDate !== undefined) {
+                  const expirationDate = item.expirationDate;
+                  const dateParts = expirationDate.split("/");
+                  const year = parseInt(dateParts[2], 10);
+                  const month = parseInt(dateParts[0], 10) - 1; // Months in JavaScript are zero-based
+                  const day = parseInt(dateParts[1], 10);
+
+                  const convertedDate = new Date(year, month, day);
+                  if (convertedDate > today) {
+                  }
+                } else {
+                  postsWithoutLucky.unshift(item);
                 }
-              } else {
-                postsWithoutLucky.unshift(item);
-              }
-            });
+              });
+            }
+
+            setData(postsWithoutLucky);
+            setIsLoading(false);
           }
-
-
-          setData(postsWithoutLucky);
-          setIsLoading(false);
         }
-        
       }
     }
-  }
 
     fetchData();
   }, [page, user]);
@@ -314,11 +332,11 @@ interface IProps {
           }
         }
       }
-      const dataSocket ={
-        receiver: user?.userId
-      }
-  
-      socket?.emit("send_notification_request",dataSocket )
+      const dataSocket = {
+        receiver: user?.userId,
+      };
+
+      socket?.emit("send_notification_request", dataSocket);
     }
   };
 
@@ -328,7 +346,6 @@ interface IProps {
     setData(dataCopy);
     await deletePostBE(postId);
   };
-
 
   const [followers, setFollowers] = useState([]);
   useEffect(() => {
@@ -343,13 +360,11 @@ interface IProps {
     getFollowers();
   }, []);
 
-
   const deletePostLuckyLocal = (id: string) => {
     let dataCopy: Post[] = _.cloneDeep(data);
     dataCopy = dataCopy.filter((post) => String(post._id) !== id);
     setData(dataCopy);
   };
-
 
   return (
     <div className={styles.container}>
@@ -380,7 +395,14 @@ interface IProps {
       )}
       {showModules && (
         <div>
-          <ModulesAndExercises setShowModules={setShowModules} user={user} />
+          <ModulesAndExercises
+            showModal={showModal}
+            setShowModal={setShowModal}
+            setChangesWithoutSave={setChangesWithoutSave}
+            isChangesWithoutSave={isChangesWithoutSave}
+            setShowModules={setShowModules}
+            user={user}
+          />
         </div>
       )}
 
@@ -417,4 +439,4 @@ interface IProps {
   );
 };
 
-export default PostsHome
+export default PostsHome;
