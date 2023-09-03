@@ -37,6 +37,7 @@ const ProfileSidebar = ({
 }: IProps) => {
   console.log("USER", user);
   const router = useRouter();
+  
   const [avg, setAvg] = useState(0);
   const [numberOfReviews, setNumberOfReviews] = useState(0);
   useEffect(() => {

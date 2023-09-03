@@ -380,6 +380,7 @@ setChangesWithoutSave(true);
   useEffect(() => {
     async function getModules() {
       if (quitterSelected !== "") {
+        console.log("quitterUserId", quitterSelected)
         // let modulesNoQuitter;
         // let exercisesNoQuitter;
         // let totalDaysNoQuitter;
@@ -901,11 +902,7 @@ setChangesWithoutSave(true);
   }, []);
 
 
-const handleConfirm = () => {
-    // Handle the user's confirmation to leave the page
-    // You can perform any necessary actions here, such as navigating away
-    setShowModal(false);
-  };
+
 
   const handleCancel = () => {
     // Handle the user's cancellation of leaving the page
@@ -914,7 +911,7 @@ const handleConfirm = () => {
 
 
 
-  if (!isMounted) return null;
+  //if (!isMounted) return null;
 
   return (
     <>
