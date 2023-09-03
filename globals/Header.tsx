@@ -20,8 +20,8 @@ import { auth } from "../config/firebase";
 import Image from "next/image";
 
 interface IHeader {
-  isChangesWithoutSave: boolean;
-  setShowModal: (value: boolean) => void;
+  isChangesWithoutSave?: boolean;
+  setShowModal?: (value: boolean) => void;
 }
 
 const Header = ({isChangesWithoutSave,setShowModal}: IHeader) => {

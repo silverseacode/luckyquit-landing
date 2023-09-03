@@ -25,7 +25,7 @@ import Header from "@/globals/Header";
 import { useRouter } from "next/navigation";
 import { API_URL } from "@/config";
 import { saveMessageBE } from "@/helpers/chats";
-
+import NotificationsIcon from "@mui/icons-material/Notifications";
 export default function Notifications() {
   const router = useRouter();
   const [allNotifications, setAllNotifications] =
@@ -231,9 +231,9 @@ export default function Notifications() {
 
   const [expirationDate, setExpirationDate] = useState<string>("");
   const [startPlanDate, setStartPlanDate] = useState<string>("");
-  const [currentNotif, setCurrentNotif] = useState()
+  const [currentNotif, setCurrentNotif] = useState();
   const seeDetails = async (notification: NotificationType) => {
-    setCurrentNotif(notification)
+    setCurrentNotif(notification);
     const itemUUID = localStorage.getItem("UUID");
     const UUID = itemUUID ? itemUUID : "";
 
@@ -487,7 +487,6 @@ export default function Notifications() {
       options
     );
 
-
     const valuesFromRN = {
       emailMySelf,
       emailCoach: coachData?.email,
@@ -502,7 +501,7 @@ export default function Notifications() {
       fullNameQuitter: `${quitterData?.firstName} ${quitterData?.lastName}`,
       token: tokenLocal,
     };
-    console.log("VALUES RN",valuesFromRN)
+    console.log("VALUES RN", valuesFromRN);
     try {
       const data = {
         user: {
@@ -540,7 +539,7 @@ export default function Notifications() {
         .then((response) => response.json())
         .then((data) => {
           sendMessageAlreadyPaid();
-          setOpenToast(true)
+          setOpenToast(true);
           // Toast.show({
           //   type: "success",
           //   text1: "Payment Successfull",
@@ -554,9 +553,9 @@ export default function Notifications() {
   };
 
   if (isCheckingUserId) return null;
-
+console.log("NOTIF", notifications)
   return (
-    <Layout title={"Lucky Quit - Quit smoking for life"}>
+    <>
       <Header />
 
       <div className={styles.container}>
@@ -574,7 +573,7 @@ export default function Notifications() {
                       borderBottomColor: "#f2f2f2",
                     }}
                   >
-                    {/* #E2F0FE */}
+                   
                     <div
                       style={{ cursor: "pointer" }}
                       onClick={() =>
@@ -858,6 +857,24 @@ export default function Notifications() {
                   </View>
                 );
               })}
+              {notifications.length === 0 && (
+                <div
+                  style={{
+                    flexDirection: "column",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: 500
+                  }}
+                >
+                  <NotificationsIcon
+                    style={{ fontSize: 70, color: Colors.darkGray }}
+                  />
+                  <p style={{ color: Colors.darkGray, marginTop: 50 }}>
+                    You don't have notifications for the moment.
+                  </p>
+                </div>
+              )}
             </View>
           </div>
         </Container>
@@ -879,18 +896,18 @@ export default function Notifications() {
         </div>
       </Modal>
       <Snackbar
-            open={openToast}
-            autoHideDuration={6000}
-            onClose={() => setOpenToast(false)}
-          >
-            <Alert
-              onClose={() => setOpenToast(false)}
-              severity="success"
-              sx={{ width: "100%" }}
-            >
-            {`${coachDetails?.firstName} ${coachDetails?.lastName} is now your coach!`}
-            </Alert>
-          </Snackbar>
-    </Layout>
+        open={openToast}
+        autoHideDuration={6000}
+        onClose={() => setOpenToast(false)}
+      >
+        <Alert
+          onClose={() => setOpenToast(false)}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          {`${coachDetails?.firstName} ${coachDetails?.lastName} is now your coach!`}
+        </Alert>
+      </Snackbar>
+    </>
   );
 }
