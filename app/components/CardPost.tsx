@@ -581,8 +581,9 @@ console.log("ENTA SHARE OON APP")
               style={{
                 flexDirection: "row",
                 marginTop: 10,
-                maxWidth: 270,
+                maxWidth: 500,
                 marginLeft: post.picturePost !== "" ? 0 : 15,
+                alignItems: "center"
               }}
             >
               <Pressable
@@ -595,6 +596,7 @@ console.log("ENTA SHARE OON APP")
                 </span>
               </Pressable>
               <span
+              className={styles.firstComment}
                 style={{
                   color: Colors.darkGray,
                   marginLeft: 5,
