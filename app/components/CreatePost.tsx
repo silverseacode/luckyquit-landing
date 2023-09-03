@@ -56,6 +56,7 @@ const CreatePost = ({ user, setNewPostAdded }: IProps) => {
         userName: user?.userName ?? "",
         initials: user?.initials ?? "",
         backgroundColor: user?.backgroundColor ?? "",
+        userType: user?.type
       };
       setOpenModal(false);
       const newPostFromBE = await createPostBE(newPost);

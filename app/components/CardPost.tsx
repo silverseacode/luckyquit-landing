@@ -295,6 +295,7 @@ console.log("ENTA SHARE OON APP")
             </Pressable>
             <View style={{ marginLeft: 15 }}>
               <View>
+                
                 <Pressable
                   onPress={() => {
                     if (post.userName !== "12345-lucky-12345") {
@@ -302,14 +303,16 @@ console.log("ENTA SHARE OON APP")
                     }
                   }}
                 >
-                  <View>
+                  <View style={{flexDirection: "row", alignItems: "center"}}>
                     <span
-                      style={{ fontSize: 17, fontWeight: "600", marginTop: 5 }}
+                      style={{ fontSize: 17, fontWeight: "600", marginTop: 5, marginRight: 15 }}
                     >
                       {`${post.firstName} ${post.lastName}`}
                     </span>
+                    {post.userType !== undefined && post.userType !== "" &&  <span style={{background: Colors.primary, padding: "5px 5px", margin: "5px 0px", borderRadius: "24px", color: Colors.white, fontSize: 11, textAlign: "center", position: "relative", top: 4}}>{post.userType.toUpperCase()}</span>}
                   </View>
                 </Pressable>
+               
                 <View style={{ marginBottom: 10, marginTop: 5 }}>
                   <span style={{ fontSize: 13, color: Colors.darkGray }}>
                   {post.userId === "12345-lucky-12345"
@@ -317,6 +320,7 @@ console.log("ENTA SHARE OON APP")
                       : timeAgo}
                   </span>
                 </View>
+                
               </View>
             </View>
           </View>

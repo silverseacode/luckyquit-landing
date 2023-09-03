@@ -66,6 +66,7 @@ export type Post = {
   allowComments: boolean;
   backgroundColor: string;
   initials: string;
+  userType: string;
   likes: {
     userName: string;
     profilePicture: string;
