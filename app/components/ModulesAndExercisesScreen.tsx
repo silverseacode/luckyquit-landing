@@ -404,7 +404,8 @@ const ModulesAndExercises = ({
         // exercisesNoQuitter = modulesNoQuitterData.module[0]?.exercises;
 
         const res = await getModulesAndExercisesByQuitterUserIdWithS3(
-          quitterSelected
+          quitterSelected,
+          user?.userId //coach ID
         );
         const modules = res.response;
         // if (modulesNoQuitterData !== undefined) {
@@ -423,6 +424,7 @@ const ModulesAndExercises = ({
           setInputValues(modules?.module?.[0]?.modules);
           setInputValuesEx(modules?.module?.[0]?.exercises);
         } else {
+          //check this
           setInputValues({});
           setInputValuesEx({});
           setDays("1");

@@ -122,7 +122,8 @@ export const getModulesAndExercisesByQuitterUserId = async (
 
 
 export const getModulesAndExercisesByQuitterUserIdWithS3 = async (
-  quitterUserId: string
+  quitterUserId: string,
+  coachId: string
 ) => {
   try {
     const itemToken = localStorage.getItem("jwtToken");
@@ -137,7 +138,7 @@ export const getModulesAndExercisesByQuitterUserIdWithS3 = async (
       token = tokenBE.token
     }
     const response = await fetch(
-      `/api/modules/getModulesAndExercisesByQuitterUserIdWithS3/${quitterUserId}`,
+      `/api/modules/getModulesAndExercisesByQuitterUserIdWithS3/${quitterUserId}/${coachId}`,
       {
         method: "GET",
         headers: {
