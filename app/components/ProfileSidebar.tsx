@@ -21,8 +21,6 @@ interface IProps {
   isLoading: boolean;
   isChangesWithoutSave: boolean;
   setShowModal: (value: boolean) => void;
-
-
 }
 
 const ProfileSidebar = ({
@@ -33,11 +31,11 @@ const ProfileSidebar = ({
   showButtons = true,
   isLoading,
   isChangesWithoutSave,
-  setShowModal
+  setShowModal,
 }: IProps) => {
   console.log("USER", user);
   const router = useRouter();
-  
+
   const [avg, setAvg] = useState(0);
   const [numberOfReviews, setNumberOfReviews] = useState(0);
   useEffect(() => {
@@ -201,13 +199,13 @@ const ProfileSidebar = ({
           <button
             className={styles.button}
             onClick={() => {
-              if(isChangesWithoutSave) {
-                setShowModal(true)
-                return
+              if (isChangesWithoutSave) {
+                setShowModal(true);
+                return;
               }
-              setShowCalendar(true);
-              setShowModules(false);
-              setShowHomework(false);
+              setShowCalendar?.(true);
+              setShowModules?.(false);
+              setShowHomework?.(false);
             }}
           >
             Show Calendar
@@ -217,6 +215,8 @@ const ProfileSidebar = ({
               style={{ marginLeft: 20 }}
               className={styles.buttonModules}
               onClick={() => {
+                setShowCalendar?.(false);
+                setShowModules?.(false);
                 setShowHomework?.(true);
               }}
             >
@@ -227,12 +227,12 @@ const ProfileSidebar = ({
             <button
               className={styles.buttonModules}
               onClick={() => {
-                if(isChangesWithoutSave) {
-                  setShowModal(true)
-                  return
+                if (isChangesWithoutSave) {
+                  setShowModal(true);
+                  return;
                 }
-                setShowCalendar(false);
-                setShowModules(true);
+                setShowCalendar?.(false);
+                setShowModules?.(true);
               }}
             >
               Create modules and exercises
