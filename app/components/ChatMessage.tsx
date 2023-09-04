@@ -248,6 +248,13 @@ const ChatMessage = ({
               const date = moment(dateItem);
               const timeAgo = date.fromNow();
 
+              const dateMessage = new Date(item.dateDefault)
+              const formattedTime = dateMessage.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              });
+
               return (
                 <View key={`${item.senderFullName}${index}`}>
                   {!item.isNotification && (
@@ -295,11 +302,7 @@ const ChatMessage = ({
                         }}
                       >
                         {"\u2022"}{" "}
-                        {item.date?.split?.(",")[1] === undefined
-                          ? item.date?.split?.(" ")[1] +
-                            " " +
-                            item.date?.split?.(" ")[2]
-                          : convertTimeMsg(item.date?.split?.(",")[1])}
+                        {formattedTime}
                       </span>
                     </View>
                   )}
@@ -588,6 +591,7 @@ const ChatMessage = ({
       backgroundColorSender: user?.backgroundColor ?? "",
       initialsReceiver: `${receiver?.firstName[0]} ${receiver?.lastName[0]}`,
       backgroundColorReceiver: receiver?.backgroundColor,
+      dateDefault: new Date()
     };
 
     const dateItem = moment(dateTimezone, "M/D/YYYY, h:mm:ss A");
@@ -607,6 +611,7 @@ const ChatMessage = ({
       backgroundColorSender: user?.backgroundColor ?? "",
       initialsReceiver: `${receiver?.firstName[0]} ${receiver?.lastName[0]}`,
       backgroundColorReceiver: receiver?.backgroundColor,
+      dateDefault: new Date()
     };
     console.log("111 newMessageLocal", newMessageLocal);
     handleMessages(newMessageLocal);
@@ -1334,7 +1339,7 @@ const ChatMessage = ({
               >
                 <TouchableOpacity
                   onPress={() => {
-                    setQuantity("");
+                    setTextDatePlan("")
                     setPrice("");
                     showPlanModal(false);
                   }}
@@ -1387,6 +1392,8 @@ const ChatMessage = ({
                       );
                       return;
                     }
+                    setTextDatePlan("")
+                    setPrice("");
                     showPlanModal(false);
                     showModalConfirmPayment(true);
                   }}

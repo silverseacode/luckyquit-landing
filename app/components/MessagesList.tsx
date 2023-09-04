@@ -176,11 +176,8 @@ const MessagesList = ({
           initials = item?.initialsReceiver;
           backgroundColor = item?.backgroundColorReceiver;
         }
-
-        const dateItem = moment(
-          item?.messages?.[item?.messages?.length - 1]?.date,
-          "M/D/YYYY, h:mm:ss A"
-        );
+console.log("item?.messages?.[item?.messages?.length - 1]?.dateDefault",item?.messages?.[item?.messages?.length - 1]?.dateDefault)
+        const dateItem = item?.messages?.[item?.messages?.length - 1]?.dateDefault
         const date = moment(dateItem);
         const timeAgo = date.fromNow();
         return (

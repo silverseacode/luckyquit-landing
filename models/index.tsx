@@ -135,6 +135,7 @@ export type Message = {
     initialsSender: string;
     backgroundColorSender: string;
     isRead: boolean;
+    dateDefault: Date
   }[];
 };
 
