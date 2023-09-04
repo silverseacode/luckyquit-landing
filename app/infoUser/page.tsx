@@ -163,7 +163,7 @@ export default function InfoUser() {
   const [isErrorEmail, setIsErrorEmail] = useState(false);
   const handleValidationEmail = (value: string) => {
     setEmailPaypal(value);
-    const regex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+$/;
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (value.trim().length > 0) {
       if (regex.test(value)) {
         setIsErrorEmail(false);
@@ -174,6 +174,7 @@ export default function InfoUser() {
       setIsErrorEmail(false);
     }
   };
+
 
   console.log("timezone", timezone);
   return (
