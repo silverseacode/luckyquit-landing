@@ -49,12 +49,19 @@ interface IProps {
   user: User | undefined;
   setShowModules: (value: boolean) => void;
   setChangesWithoutSave: (value: boolean) => void;
-  isChangesWithoutSave: boolean
+  isChangesWithoutSave: boolean;
   showModal: boolean;
   setShowModal: (value: boolean) => void;
 }
 
-const ModulesAndExercises = ({ showModal, setShowModal,user, setShowModules, isChangesWithoutSave, setChangesWithoutSave }: IProps) => {
+const ModulesAndExercises = ({
+  showModal,
+  setShowModal,
+  user,
+  setShowModules,
+  isChangesWithoutSave,
+  setChangesWithoutSave,
+}: IProps) => {
   const socket = useSocket();
   const [days, setDays] = useState("1");
   const [currentDay, setCurrentDay] = useState(1);
@@ -74,7 +81,10 @@ const ModulesAndExercises = ({ showModal, setShowModal,user, setShowModules, isC
 
   const addModule = () => {
     const copyInputValues = _.cloneDeep(inputValues) ?? {};
+    const idLocal = uuidv4();
+
     const newData = {
+      //id: idLocal,
       title: "",
       short: "",
       thumb: "",
@@ -110,7 +120,9 @@ const ModulesAndExercises = ({ showModal, setShowModal,user, setShowModules, isC
 
   const addExercise = () => {
     const copyInputValues = _.cloneDeep(inputValuesEx) ?? {};
+    const idLocal = uuidv4();
     const newData = {
+      //id: idLocal,
       title: "",
       short: "",
       thumb: "",
@@ -290,7 +302,7 @@ const ModulesAndExercises = ({ showModal, setShowModal,user, setShowModules, isC
     setIsLoadingIn({ key: currentDay, index, isExercise: isEx });
     const file = event.target.files[0];
     const url = URL.createObjectURL(file);
-setChangesWithoutSave(true);
+    setChangesWithoutSave(true);
     console.log("333 is ex thumb", isEx);
     const newFileName = uuidv4();
 
@@ -347,7 +359,7 @@ setChangesWithoutSave(true);
       }
 
       setQuitters(quittersNoExpire);
-     // setChangesWithoutSave(true);
+      // setChangesWithoutSave(true);
       const res = await getByQuitterNullAndCoachIdBE(user?.userId);
       const modulesNoQuitterData = res.response;
       console.log("222 modulesNoQuitterData", modulesNoQuitterData);
@@ -380,7 +392,7 @@ setChangesWithoutSave(true);
   useEffect(() => {
     async function getModules() {
       if (quitterSelected !== "") {
-        console.log("quitterUserId", quitterSelected)
+        console.log("quitterUserId", quitterSelected);
         // let modulesNoQuitter;
         // let exercisesNoQuitter;
         // let totalDaysNoQuitter;
@@ -901,15 +913,10 @@ setChangesWithoutSave(true);
     setIsMounted(true);
   }, []);
 
-
-
-
   const handleCancel = () => {
     // Handle the user's cancellation of leaving the page
     setShowModal(false);
   };
-
-
 
   useEffect(() => {
     // Add event listener for beforeunload event
@@ -917,18 +924,17 @@ setChangesWithoutSave(true);
       if (isChangesWithoutSave) {
         // Display the confirmation message
         e.preventDefault();
-        e.returnValue = ''; // Required for some browsers
+        e.returnValue = ""; // Required for some browsers
       }
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
     // Cleanup the event listener when the component unmounts
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [isChangesWithoutSave]);
-
 
   return (
     <>
@@ -960,9 +966,9 @@ setChangesWithoutSave(true);
               margin: 10,
             }}
             onClick={() => {
-              if(isChangesWithoutSave) {
-                setShowModal(true)
-                return
+              if (isChangesWithoutSave) {
+                setShowModal(true);
+                return;
               }
               setShowModules(false);
             }}
@@ -1283,15 +1289,17 @@ setChangesWithoutSave(true);
                   if (isValueThumbFile) {
                     imageUrl = valueThumb;
                   } else {
-                    const matches = value.thumb.match(/https/g);
+                    if (value.thumb !== "" && value.thumb !== undefined) {
+                      const matches = value.thumb.match(/https/g);
 
-                    // Verificamos si hay al menos dos ocurrencias
-                    if (matches && matches.length >= 2) {
-                      imageUrl = value.thumbLocal;
-                    } else if (matches?.length === 1) {
-                      imageUrl = value.thumb;
-                    } else {
-                      imageUrl = value.thumb;
+                      // Verificamos si hay al menos dos ocurrencias
+                      if (matches && matches.length >= 2) {
+                        imageUrl = value.thumbLocal;
+                      } else if (matches?.length === 1) {
+                        imageUrl = value.thumb;
+                      } else {
+                        imageUrl = value.thumb;
+                      }
                     }
                   }
 
@@ -1630,14 +1638,16 @@ setChangesWithoutSave(true);
                 if (isValueThumbFile) {
                   imageUrl = valueThumb;
                 } else {
-                  const matches = value.thumb.match(/https/g);
+                  if (value.thumb !== "" && value.thumb !== undefined) {
+                    const matches = value.thumb.match(/https/g);
 
-                  if (matches && matches.length >= 2) {
-                    imageUrl = value.thumbLocal;
-                  } else if (matches?.length === 1) {
-                    imageUrl = value.thumb;
-                  } else {
-                    imageUrl = value.thumb;
+                    if (matches && matches.length >= 2) {
+                      imageUrl = value.thumbLocal;
+                    } else if (matches?.length === 1) {
+                      imageUrl = value.thumb;
+                    } else {
+                      imageUrl = value.thumb;
+                    }
                   }
                 }
 
@@ -2164,58 +2174,58 @@ setChangesWithoutSave(true);
         </View>
       </View>
       <Modal
-          className={styles.modalUnsave}
-            open={showModal}
-            onClose={() => setShowModal(false)}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-        >
-           <div className={styles.containerModalUnSave}>
-            {/* <TouchableOpacity onPress={() => setShowModal(false)}>
+        className={styles.modalUnsave}
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <div className={styles.containerModalUnSave}>
+          {/* <TouchableOpacity onPress={() => setShowModal(false)}>
               <AntDesign name='close' size={24} color={Colors.black} />
             </TouchableOpacity> */}
-            <View style={{ marginTop: 20 }}>
-              <span
-                style={{
-                  color: Colors.black,
-                  fontSize: 18,
-                  textAlign: "center"
-                }}
-              >
-                You will lost your changes if you leave without saving.
-              </span>
-            </View>
-            <View
+          <View style={{ marginTop: 20 }}>
+            <span
               style={{
-                marginTop: 30,
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
+                color: Colors.black,
+                fontSize: 18,
+                textAlign: "center",
               }}
             >
-              <TouchableOpacity onPress={() => handleCancel()}>
-                <View
+              You will lost your changes if you leave without saving.
+            </span>
+          </View>
+          <View
+            style={{
+              marginTop: 30,
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <TouchableOpacity onPress={() => handleCancel()}>
+              <View
+                style={{
+                  width: 170,
+                  paddingVertical: 10,
+                  marginRight: 15,
+                  backgroundColor: Colors.primary,
+                  borderRadius: 50,
+                }}
+              >
+                <span
                   style={{
-                    width: 170,
-                    paddingVertical: 10,
-                    marginRight: 15,
-                    backgroundColor: Colors.primary,
-                    borderRadius: 50,
+                    textAlign: "center",
+                    color: Colors.white,
                   }}
                 >
-                  <span
-                    style={{
-                      textAlign: "center",
-                      color: Colors.white,
-                    }}
-                  >
-                    Back to Modules
-                  </span>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </div>
-        </Modal>
+                  Back to Modules
+                </span>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </div>
+      </Modal>
     </>
   );
 };

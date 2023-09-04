@@ -88,6 +88,7 @@ export type Post = {
 
 export type Module = {
   [key: string]: {
+    id: string;
     title: string;
     short: string;
     thumb: string;
