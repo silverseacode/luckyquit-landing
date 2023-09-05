@@ -359,7 +359,7 @@ const ModulesAndExercises = ({
       }
 
       setQuitters(quittersNoExpire);
-      // setChangesWithoutSave(true);
+      setChangesWithoutSave(true);
       const res = await getByQuitterNullAndCoachIdBE(user?.userId);
       const modulesNoQuitterData = res.response;
       console.log("222 modulesNoQuitterData", modulesNoQuitterData);
@@ -407,6 +407,7 @@ const ModulesAndExercises = ({
           quitterSelected,
           user?.userId //coach ID
         );
+        setChangesWithoutSave(true);
         const modules = res.response;
         // if (modulesNoQuitterData !== undefined) {
         //   setDays(totalDaysNoQuitter);
@@ -918,6 +919,7 @@ const ModulesAndExercises = ({
   const handleCancel = () => {
     // Handle the user's cancellation of leaving the page
     setShowModal(false);
+    setIsChangingQuitter("");
   };
 
   useEffect(() => {
@@ -937,7 +939,7 @@ const ModulesAndExercises = ({
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [isChangesWithoutSave]);
-
+  const [quitterIdToChange, setIsChangingQuitter] = useState("");
   return (
     <>
       <View
@@ -1027,7 +1029,7 @@ const ModulesAndExercises = ({
               <button
                 type="button"
                 className={styles.button}
-                style={{backgroundColor: Colors.success, color: Colors.white}}
+                style={{ backgroundColor: Colors.success, color: Colors.white }}
                 onClick={() => {
                   if (isSaving) return;
                   handleOpenSubmitWork();
@@ -1140,7 +1142,14 @@ const ModulesAndExercises = ({
                         return (
                           <Pressable
                             key={item.userId}
-                            onPress={() => setSelectedQuitter(item.userId)}
+                            onPress={() => {
+                              if (isChangesWithoutSave) {
+                                setIsChangingQuitter(item.userId);
+                                setShowModal(true);
+                                return;
+                              }
+                              setSelectedQuitter(item.userId);
+                            }}
                           >
                             <RadioButton
                               active={quitterSelected === item.userId}
@@ -2179,11 +2188,14 @@ const ModulesAndExercises = ({
       <Modal
         className={styles.modalUnsave}
         open={showModal}
-        onClose={() => setShowModal(false)}
+        onClose={() => {
+          setIsChangingQuitter("");
+          setShowModal(false)
+        }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <div className={styles.containerModalUnSave}>
+        <div style={{ width: quitterIdToChange !== "" ? "360px" : "330px"}} className={styles.containerModalUnSave}>
           {/* <TouchableOpacity onPress={() => setShowModal(false)}>
               <AntDesign name='close' size={24} color={Colors.black} />
             </TouchableOpacity> */}
@@ -2226,6 +2238,33 @@ const ModulesAndExercises = ({
                 </span>
               </View>
             </TouchableOpacity>
+            {quitterIdToChange !== "" && (
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedQuitter(quitterIdToChange);
+                  setIsChangingQuitter("");
+                  setShowModal(false);
+                }}
+              >
+                <View
+                  style={{
+                    width: 140,
+                    paddingVertical: 10,
+                    backgroundColor: Colors.red,
+                    borderRadius: 50,
+                  }}
+                >
+                  <span
+                    style={{
+                      textAlign: "center",
+                      color: Colors.white,
+                    }}
+                  >
+                    Change Quitter
+                  </span>
+                </View>
+              </TouchableOpacity>
+            )}
           </View>
         </div>
       </Modal>
