@@ -167,6 +167,35 @@ const ModulesAndExercisesFullScreen = ({
   useEffect(() => {
     setIsMounted(true);
   }, []);
+  const [errorMaxSize, setErrorMaxSize] = useState("");
+
+  const checkSizeOfVideoFile = async (event: any) => {
+    const maxSizeAllowed = 500 * 1024 * 1024;
+    const file = event.target.files[0];
+    const fileSizeInBytes = file.size;
+    const fileSizeInMB = (fileSizeInBytes / (1024 * 1024)).toFixed(2);
+    if (file && file.size > maxSizeAllowed) {
+      setErrorMaxSize(
+        `Your file has the size of ${fileSizeInMB}MB, the max allowed is 500MB.`
+      );
+      return
+    } else {
+      setErrorMaxSize("");
+    }
+
+    let isEx = false;
+    if (isExerciseShow) {
+      isEx = true;
+    }
+    if (isModuleShow) {
+      isEx = false;
+    }
+    const url = URL.createObjectURL(file);
+    console.log("URL VIDEO", url);
+    setVideo(url);
+    setImage("");
+    handleSaveVideo(event, index, isEx);
+  };
 
   if (!isMounted) return null;
 
@@ -240,6 +269,17 @@ const ModulesAndExercisesFullScreen = ({
                 </video>
               </View>
             )}
+            {errorMaxSize !== "" && (
+              <div
+                style={{
+                  color: Colors.red,
+                  textAlign: "center",
+                  marginTop: 20,
+                }}
+              >
+                Your file has the size of 10MB, the max allowed is 500mb
+              </div>
+            )}
             {!isViewFromHomeWork && (
               <>
                 <View
@@ -300,20 +340,8 @@ const ModulesAndExercisesFullScreen = ({
                       <label className={styles.label}>
                         <input
                           ref={fileInputRef}
-                          onChange={(event) => {
-                            let isEx = false;
-                            if (isExerciseShow) {
-                              isEx = true;
-                            }
-                            if (isModuleShow) {
-                              isEx = false;
-                            }
-                            const file = event.target.files[0];
-                            const url = URL.createObjectURL(file);
-                            console.log("URL VIDEO", url);
-                            setVideo(url);
-                            setImage("");
-                            handleSaveVideo(event, index, isEx);
+                          onChange={async (event) => {
+                            checkSizeOfVideoFile(event);
                           }}
                           id="fileVideo"
                           accept="video/mp4"
