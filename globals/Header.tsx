@@ -162,6 +162,7 @@ const Header = ({isChangesWithoutSave,setShowModal}: IHeader) => {
 
   const handleLogout = () => {
     localStorage.removeItem("UUID");
+    //localStorage.removeItem("doneLogin");
     auth.signOut()
     router.replace("/login");
   };

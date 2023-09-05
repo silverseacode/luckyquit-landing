@@ -9,11 +9,13 @@ import { v4 as uuidv4 } from "uuid";
 import {
   getTimezoneBE,
   getUniqueUserName,
+  getUser,
   updateUserInfoBE,
 } from "@/helpers/users";
 import { useRouter } from "next/navigation";
 
 import Layout from "../../app/components/Layout";
+import { User } from "@/models";
 
 export default function InfoUser() {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,12 +27,21 @@ export default function InfoUser() {
   const [emailPaypal, setEmailPaypal] = useState("");
 
   useEffect(() => {
-    const itemUUID = localStorage.getItem("UUID");
-      const UUID = itemUUID ? itemUUID : null;
-      if(UUID !== null) {
+    async function redirectFromLoginToHome() {
+      const doneLoginStorage = localStorage.getItem("UUID");
+      const doneLogin = doneLoginStorage ? doneLoginStorage : null;
+      const data = await getUser();
+      const user: User = data.response[0];
+      if (
+        user?.doneTutorialCommunities &&
+        doneLogin !== null
+      ) {
+        console.log("ENRA")
         router.push(`/home`);
       }
-  },[])
+    }
+    redirectFromLoginToHome()
+  }, []);
 
   useEffect(() => {
     getTimezone();
@@ -89,8 +100,13 @@ export default function InfoUser() {
       setErrorForm("You must complete the contain pack field");
       return;
     }
-    if (isUnique !== null) {
+    
+    if (isUnique !== null && isUnique !== false) {
       setErrorForm("You must choose a username not already taken");
+      return;
+    }
+    if (isUnique === false) {
+      setErrorForm("You must verify your username.");
       return;
     }
     setIsLoading(true);

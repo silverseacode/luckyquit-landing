@@ -60,6 +60,7 @@ export default function Login() {
           return;
         }
       }
+      localStorage.setItem("doneLogin", "1");
 
       router.push("/infoUser");
     }
@@ -240,6 +241,7 @@ export default function Login() {
         return;
       }
     }
+    localStorage.setItem("doneLogin", "1");
 
     router.push("/infoUser");
 
