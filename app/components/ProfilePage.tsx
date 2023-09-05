@@ -1029,7 +1029,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                       )}
                     </View>
                   )}
-                  {user?.type === "coach" && (
+                  {user?.type === "coach" && myUserId === user?.userId && (
                     <>
                       <View style={{ width: 155 }}>
                         <span>Your PayPal email: </span>
