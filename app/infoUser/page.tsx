@@ -146,6 +146,8 @@ export default function InfoUser() {
   const [costCigarettes, setCostCigarettes] = useState("");
 
   const handleCostCig = (text: string) => {
+    if (text === "0") return;
+    if (Number(text) > 9999) return;
     const regex = /^[0-9]+(\.[0-9]*)?$/;
     const sanitizedText = text
       .replace(/[^0-9.]/g, "") // Remove non-numeric and non-dot characters
@@ -154,8 +156,11 @@ export default function InfoUser() {
 
     setCostCigarettes(sanitizedText);
   };
+
   const [containPack, setContainPack] = useState("");
   const handleContainPack = (value: string) => {
+    if (value === "0") return;
+    if (Number(value) > 150) return;
     const regex = /^[0-9]+$/;
     const sanitizedText = value.replace(/[^0-9]/g, "").replace(regex, "$&");
     setContainPack(sanitizedText);
