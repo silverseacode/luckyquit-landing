@@ -25,6 +25,14 @@ export default function InfoUser() {
   const [emailPaypal, setEmailPaypal] = useState("");
 
   useEffect(() => {
+    const itemUUID = localStorage.getItem("UUID");
+      const UUID = itemUUID ? itemUUID : null;
+      if(UUID !== null) {
+        router.push(`/home`);
+      }
+  },[])
+
+  useEffect(() => {
     getTimezone();
   }, []);
 
