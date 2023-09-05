@@ -215,6 +215,7 @@ const ModulesAndExercises = ({
     setChangesWithoutSave(true);
   };
   const [isSavingMainAsset, setSavingMainAsset] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const handleSaveVideo = async (event: any, index: number, isEx: boolean) => {
     setSavingMainAsset(true);
     setChangesWithoutSave(true);
@@ -246,7 +247,13 @@ const ModulesAndExercises = ({
     await axios.post(
       `${API_URL}/modules/uploadVideoToS3/${newFileName}`,
       formData,
-      { headers: { "Content-Type": "multipart/form-data" } }
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (progressEvent) => {
+          const progress = (progressEvent.loaded / progressEvent?.total) * 100;
+          setUploadProgress(progress);
+        },
+      }
     );
     setSavingMainAsset(false);
   };
@@ -959,27 +966,28 @@ const ModulesAndExercises = ({
             marginRight: 20,
           }}
         >
-          {currentDay === 1 && !isOpenFull && 
-          <button
-            style={{
-              backgroundColor: "#7D5FCE",
-              color: "#FFF",
-              width: 150,
-              border: 0,
-              borderRadius: 8,
-              padding: 10,
-              margin: 10,
-            }}
-            onClick={() => {
-              if (isChangesWithoutSave) {
-                setShowModal(true);
-                return;
-              }
-              setShowModules(false);
-            }}
-          >
-            Back To Posts
-          </button>}
+          {currentDay === 1 && !isOpenFull && (
+            <button
+              style={{
+                backgroundColor: "#7D5FCE",
+                color: "#FFF",
+                width: 150,
+                border: 0,
+                borderRadius: 8,
+                padding: 10,
+                margin: 10,
+              }}
+              onClick={() => {
+                if (isChangesWithoutSave) {
+                  setShowModal(true);
+                  return;
+                }
+                setShowModules(false);
+              }}
+            >
+              Back To Posts
+            </button>
+          )}
           <View
             style={{
               flexDirection: "row",
@@ -1571,6 +1579,7 @@ const ModulesAndExercises = ({
               })}
             {isOpenFull && isModuleShow && !isExerciseShow && (
               <ModulesAndExercisesFullScreen
+              uploadProgress={uploadProgress}
                 handleSaveUploadedImage={(text, index, ex) => {
                   handleSaveUploadedImage(text, index, ex);
                 }}
@@ -1906,6 +1915,7 @@ const ModulesAndExercises = ({
             })}
           {isOpenFull && isExerciseShow && !isModuleShow && (
             <ModulesAndExercisesFullScreen
+            uploadProgress={uploadProgress}
               handleSaveVideo={handleSaveVideo}
               handleSaveUploadedImage={handleSaveUploadedImage}
               handleSaveVideoId={handleSaveVideoId}
@@ -2191,12 +2201,15 @@ const ModulesAndExercises = ({
         open={showModal}
         onClose={() => {
           setIsChangingQuitter("");
-          setShowModal(false)
+          setShowModal(false);
         }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <div style={{ width: quitterIdToChange !== "" ? "360px" : "330px"}} className={styles.containerModalUnSave}>
+        <div
+          style={{ width: quitterIdToChange !== "" ? "360px" : "330px" }}
+          className={styles.containerModalUnSave}
+        >
           {/* <TouchableOpacity onPress={() => setShowModal(false)}>
               <AntDesign name='close' size={24} color={Colors.black} />
             </TouchableOpacity> */}

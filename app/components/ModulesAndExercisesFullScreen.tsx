@@ -27,6 +27,7 @@ interface IProps {
   youTubeId: string;
   isViewFromHomeWork: boolean;
   isSavingMainAsset: boolean;
+  uploadProgress: number;
 }
 
 const ModulesAndExercisesFullScreen = ({
@@ -47,6 +48,7 @@ const ModulesAndExercisesFullScreen = ({
   short,
   index,
   isSavingMainAsset,
+  uploadProgress
 }: IProps) => {
   const [textTitle, setTextTitle] = useState(title);
   const [textShort, setTextShort] = useState(short);
@@ -178,7 +180,7 @@ const ModulesAndExercisesFullScreen = ({
       setErrorMaxSize(
         `Your file has the size of ${fileSizeInMB}MB, the max allowed is 500MB.`
       );
-      return
+      return;
     } else {
       setErrorMaxSize("");
     }
@@ -215,6 +217,9 @@ const ModulesAndExercisesFullScreen = ({
             <div className={styles.spinnerOverlay}>
               <div className={styles.spinnerContainer}></div>
             </div>
+            {uploadProgress > 0 && (
+              <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>
+            )}
           </View>
         ) : (
           <>
