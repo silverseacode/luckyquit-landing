@@ -959,6 +959,7 @@ const ModulesAndExercises = ({
             marginRight: 20,
           }}
         >
+          {currentDay === 1 && !isOpenFull && 
           <button
             style={{
               backgroundColor: "#7D5FCE",
@@ -978,7 +979,7 @@ const ModulesAndExercises = ({
             }}
           >
             Back To Posts
-          </button>
+          </button>}
           <View
             style={{
               flexDirection: "row",

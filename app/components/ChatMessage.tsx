@@ -966,6 +966,8 @@ const ChatMessage = ({
       showDatePickerPlan(false);
     }
   };
+
+  const canHaveVideoCall = user?.type === "coach" || receiver?.type === "coach"
   return (
     <View style={{ backgroundColor: Colors.lightGray }}>
       <View
@@ -995,10 +997,11 @@ const ChatMessage = ({
           </View>
         </Pressable>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
+          {roomId.trim() !== "-" && canHaveVideoCall &&
           <InfoCircleOutlined
             onClick={handleClick}
             style={{ fontSize: 25, marginRight: 25 }}
-          />
+          />}
           <Popper id={id} open={open} anchorEl={anchorEl} transition>
             {({ TransitionProps }) => (
               <Fade {...TransitionProps} timeout={350}>
@@ -1010,14 +1013,13 @@ const ChatMessage = ({
                     bgcolor: "background.paper",
                   }}
                 >
-                  Videocalls are currently only available between web-to-web and
-                  mobile-to-mobile.
+                  Videocalls are currently only available between web-to-web desktop.
                 </Box>
               </Fade>
             )}
           </Popper>
 
-          {roomId.trim() !== "-" && (
+          {roomId.trim() !== "-" && canHaveVideoCall && (
             <Pressable
               onPress={() => {
                 router.replace(`/videocall/${roomId}/${receiver?.userId}`);
