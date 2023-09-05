@@ -23,6 +23,13 @@ interface IProps {
 
 const Home = ({ posts }: IProps) => {
   const router = useRouter();
+  useEffect(() => {
+    const itemUUID = localStorage.getItem("UUID");
+      const UUID = itemUUID ? itemUUID : null;
+      if(UUID === null) {
+        router.push(`/login`);
+      }
+  },[])
   const [isCheckingUserId, setCheckingUserId] = useState(true);
   useEffect(() => {
     const itemUUID = localStorage.getItem("UUID");

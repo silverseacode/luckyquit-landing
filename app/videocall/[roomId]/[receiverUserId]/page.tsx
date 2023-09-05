@@ -14,6 +14,13 @@ import MicOffIcon from "@mui/icons-material/MicOff";
 import { SOCKET_URL } from "@/config";
 export default function VideoCall({params}: any) {
   const router = useRouter();
+  ///useEffect(() => {
+    const itemUUID = localStorage.getItem("UUID");
+      const UUID = itemUUID ? itemUUID : null;
+      if(UUID === null) {
+        router.push(`/login`);
+      }
+  //},[])
   const [socket, setSocket] = useState();
   let videoElement;
   useEffect(() => {

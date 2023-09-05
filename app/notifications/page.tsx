@@ -28,6 +28,13 @@ import { saveMessageBE } from "@/helpers/chats";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 export default function Notifications() {
   const router = useRouter();
+  useEffect(() => {
+    const itemUUID = localStorage.getItem("UUID");
+      const UUID = itemUUID ? itemUUID : null;
+      if(UUID === null) {
+        router.push(`/login`);
+      }
+  },[])
   const [allNotifications, setAllNotifications] =
     useState<NotificationType[]>();
   const [isCheckingUserId, setCheckingUserId] = useState(true);

@@ -20,6 +20,13 @@ export default function Messages() {
   const [usersRecommendation, setUsersRecommendation] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  useEffect(() => {
+    const itemUUID = localStorage.getItem("UUID");
+      const UUID = itemUUID ? itemUUID : null;
+      if(UUID === null) {
+        router.push(`/login`);
+      }
+  },[])
 
   const [isCheckingUserId, setCheckingUserId] = useState(true);
   useEffect(() => {

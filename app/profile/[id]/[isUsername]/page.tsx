@@ -27,6 +27,7 @@ import { API_URL } from "@/config";
 export default function Profile(params: any) {
   //const userContext = await fetchUser(params.params.id);
   const router = useRouter()
+  
   const [isCheckingUserId, setCheckingUserId] = useState(true);
   useEffect(() => {
     const itemUUID = localStorage.getItem("UUID");
