@@ -1020,19 +1020,20 @@ const ModulesAndExercises = ({
                 </span>
               </View>
             )}
-            {(Object.keys(inputValues ?? {}).length !== 0 ||
-              Object.keys(inputValuesEx ?? {}).length !== 0) &&
+            {!isChangesWithoutSave &&
             quitters.length > 0 &&
+            !isOpenFull &&
             currentDay == 1 ? (
               <button
                 type="button"
                 className={styles.button}
+                style={{backgroundColor: Colors.success, color: Colors.white}}
                 onClick={() => {
                   if (isSaving) return;
                   handleOpenSubmitWork();
                 }}
               >
-                {isSaving ? "Saving..." : "Submit"}
+                {isSaving ? "Saving..." : "Send to Quitter"}
               </button>
             ) : (
               <View></View>

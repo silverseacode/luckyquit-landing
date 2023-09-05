@@ -233,6 +233,7 @@ export default function Notifications() {
   const [startPlanDate, setStartPlanDate] = useState<string>("");
   const [currentNotif, setCurrentNotif] = useState();
   const seeDetails = async (notification: NotificationType) => {
+    setPressedSeeDetails(true);
     setCurrentNotif(notification);
     const itemUUID = localStorage.getItem("UUID");
     const UUID = itemUUID ? itemUUID : "";
@@ -376,6 +377,7 @@ export default function Notifications() {
       if (event.data === "success") {
         showCreditCardModal(false);
         await addToQuitterAndCoach();
+        setPressedSeeDetails(false);
         const data = {
           _id: notifToBeUpdated?.notif._id,
           isRejectedPayment: false,
@@ -552,8 +554,11 @@ export default function Notifications() {
     }
   };
 
+  const [pressedSeeDetails, setPressedSeeDetails] = useState(false);
+
+
   if (isCheckingUserId) return null;
-console.log("NOTIF", notifications)
+  console.log("NOTIF", notifications);
   return (
     <>
       <Header />
@@ -573,7 +578,6 @@ console.log("NOTIF", notifications)
                       borderBottomColor: "#f2f2f2",
                     }}
                   >
-                   
                     <div
                       style={{ cursor: "pointer" }}
                       onClick={() =>
@@ -652,6 +656,7 @@ console.log("NOTIF", notifications)
                             </TouchableOpacity>
                             <Pressable
                               onPress={() => {
+                                if (pressedSeeDetails) return;
                                 setNotifToBeUpdated({ notif: item, index });
                                 seeDetails(item);
                               }}
@@ -662,7 +667,9 @@ console.log("NOTIF", notifications)
                                   borderRadius: 50,
                                   paddingVertical: 7,
                                   marginTop: 5,
-                                  backgroundColor: Colors.primary,
+                                  backgroundColor: pressedSeeDetails
+                                    ? Colors.darkGray
+                                    : Colors.primary,
                                   width: 100,
                                 }}
                               >
@@ -864,7 +871,7 @@ console.log("NOTIF", notifications)
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    height: 500
+                    height: 500,
                   }}
                 >
                   <NotificationsIcon
@@ -882,7 +889,10 @@ console.log("NOTIF", notifications)
       <Modal
         open={shouldShowCreditCardModal}
         className={styles.modal}
-        onClose={() => showCreditCardModal(false)}
+        onClose={() => {
+          setPressedSeeDetails(false);
+          showCreditCardModal(false)
+        }}
       >
         <div className={styles.containerModal}>
           <View>

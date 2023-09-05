@@ -1053,6 +1053,8 @@ const ChatMessage = ({
               <TouchableOpacity
                 onPress={() => {
                   if (isPlanEndExpire === false) return;
+                  setTextDatePlan("")
+                    setPrice("");
                   showPlanModal(true);
                 }}
               >
@@ -1392,8 +1394,6 @@ const ChatMessage = ({
                       );
                       return;
                     }
-                    setTextDatePlan("")
-                    setPrice("");
                     showPlanModal(false);
                     showModalConfirmPayment(true);
                   }}
