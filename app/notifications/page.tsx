@@ -30,11 +30,12 @@ export default function Notifications() {
   const router = useRouter();
   useEffect(() => {
     const itemUUID = localStorage.getItem("UUID");
-      const UUID = itemUUID ? itemUUID : null;
-      if(UUID === null) {
-        router.push(`/login`);
-      }
-  },[])
+    const UUID = itemUUID ? itemUUID : null;
+    if (UUID === null) {
+      router.replace("/login");
+    }
+    setCheckingUserId(false);
+  }, [router]);
   const [allNotifications, setAllNotifications] =
     useState<NotificationType[]>();
   const [isCheckingUserId, setCheckingUserId] = useState(true);
@@ -60,14 +61,7 @@ export default function Notifications() {
     checkIfHasPlan();
   }, [allNotifications]);
 
-  useEffect(() => {
-    const itemUUID = localStorage.getItem("UUID");
-    const UUID = itemUUID ? itemUUID : null;
-    if (UUID === null) {
-      router.replace("/login");
-    }
-    setCheckingUserId(false);
-  }, [router]);
+ 
   const socket = useSocket();
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
 
@@ -177,6 +171,7 @@ export default function Notifications() {
           }
         });
       });
+      finalNotif?.reverse()
       setNotifications(finalNotif);
     }
     if (!isCheckingUserId) {
