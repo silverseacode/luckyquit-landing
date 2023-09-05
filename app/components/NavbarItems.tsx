@@ -26,7 +26,7 @@ const NavBarItems = () => {
       }}
     >
       <div className={styles.menuItems}>
-        <div className={`${styles.menuItem} ${styles.navItem}`}>Home</div>
+        <div className={`${styles.menuItem} ${styles.navItem}`}><span>Home</span></div>
         <div className={`${styles.menuItem} ${styles.navItem}`}>
           <span onClick={() => scrollToSection("features-section")}>
             Features

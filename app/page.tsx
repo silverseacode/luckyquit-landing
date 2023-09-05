@@ -18,17 +18,18 @@ export default function Landing() {
             style={{
               display: "flex",
               flexDirection: "row",
-              width: 200,
+              width: 220,
               alignItems: "center",
             }}
           >
             <Image
-              width={50}
-              height={50}
+              width={60}
+              height={60}
               alt="icon app"
               src={"/icon-of-the-app.png"}
+              style={{cursor: 'pointer'}}
             />
-            <span className={styles.brand} style={{ marginLeft: 15 }}>
+            <span className={styles.brand} style={{ marginLeft: 5, fontWeight: "600", fontSize: 19, cursor: 'pointer' }}>
               Lucky Quit
             </span>
           </div>

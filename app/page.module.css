@@ -21,6 +21,14 @@
     cursor: pointer;
 }
 
+.menuItem span{
+  font-size: 18px;
+}
+
+.menuItem span:hover{
+  color:#7D5FCE;
+}
+
 .jumbotron {
     height: 100vh;
     width: 100%;
