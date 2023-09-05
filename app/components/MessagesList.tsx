@@ -181,13 +181,13 @@ console.log("item?.messages?.[item?.messages?.length - 1]?.dateDefault",item?.me
         const date = moment(dateItem);
         const timeAgo = date.fromNow();
         return (
-          <View
+          <div
             key={index}
             style={{
               borderBottomWidth: 1,
               borderColor: "#f2f2f2",
               padding: 20,
-              height: "100px",
+              height: "auto",
               backgroundColor: "#FFF",
             }}
           >
@@ -250,7 +250,9 @@ console.log("item?.messages?.[item?.messages?.length - 1]?.dateDefault",item?.me
                 justifyContent: "space-between",
               }}
             >
+              <div className={styles.commentChatListFirst}>
               <span
+              
                 style={{
                   fontWeight:
                     item?.messages?.[item?.messages?.length - 1]?.isRead === false
@@ -278,8 +280,10 @@ console.log("item?.messages?.[item?.messages?.length - 1]?.dateDefault",item?.me
                   </span>
                 </View>
               )}
+              </div>
+
             </View>
-          </View>
+          </div>
         );
       })}
       {chats.length === 0 && (

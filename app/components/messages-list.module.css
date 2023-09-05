@@ -39,3 +39,10 @@
       transform: rotate(360deg);
     }
   }
+  .commentChatListFirst {
+    width: 235px; /* Establece el ancho deseado de tu contenedor */
+    display: -webkit-box; /* Establece el modelo de caja como -webkit-box */
+    -webkit-line-clamp: 3; /* Limita el texto a 3 líneas */
+    -webkit-box-orient: vertical; /* Establece la orientación vertical del modelo de caja */
+    overflow: hidden;
+  }
