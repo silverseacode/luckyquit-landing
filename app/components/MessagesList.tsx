@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./messages-list.module.css";
-import { View, Pressable} from "react-native";
+import { View, Pressable } from "react-native";
 import { Message, User } from "@/models";
 import { getFollowersBE } from "@/helpers/followers";
 import { getChatsBE } from "@/helpers/chats";
@@ -30,18 +30,17 @@ const MessagesList = ({
   user,
   receiver,
 }: IProps) => {
-  const socket = useSocket()
- 
+  const socket = useSocket();
+
   const markConversationAsRead = async (idChat: string) => {
-    
     const copyChats: Message[] = _.cloneDeep(chats);
 
-    const filteredChats = copyChats
-    let countMarkAsRead = 0
+    const filteredChats = copyChats;
+    let countMarkAsRead = 0;
     const modifiedChats = filteredChats.map((chat) => {
       chat.messages.forEach((item) => {
-        if(item.isRead === false) {
-          countMarkAsRead++
+        if (item.isRead === false) {
+          countMarkAsRead++;
         }
         item.isRead = true;
       });
@@ -53,7 +52,7 @@ const MessagesList = ({
     socket?.emit("messages_read", {
       userId: user?.userId, //same as sender
       receiver: receiver,
-      count: countMarkAsRead
+      count: countMarkAsRead,
     });
 
     setChats(modifiedChats);
@@ -95,8 +94,6 @@ const MessagesList = ({
     const chatsArray = dataChats.response.chats;
     const followersArray = dataFollowers.response?.users;
 
-
-
     setReceiver(
       chatsArray[0]?.sender !== UUID
         ? chatsArray[0]?.sender
@@ -118,7 +115,7 @@ const MessagesList = ({
 
   useEffect(() => {
     async function getInitialData() {
-      console.log("ENTRA123")
+      console.log("ENTRA123");
       await getData();
     }
 
@@ -127,21 +124,23 @@ const MessagesList = ({
 
   useEffect(() => {
     if (triggerChange === true) {
-      console.log("111 message send", messageSend)
+      console.log("111 message send", messageSend);
       // let chatsFiltered = chats.filter(
       //   (item) => item?.sender !== user?.userId && item?.receiver !== receiver
       // );
       let chatsFiltered = _.cloneDeep(chats);
-      if(!messageSend.isNew) {
-        chatsFiltered[chatsFiltered.length - 1 ?? 0].messages.push(messageSend.messages);
+      if (!messageSend.isNew) {
+        chatsFiltered[chatsFiltered.length - 1 ?? 0].messages.push(
+          messageSend.messages
+        );
       } else {
-        chatsFiltered.unshift(messageSend.messages)
+        chatsFiltered.unshift(messageSend.messages);
       }
 
       setChats(chatsFiltered);
     }
-    
-    setTriggerChange(false)
+
+    setTriggerChange(false);
   }, [messageSend, triggerChange]);
 
   return (
@@ -152,14 +151,16 @@ const MessagesList = ({
       {chats.map((item, index) => {
         let count = 0;
         //el sender siempre es el user.userId porque traigo  await Messages.find({ sender });
-        const currentUserFullName = `${user?.firstName} ${user?.lastName}`
-        
-          item?.messages?.map((message) => {
-            if (message.isRead === false && message.senderFullName !== currentUserFullName) {
-              count++;
-            }
-          });
-        
+        const currentUserFullName = `${user?.firstName} ${user?.lastName}`;
+
+        item?.messages?.map((message) => {
+          if (
+            message.isRead === false &&
+            message.senderFullName !== currentUserFullName
+          ) {
+            count++;
+          }
+        });
 
         let profilePicture;
         let name;
@@ -176,8 +177,12 @@ const MessagesList = ({
           initials = item?.initialsReceiver;
           backgroundColor = item?.backgroundColorReceiver;
         }
-console.log("item?.messages?.[item?.messages?.length - 1]?.dateDefault",item?.messages?.[item?.messages?.length - 1]?.dateDefault)
-        const dateItem = item?.messages?.[item?.messages?.length - 1]?.dateDefault
+        console.log(
+          "item?.messages?.[item?.messages?.length - 1]?.dateDefault",
+          item?.messages?.[item?.messages?.length - 1]?.dateDefault
+        );
+        const dateItem =
+          item?.messages?.[item?.messages?.length - 1]?.dateDefault;
         const date = moment(dateItem);
         const timeAgo = date.fromNow();
         return (
@@ -202,22 +207,47 @@ console.log("item?.messages?.[item?.messages?.length - 1]?.dateDefault",item?.me
                   const itemFollower = followers.filter(
                     (itemFollower) => itemFollower.userId === item?.receiver
                   );
-                  
+
                   setReceiver(
-                    item?.sender !== user?.userId ? item?.sender : item?.receiver
+                    item?.sender !== user?.userId
+                      ? item?.sender
+                      : item?.receiver
                   );
                   //changed from itemFollower[0]
                   markConversationAsRead(item?._id);
                 }}
               >
                 {profilePicture !== "" && profilePicture !== undefined ? (
+                  <>
                   <Image
-                    src={profilePicture }
+                    src={profilePicture}
                     height={50}
                     width={50}
                     alt="profile pic"
                     style={{ height: 50, width: 50, borderRadius: 50 }}
                   />
+                   {item?.messages?.[item?.messages?.length - 1]
+                    ?.senderFullName !== currentUserFullName &&
+                    count > 0 && ( 
+                      <View
+                        style={{
+                          height: count < 10 ? 20 : 25,
+                          width: count < 10 ? 20 : 25,
+                          borderRadius: 50,
+                          backgroundColor: "#FF2D55",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          position: "relative",
+                          top: -20,
+                          right: -25,
+                        }}
+                      >
+                        <span style={{ color: Colors.white, fontSize: 16 }}>
+                          {count}
+                        </span>
+                      </View>
+                    )} 
+                    </>
                 ) : (
                   <View
                     style={{
@@ -229,9 +259,37 @@ console.log("item?.messages?.[item?.messages?.length - 1]?.dateDefault",item?.me
                       alignItems: "center",
                     }}
                   >
-                    <span style={{ color: Colors.blackDefault, fontSize: 16 }}>
+                    <span
+                      style={{
+                        color: Colors.blackDefault,
+                        fontSize: 16,
+                        position: "relative",
+                        top: count > 0 ? 10 : 0,
+                      }}
+                    >
                       {initials}
                     </span>
+                    {item?.messages?.[item?.messages?.length - 1]
+                      ?.senderFullName !== currentUserFullName &&
+                      count > 0 && (
+                        <View
+                          style={{
+                            height: count < 10 ? 20 : 25,
+                            width: count < 10 ? 20 : 25,
+                            borderRadius: 50,
+                            backgroundColor: "#FF2D55",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            position: "relative",
+                            top: 10,
+                            right: -18,
+                          }}
+                        >
+                          <span style={{ color: Colors.white, fontSize: 16 }}>
+                            {count}
+                          </span>
+                        </View>
+                      )}
                   </View>
                 )}
               </Pressable>
@@ -251,37 +309,18 @@ console.log("item?.messages?.[item?.messages?.length - 1]?.dateDefault",item?.me
               }}
             >
               <div className={styles.commentChatListFirst}>
-              <span
-              
-                style={{
-                  fontWeight:
-                    item?.messages?.[item?.messages?.length - 1]?.isRead === false
-                      ? "600"
-                      : "normal",
-                }}
-              >
-                {item?.messages?.[item?.messages?.length - 1]?.message}
-              </span>
-              {item?.messages?.[item?.messages?.length - 1]?.senderFullName !== currentUserFullName && count > 0 && (
-                <View
+                <span
                   style={{
-                    height: count < 10 ? 25 : 28,
-                    width: count < 10 ? 25 : 28,
-                    borderRadius: 50,
-                    backgroundColor: "#FF2D55",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    position: "relative",
-                    top: -10,
+                    fontWeight:
+                      item?.messages?.[item?.messages?.length - 1]?.isRead ===
+                      false
+                        ? "600"
+                        : "normal",
                   }}
                 >
-                  <span style={{ color: Colors.white, fontSize: 16 }}>
-                    {count}
-                  </span>
-                </View>
-              )}
+                  {item?.messages?.[item?.messages?.length - 1]?.message}
+                </span>
               </div>
-
             </View>
           </div>
         );
@@ -330,4 +369,4 @@ export const convertToDayOfTheWeek = (date: string) => {
   return weekday;
 };
 
-export default MessagesList
+export default MessagesList;
