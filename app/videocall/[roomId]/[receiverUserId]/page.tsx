@@ -1,9 +1,9 @@
-"use client"
+"use client";
 import React, { useEffect } from "react";
 
 import { useState } from "react";
 import { Colors } from "@/app/colors";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 import { io } from "socket.io-client";
 import CallEndIcon from "@mui/icons-material/CallEnd";
 import styles from "../../../components/videocall.module.css";
@@ -12,14 +12,14 @@ import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
 import { SOCKET_URL } from "@/config";
-export default function VideoCall({params}: any) {
+export default function VideoCall({ params }: any) {
   const router = useRouter();
   ///useEffect(() => {
-    const itemUUID = localStorage.getItem("UUID");
-      const UUID = itemUUID ? itemUUID : null;
-      if(UUID === null) {
-        router.push(`/login`);
-      }
+  const itemUUID = localStorage.getItem("UUID");
+  const UUID = itemUUID ? itemUUID : null;
+  if (UUID === null) {
+    router.push(`/login`);
+  }
   //},[])
   const [socket, setSocket] = useState();
   let videoElement;
@@ -64,6 +64,24 @@ export default function VideoCall({params}: any) {
     init();
   }, [socket]);
 
+  // function stopCamera() {
+  //   //const video = document.querySelector(".remote-video");
+  //   const video1 = document.getElementById("user-video");
+  //   // console.log("VIDEO 1", video1);
+  //   // if (video) {
+  //   //   for (const track of video.srcObject.getTracks()) {
+  //   //     track.stop();
+  //   //   }
+  //   //   video.srcObject = null;
+  //   // }
+  //   if (video1) {
+  //     for (const track of video1.srcObject.getTracks()) {
+  //       track.stop();
+  //     }
+  //     video1.srcObject = null;
+  //   }
+  // }
+
   let userStream;
   let isAdmin = false;
   function callOtherUsers(otherUsers, stream) {
@@ -81,7 +99,7 @@ export default function VideoCall({params}: any) {
   //ctLqhSip18fvGDMrAAAN
   //Yp3K7b30kPTvTu9WAAAP
 
-  const [isRemoteStreamReady, setRemoteStreamReady] = useState(false)
+  const [isRemoteStreamReady, setRemoteStreamReady] = useState(false);
 
   function createPeer(userIdToCall) {
     console.log(
@@ -115,7 +133,7 @@ export default function VideoCall({params}: any) {
         videoElement = video;
         video.classList.add("remote-video");
         container.appendChild(video);
-        setRemoteStreamReady(true)
+        setRemoteStreamReady(true);
 
         if (isAdmin) {
           const button = document.createElement("button");
@@ -198,11 +216,19 @@ export default function VideoCall({params}: any) {
     userVideo.forEach((video) => {
       video.remove();
     });
-    setMute(true)
+    setMute(true);
+    
     router.replace("/messages");
   }
 
   function handleDisconnectButton() {
+    const video1 = document.getElementById("user-video");
+    if (video1) {
+      for (const track of video1.srcObject.getTracks()) {
+        track.stop();
+      }
+      video1.srcObject = null;
+    }
     socket?.close();
     console.log("ENTRO");
     socket?.emit("leaves screen");
@@ -214,7 +240,7 @@ export default function VideoCall({params}: any) {
     userVideo.forEach((video) => {
       video.remove();
     });
-    setMute(true)
+    setMute(true);
     router.replace("/messages");
   }
 
@@ -223,6 +249,9 @@ export default function VideoCall({params}: any) {
       .getTracks()
       .find((track) => track.kind === "video");
     videoTrack.enabled = false;
+    myVideo?.current.srcObject
+      .getVideoTracks()
+      .forEach((track) => track.stop());
   }
 
   function showCam() {
@@ -231,7 +260,7 @@ export default function VideoCall({params}: any) {
       .find((track) => track.kind === "video");
     videoTrack.enabled = true;
   }
-
+  const [myVideo, setMyVideo] = useState();
   async function init() {
     socket?.on("connect", async () => {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -239,11 +268,12 @@ export default function VideoCall({params}: any) {
         audio: true,
       });
       userStream = stream;
+      setMyVideo(userStream);
       if (userVideo) {
         userVideo.srcObject = stream;
       }
-      const roomId= params.roomId
-      console.log("ROOOM ID", roomId)
+      const roomId = params.roomId;
+      console.log("ROOOM ID", roomId);
 
       socket?.emit("user joined room", roomId);
 
@@ -268,8 +298,7 @@ export default function VideoCall({params}: any) {
     });
   }
 
-
-const [isMute, setMute] = useState(false);
+  const [isMute, setMute] = useState(false);
   console.log("ismuute", isMute);
   const mute = () => {
     setMute((prev) => !prev);
@@ -349,6 +378,12 @@ const [isMute, setMute] = useState(false);
                 <MicIcon style={{ fontSize: 40 }} />
               )}
             </div>
+            {/* <div
+              onClick={stopCamera}
+              style={{ background: "white", color: "black" }}
+            >
+              acaaa
+            </div> */}
           </div>
         </div>
       </div>
