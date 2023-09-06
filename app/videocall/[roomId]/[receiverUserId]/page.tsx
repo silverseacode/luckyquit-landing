@@ -12,6 +12,7 @@ import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
 import { SOCKET_URL } from "@/config";
+
 export default function VideoCall({ params }: any) {
   const router = useRouter();
   ///useEffect(() => {
@@ -145,6 +146,7 @@ export default function VideoCall({ params }: any) {
         video.srcObject = e.streams[0];
         video.autoplay = true;
         video.playsInline = true;
+        video.id = "remote-video-id";
         videoElement = video;
         video.classList.add("remote-video");
         container.appendChild(video);
@@ -220,17 +222,24 @@ export default function VideoCall({ params }: any) {
   //try random url
   function handleDisconnect(userId) {
     console.log("DISCONNECT");
+    const video1 = document.getElementById("user-video");
+    if (video1 !== null && video1 !== undefined && video1.srcObject !== null) {
+      for (const track of video1?.srcObject?.getTracks()) {
+        track.stop();
+      }
+      video1.srcObject = null;
+    }
     delete peers[userId];
     socket?.close();
     document.getElementById(userId)?.remove();
-    const remoteVideos = document.querySelectorAll(".remote-video");
-    remoteVideos.forEach((video) => {
-      video.remove();
-    });
-    const userVideo = document.querySelectorAll(".user-video");
-    userVideo.forEach((video) => {
-      video.remove();
-    });
+    // const remoteVideos = document.querySelectorAll(".remote-video");
+    // remoteVideos.forEach((video) => {
+    //   video.remove();
+    // });
+    // const userVideo = document.querySelectorAll(".user-video");
+    // userVideo.forEach((video) => {
+    //   video.remove();
+    // });
     setMute(true);
 
     router.replace("/messages");
@@ -304,6 +313,10 @@ export default function VideoCall({ params }: any) {
       socket?.on("ice-candidate", handleReceiveIce);
 
       socket?.on("user disconnected", (userId) => handleDisconnect(userId));
+      socket?.on("disconnect", () => handleDisconnect(1));
+
+
+      socket?.on("disconnect", () => handleDisconnect(1));
 
       socket?.on("hide cam", hideCam);
 
@@ -312,6 +325,12 @@ export default function VideoCall({ params }: any) {
       //socket?.on("server is full", () => alert("chat is full"));
     });
   }
+
+  useEffect(() => {
+    return () => {
+      socket?.disconnect();
+    };
+  }, [socket]);
 
   const [isMute, setMute] = useState(false);
   console.log("ismuute", isMute);

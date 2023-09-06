@@ -1023,7 +1023,6 @@ const ChatMessage = ({
             <Pressable
               onPress={() => {
                 router.replace(`/videocall/${roomId}/${receiver?.userId}`);
-                mixpanel.track("Enter videocall Web");
               }}
             >
               <View style={{ marginRight: 15 }}>
