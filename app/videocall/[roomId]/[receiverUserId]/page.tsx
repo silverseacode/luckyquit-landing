@@ -328,7 +328,7 @@ export default function VideoCall({ params }: any) {
 
   useEffect(() => {
     return () => {
-      socket?.disconnect();
+      socket?.emit("leaves screen");
     };
   }, [socket]);
 
