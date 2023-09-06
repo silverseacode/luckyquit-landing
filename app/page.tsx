@@ -179,6 +179,7 @@ export default function Landing() {
             <AccordionItem
               title="How can I start earning money as a Coach?"
               content="Start connecting with individuals who are looking to quit in the community section of the app."
+              id="faq-coaches-1"
             />
             <AccordionItem
               title="How do I send a payment link?"
@@ -192,10 +193,12 @@ export default function Landing() {
             <AccordionItem
               title="How much can I earn?"
               content="When sending the payment link, you have the flexibility to set the amount you want and the expiration date for the plan you're selling. The quitter will receive a payment link with the specified amount and a 10% fee, which goes to the Lucky Quit app. This information is clearly explained in the payment link that will be sent to the quitter."
+              id="faq-coaches-4"
             />
             <AccordionItem
               title="How can I create modules and exercises for the quitter?"
               content="Creating modules and exercises for the quitter is a seamless process. While it's possible to create them both in the app and on the website, it's often more convenient to develop them on the website. Additionally, you'll find that refining the format and enhancing the content is more accessible from the web interface, especially when using a computer."
+              id="faq-coaches-5"
             />
             <AccordionItem
               title="How can I schedule and conduct video calls with my quitter?"
