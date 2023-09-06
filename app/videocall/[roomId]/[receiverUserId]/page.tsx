@@ -45,7 +45,7 @@ export default function VideoCall({ params }: any) {
     setToggleButton(toggleButton);
     setUserVideo(userVideo);
 
-    toggleButton?.addEventListener("click", () => {
+    toggleButton?.addEventListener("click", async () => {
       const videoTrack = userStream
         ?.getTracks()
         .find((track) => track.kind === "video");
@@ -53,8 +53,23 @@ export default function VideoCall({ params }: any) {
       if (videoTrack !== undefined && toggleButton !== undefined) {
         if (videoTrack.enabled) {
           videoTrack.enabled = false;
+          const video1 = document.getElementById("user-video");
+          if (video1) {
+            for (const track of video1.srcObject.getTracks()) {
+              track.stop();
+            }
+            video1.srcObject = null;
+          }
           setCamEnabled(false);
         } else {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true,
+          });
+          userStream = stream;
+          if (userVideo) {
+            userVideo.srcObject = stream;
+          }
           videoTrack.enabled = true;
           setCamEnabled(true);
         }
@@ -217,7 +232,7 @@ export default function VideoCall({ params }: any) {
       video.remove();
     });
     setMute(true);
-    
+
     router.replace("/messages");
   }
 
@@ -249,9 +264,9 @@ export default function VideoCall({ params }: any) {
       .getTracks()
       .find((track) => track.kind === "video");
     videoTrack.enabled = false;
-    myVideo?.current.srcObject
-      .getVideoTracks()
-      .forEach((track) => track.stop());
+    // myVideo?.current.srcObject
+    //   .getVideoTracks()
+    //   .forEach((track) => track.stop());
   }
 
   function showCam() {
