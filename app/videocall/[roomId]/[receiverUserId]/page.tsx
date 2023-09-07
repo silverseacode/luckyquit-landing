@@ -25,7 +25,7 @@ export default function VideoCall({ params }: any) {
   const [socket, setSocket] = useState();
   let videoElement;
   useEffect(() => {
-    const socket = io(`${SOCKET_URL}`);
+    const socket = io(`http://52.53.194.42:3111`);
 
     setSocket(socket);
   }, []);

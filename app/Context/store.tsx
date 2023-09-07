@@ -12,7 +12,7 @@ export const SocketProvider = ({children}) => {
   useEffect(() => {
     async function getInfo() {
       console.log("SOCKET URL123", SOCKET_URL)
-      const socket = io(`${SOCKET_URL}`);
+      const socket = io(`http://52.53.194.42:3111`);
 
       const data = await getUser();
       const user = data.response[0];
