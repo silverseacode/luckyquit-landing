@@ -642,7 +642,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                 width={200}
                 height={200}
                 style={{ objectFit: "cover", width: "100%", height: 200 }}
-                source={{uri: user?.backgroundPicture !== "" ? user?.backgroundPicture : user?.backgroundPicture}}
+                source={{uri: user?.backgroundPicture !== "" && imageBackground === null ? user?.backgroundPicture : imageBackground}}
                 alt="background"
               />}
             </View>
@@ -731,7 +731,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                                     borderColor: Colors.darkGray,
                                   }}
                                 >
-                                  {imageProfile !== "" &&
+                                  {/* {imageProfile !== "" &&
                                     imageProfile !== null && (
                                       <TouchableOpacity
                                         onPress={() => removePhoto(true)}
@@ -743,9 +743,9 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                                           }}
                                         />
                                       </TouchableOpacity>
-                                    )}
-                                  {(imageProfile === "" ||
-                                    imageProfile === null) && (
+                                  //   )} */}
+                                  {/* // {(imageProfile === "" || */}
+                                  {/* //   imageProfile === null) && ( */}
                                     <label className={styles.label}>
                                       <input
                                         onChange={(event) => {
@@ -766,7 +766,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                                         }}
                                       />
                                     </label>
-                                  )}
+                                  {/* // )} */}
                                 </View>
                               )}
                             </TouchableOpacity>
@@ -859,7 +859,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                               borderColor: Colors.darkGray,
                             }}
                           >
-                            {imageBackground !== "" &&
+                            {/* {imageBackground !== "" &&
                               imageBackground !== null && (
                                 <TouchableOpacity
                                   onPress={() => removePhoto(false)}
@@ -871,9 +871,9 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                                     }}
                                   />
                                 </TouchableOpacity>
-                              )}
-                            {(imageBackground === "" ||
-                              imageBackground === null) && (
+                              )} */}
+                            {/* {(imageBackground === "" ||
+                              imageBackground === null) && ( */}
                               <label className={styles.label}>
                                 <input
                                   onChange={(event) => {
@@ -896,7 +896,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                                   />
                                 </span>
                               </label>
-                            )}
+                            {/* )} */}
                           </View>
                         )}
                       </TouchableOpacity>
