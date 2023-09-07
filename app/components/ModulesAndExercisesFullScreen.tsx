@@ -251,7 +251,7 @@ const ModulesAndExercisesFullScreen = ({
                     height: 300,
                   }}
                 >
-                  <Image fill alt="uploaded image" src={image} />
+                  <Image fill style={{objectFit: "cover"}} alt="uploaded image" src={image} />
                 </View>
               )}
 
@@ -282,7 +282,7 @@ const ModulesAndExercisesFullScreen = ({
                   marginTop: 20,
                 }}
               >
-                Your file has the size of 10MB, the max allowed is 500mb
+                {errorMaxSize}
               </div>
             )}
             {!isViewFromHomeWork && (
