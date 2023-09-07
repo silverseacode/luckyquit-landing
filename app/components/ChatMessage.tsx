@@ -715,6 +715,7 @@ const ChatMessage = ({
 
   const [errorMessage, setErrorMessage] = useState("");
 
+
   const handleConfirmPayment = async () => {
     showModalConfirmPayment(false);
 
@@ -840,6 +841,7 @@ const ChatMessage = ({
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [textDate, setTextDate] = useState("");
   const handleConfirmDatePicker = () => {
+    setDateWithoutFormatCall(new Date(dateTimeChoosed));
     const date = new Date(dateTimeChoosed);
     setShowErrorPicker("");
     const formattedDate = formatDateAndTime(date);
@@ -895,7 +897,6 @@ const ChatMessage = ({
       roomId: roomId,
       initials: user?.initials,
       backgroundColor: user?.backgroundColor,
-      expirationDate: datePickDay,
     };
 
     await sendNotification(newNotification);
@@ -954,6 +955,8 @@ const ChatMessage = ({
   const [dateTimeChoosedPlan, saveDateTimeChoosedPlan] = useState();
   const [textDatePlan, setTextDatePlan] = useState("");
   const [datePlanWithoutFormat, setDateWithoutFormat] = useState();
+  const [datePlanWithoutFormatCall, setDateWithoutFormatCall] = useState();
+
   const handleConfirmDatePickerPlan = () => {
     if (dateTimeChoosedPlan !== undefined) {
       setDateWithoutFormat(new Date(dateTimeChoosedPlan));
@@ -1592,7 +1595,7 @@ const ChatMessage = ({
           showModalPickDateTime(false);
         }}
       >
-        <div className={styles.containerModalEvent}>
+        <div style={{height: showErrorPicker.length > 0 ? 360 : 330 }} className={styles.containerModalEvent}>
           <View style={{ backgroundColor: Colors.white }}>
             <View
               style={{
@@ -1632,6 +1635,7 @@ const ChatMessage = ({
                       <span style={{ fontWeight: "600" }}>{textDate}</span>
                     </View>
                   )}
+                  
                   <View
                     style={{
                       flexDirection: "row",
@@ -1728,7 +1732,7 @@ const ChatMessage = ({
                     flexDirection: "row",
                     justifyContent: "center",
                     alignItems: "center",
-                    marginTop: 40,
+                    marginTop: showErrorPicker.length > 0 ? 15 : 40  ,
                   }}
                 >
                   <TouchableOpacity
@@ -1751,14 +1755,38 @@ const ChatMessage = ({
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => {
+
+                      setShowErrorPicker("");
                       if (textDate.trim() === "") {
                         setShowErrorPicker(
-                          "You must pick a date and time to confirm"
+                          "You must complete the date and time of the meeting."
                         );
                         return;
-                      } else {
-                        setShowErrorPicker("");
                       }
+                      const today = new Date();
+                      today.setDate(today.getDate() + 1);
+                      today.setHours(0, 0, 0);
+                      today.setMilliseconds(0);
+                      console.log(
+                        22,
+                        datePlanWithoutFormatCall.getTime() >= today.getTime()
+                      );
+                      console.log(3, datePlanWithoutFormatCall.getTime());
+                      console.log(4, today.getTime());
+                      if (datePlanWithoutFormatCall.getTime() >= today.getTime()) {
+                        // setErrorMessage(
+                        //   "The selected date cannot be less than tomorrow"
+                        // );
+                        // return;
+                      } else {
+                        console.log("ACA")
+                        setShowErrorPicker(
+                          "The selected date cannot be less than tomorrow"
+                        );
+                        return;
+                      }
+
+
                       showModalPickDateTime(false);
                       handleConfirmVideoCall();
                     }}
