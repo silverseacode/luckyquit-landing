@@ -459,18 +459,21 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
 
   const uploadPhotoCertificates = async (url: string, file: File) => {
     setIsUploadingCertificate(true);
-    const copyImages = _.cloneDeep(imagesCertificate);
-    copyImages.push({ image: url });
-    setImageProfileCertificate(copyImages);
+    
 
     const formData = new FormData();
     formData.append("image", file);
 
-    await axios.post(
+    const response = await axios.post(
       `${API_URL}/user/uploadImageCertificate/${myUserId}`,
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );
+    const { image, fileName } = response.data;
+    const copyImages = _.cloneDeep(imagesCertificate);
+    copyImages.push({ image: image, fileName: fileName });
+    setImageProfileCertificate(copyImages);
+
     setIsUploadingCertificate(false);
   };
 
@@ -611,8 +614,9 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
     await removeCertificatesBE(myUserId, fileName);
     setIsUploadingCertificate(false);
   };
-  console.log("imageb", imageBackground);
-  console.log("bakc", user?.backgroundPicture);
+
+
+  const [errorSameCert,showErrorSameCert] = useState("")
   return (
     <>
       {isLoadingInitial ? (
@@ -1185,32 +1189,38 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                 justifyContent: "space-between",
               }}
             >
-              <View style={{flexDirection: "row",marginBottom: 20, justifyContent: "space-between"}}>
-              <span
+              <View
                 style={{
-                  paddingHorizontal: 20,
-                  fontSize: 25,
-                  color: Colors.blackCardDarkMode,
+                  flexDirection: "row",
+                  marginBottom: 20,
+                  justifyContent: "space-between",
                 }}
               >
-                About
-              </span>
-              {myUserId === user?.userId && (
-                <View>
-                  {!isEnableAbout && (
-                    <TouchableOpacity onPress={() => setIsEnableAbout(true)}>
-                      <EditIcon
-                        style={{ color: Colors.blackDefault, fontSize: 25 }}
-                      />
-                    </TouchableOpacity>
-                  )}
-                  {isEnableAbout && (
-                    <TouchableOpacity onPress={saveAbout}>
-                      <span style={{ fontSize: 17 }}>Done</span>
-                    </TouchableOpacity>
-                  )}
-                </View>
-              )}
+                <span
+                  style={{
+                    paddingHorizontal: 20,
+                    fontSize: 25,
+                    color: Colors.blackCardDarkMode,
+                  }}
+                >
+                  About
+                </span>
+                {myUserId === user?.userId && (
+                  <View>
+                    {!isEnableAbout && (
+                      <TouchableOpacity onPress={() => setIsEnableAbout(true)}>
+                        <EditIcon
+                          style={{ color: Colors.blackDefault, fontSize: 25 }}
+                        />
+                      </TouchableOpacity>
+                    )}
+                    {isEnableAbout && (
+                      <TouchableOpacity onPress={saveAbout}>
+                        <span style={{ fontSize: 17 }}>Done</span>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                )}
               </View>
               {myUserId === user?.userId && isEnableAbout && (
                 <View style={{ marginTop: 15 }}>
@@ -1236,9 +1246,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                 </View>
               )}
               {!isEnableAbout && aboutMe?.length > 0 && (
-                
-                    <div style={{ textAlign: "justify" }}>{aboutMe}</div>
-                  
+                <div style={{ textAlign: "justify" }}>{aboutMe}</div>
               )}
             </View>
           </View>
@@ -1320,53 +1328,59 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
               >
                 Certificates
               </span>
+              {imagesCertificate.length <= 3 && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    marginHorizontal: 20,
+                    marginTop: 20,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  
+                    <View
+                      style={{
+                        borderRadius: 8,
+                        marginRight: 15,
+                        borderColor: Colors.primary,
+                        borderWidth: 1,
+                        paddingHorizontal: 15,
+                        paddingVertical: 10,
+                      }}
+                    >
+                      <View>
+                        <label className={styles.label}>
+                          <input
+                            onChange={(event) => {
+                              if (isUploadingCertificate) {
+                                return;
+                              }
+                              const file = event.target.files[0];
+                              const url = URL.createObjectURL(file);
+                              (event.target as HTMLInputElement).value = '';
 
-              <View
-                style={{
-                  flexDirection: "row",
-                  marginHorizontal: 20,
-                  marginTop: 20,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <TouchableOpacity>
-                  <View
-                    style={{
-                      borderRadius: 8,
-                      marginRight: 15,
-                      borderColor: Colors.primary,
-                      borderWidth: 1,
-                      paddingHorizontal: 15,
-                      paddingVertical: 10,
-                    }}
-                  >
-                    <View>
-                      <label className={styles.label}>
-                        <input
-                          onChange={(event) => {
-                            if (isUploadingCertificate) {
-                              return;
-                            }
-                            const file = event.target.files[0];
-                            const url = URL.createObjectURL(file);
-                            uploadPhotoCertificates(url, file);
-                          }}
-                          id="file"
-                          accept="image/jpeg,image/png"
-                          name="fileToUpload"
-                          type="file"
-                        />
-                        <span style={{ color: Colors.primary }}>
-                          {isUploadingCertificate
-                            ? "Uplading..."
-                            : "Upload Photo"}
-                        </span>
-                      </label>
+                              uploadPhotoCertificates(url, file);
+
+                            }}
+                            id="file"
+                            accept="image/jpeg,image/png"
+                            name="fileToUpload"
+                            type="file"
+                          />
+                          <span style={{ color: Colors.primary }}>
+                            {isUploadingCertificate
+                              ? "Uplading..."
+                              : "Upload Photo"}
+                          </span>
+                        </label>
+                        
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              </View>
+                  
+                </View>
+              )}
+              {errorSameCert.length > 0 && <span style={{color:Colors.red}}>{errorSameCert}</span>}
 
               <View
                 style={{
@@ -1395,7 +1409,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                         <Image
                           height={400}
                           width={500}
-                          style={{ height: 400, width: 500 }}
+                          style={{ height: 400, width: 500, objectFit: "cover" }}
                           src={image.image}
                           alt="image"
                         />
