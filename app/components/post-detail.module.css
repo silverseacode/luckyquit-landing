@@ -67,3 +67,11 @@
     height: 331px;
     overflow-y: scroll;
   }
+  .inputAddComment:focus {
+    border: none;
+    outline: none;
+  }
+  .inputAddComment {
+    border: none;
+    outline: none;
+  }

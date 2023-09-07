@@ -1537,12 +1537,13 @@ export default function PostDetail({ postId }: any) {
               justifyContent: "space-between",
             }}
           >
-            <TextInput
+            <input
               value={comment}
               ref={inputRef}
-              onChangeText={handleTextChange}
+              className={styles.inputAddComment}
+              onChange={(e) => handleTextChange(e.target.value)}
               placeholder={`Add comment for ${postInfo?.firstName} ${postInfo?.lastName}`}
-              style={{ borderRadius: 8, width: 500, outline: "none" }}
+              style={{ borderRadius: 8, width: 500, outline: "none !important", border: "none !important" }}
             />
 
             <TouchableOpacity onPress={() => sendComment()}>
