@@ -318,7 +318,7 @@ const MessagesList = ({
                         : "normal",
                   }}
                 >
-                  {item?.messages?.[item?.messages?.length - 1]?.message}
+                  {item?.messages?.[item?.messages?.length - 1].isShare === true ? `Shared with you a post.` : item?.messages?.[item?.messages?.length - 1]?.message }
                 </span>
               </div>
             </View>

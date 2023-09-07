@@ -168,7 +168,7 @@ console.log("ENTA SHARE OON APP")
       sender: userSender.userId,
       receiver: activeUserToShare?.userId,
       message: messageRamdomToGenerateNewMessage, ///TODO COMPLETE
-      date: dateTimezone,
+      date: currentDatetime,
       profilePicture:
         userSender.profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
       isNotification: false,
@@ -196,6 +196,7 @@ console.log("ENTA SHARE OON APP")
       postIdOwnerPost: infoOwnerPostShare?.idv4,
       postUserIdOwnerPost: infoOwnerPostShare?.userId,
       likesOwnerPost: infoOwnerPostShare?.likes,
+      dateDefault: new Date()
     };
 
     //handleSendToSocketMessage(newMessageBE);

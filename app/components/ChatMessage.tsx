@@ -247,7 +247,7 @@ const ChatMessage = ({
               );
               const date = moment(dateItem);
               const timeAgo = date.fromNow();
-
+                console.log("item date defuat", item.dateDefault)
               const dateMessage = new Date(item.dateDefault)
               const formattedTime = dateMessage.toLocaleTimeString([], {
                 hour: "2-digit",
