@@ -1,6 +1,8 @@
 "use client";
 import { Colors } from "@/app/colors";
 import { View, TouchableOpacity, TextInput } from "react-native";
+import { Image as ImageRN } from "react-native";
+
 import {
   getRatingsBE,
   getUser,
@@ -44,7 +46,7 @@ import {
 } from "@/helpers/notifications";
 import mixpanel from "mixpanel-browser";
 import DeleteIcon from "@mui/icons-material/Delete";
-import '../../app/globals.css';
+import "../../app/globals.css";
 interface IProps {
   id: string;
   isUsername: boolean;
@@ -450,7 +452,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
   };
 
   const [imagesCertificate, setImageProfileCertificate] = useState<
-    { image: string, fileName: string }[]
+    { image: string; fileName: string }[]
   >([]);
 
   const [isUploadingCertificate, setIsUploadingCertificate] = useState(false);
@@ -609,7 +611,8 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
     await removeCertificatesBE(myUserId, fileName);
     setIsUploadingCertificate(false);
   };
-
+  console.log("imageb", imageBackground);
+  console.log("bakc", user?.backgroundPicture);
   return (
     <>
       {isLoadingInitial ? (
@@ -618,7 +621,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
         </div>
       ) : (
         <>
-          {condition || isLoadingInitial ? (
+          {isLoadingInitial ? (
             <View
               style={{
                 backgroundColor: Colors.darkGray,
@@ -634,14 +637,14 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                 height: 200,
               }}
             >
-              <Image
-                fill
-                style={{ objectFit: "cover" }}
-                src={
-                  imageBackground ? imageBackground : user?.backgroundPicture
-                }
+              {(imageBackground !== null || user?.backgroundPicture !== "") && 
+              <ImageRN
+                width={200}
+                height={200}
+                style={{ objectFit: "cover", width: "100%", height: 200 }}
+                source={{uri: user?.backgroundPicture !== "" ? user?.backgroundPicture : user?.backgroundPicture}}
                 alt="background"
-              />
+              />}
             </View>
           )}
           {!isLoadingInitial && (
