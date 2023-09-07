@@ -637,14 +637,20 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                 height: 200,
               }}
             >
-              {(imageBackground !== null || user?.backgroundPicture !== "") && 
-              <ImageRN
-                width={200}
-                height={200}
-                style={{ objectFit: "cover", width: "100%", height: 200 }}
-                source={{uri: user?.backgroundPicture !== "" && imageBackground === null ? user?.backgroundPicture : imageBackground}}
-                alt="background"
-              />}
+              {(imageBackground !== null || user?.backgroundPicture !== "") && (
+                <ImageRN
+                  width={200}
+                  height={200}
+                  style={{ objectFit: "cover", width: "100%", height: 200 }}
+                  source={{
+                    uri:
+                      user?.backgroundPicture !== "" && imageBackground === null
+                        ? user?.backgroundPicture
+                        : imageBackground,
+                  }}
+                  alt="background"
+                />
+              )}
             </View>
           )}
           {!isLoadingInitial && (
@@ -746,26 +752,26 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                                   //   )} */}
                                   {/* // {(imageProfile === "" || */}
                                   {/* //   imageProfile === null) && ( */}
-                                    <label className={styles.label}>
-                                      <input
-                                        onChange={(event) => {
-                                          const file = event.target.files[0];
-                                          const url = URL.createObjectURL(file);
-                                          pickImage(true, url, file);
-                                        }}
-                                        id="file"
-                                        accept="image/jpeg,image/png"
-                                        name="fileToUpload"
-                                        type="file"
-                                      />
+                                  <label className={styles.label}>
+                                    <input
+                                      onChange={(event) => {
+                                        const file = event.target.files[0];
+                                        const url = URL.createObjectURL(file);
+                                        pickImage(true, url, file);
+                                      }}
+                                      id="file"
+                                      accept="image/jpeg,image/png"
+                                      name="fileToUpload"
+                                      type="file"
+                                    />
 
-                                      <CameraFilled
-                                        style={{
-                                          fontSize: 25,
-                                          color: Colors.blackCardDarkMode,
-                                        }}
-                                      />
-                                    </label>
+                                    <CameraFilled
+                                      style={{
+                                        fontSize: 25,
+                                        color: Colors.blackCardDarkMode,
+                                      }}
+                                    />
+                                  </label>
                                   {/* // )} */}
                                 </View>
                               )}
@@ -874,28 +880,28 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                               )} */}
                             {/* {(imageBackground === "" ||
                               imageBackground === null) && ( */}
-                              <label className={styles.label}>
-                                <input
-                                  onChange={(event) => {
-                                    const file = event.target.files[0];
-                                    const url = URL.createObjectURL(file);
-                                    pickImage(false, url, file);
-                                  }}
-                                  id="file"
-                                  accept="image/jpeg,image/png"
-                                  name="fileToUpload"
-                                  type="file"
-                                />
+                            <label className={styles.label}>
+                              <input
+                                onChange={(event) => {
+                                  const file = event.target.files[0];
+                                  const url = URL.createObjectURL(file);
+                                  pickImage(false, url, file);
+                                }}
+                                id="file"
+                                accept="image/jpeg,image/png"
+                                name="fileToUpload"
+                                type="file"
+                              />
 
-                                <span>
-                                  <CameraFilled
-                                    style={{
-                                      fontSize: 25,
-                                      color: Colors.blackCardDarkMode,
-                                    }}
-                                  />
-                                </span>
-                              </label>
+                              <span>
+                                <CameraFilled
+                                  style={{
+                                    fontSize: 25,
+                                    color: Colors.blackCardDarkMode,
+                                  }}
+                                />
+                              </span>
+                            </label>
                             {/* )} */}
                           </View>
                         )}
@@ -1165,99 +1171,77 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
             </>
           )}
 
-          {myUserId === user?.userId && (
+          <View
+            style={{
+              marginTop: 10,
+              backgroundColor: Colors.white,
+              paddingHorizontal: 20,
+              paddingVertical: 20,
+            }}
+          >
             <View
               style={{
-                marginTop: 10,
-                backgroundColor: Colors.white,
-                paddingHorizontal: 20,
-                paddingVertical: 20,
+                flexDirection: "column",
+                justifyContent: "space-between",
               }}
             >
-              <View
+              <View style={{flexDirection: "row",marginBottom: 20, justifyContent: "space-between"}}>
+              <span
                 style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
+                  paddingHorizontal: 20,
+                  fontSize: 25,
+                  color: Colors.blackCardDarkMode,
                 }}
               >
-                <span
-                  style={{
-                    paddingHorizontal: 20,
-                    fontSize: 25,
-                    color: Colors.blackCardDarkMode,
-                  }}
-                >
-                  About
-                </span>
-                {myUserId === user?.userId && (
-                  <View>
-                    {!isEnableAbout && (
-                      <TouchableOpacity onPress={() => setIsEnableAbout(true)}>
-                        <EditIcon
-                          style={{ color: Colors.blackDefault, fontSize: 25 }}
-                        />
-                      </TouchableOpacity>
-                    )}
-                    {isEnableAbout && (
-                      <TouchableOpacity onPress={saveAbout}>
-                        <span style={{ fontSize: 17 }}>Done</span>
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                )}
+                About
+              </span>
+              {myUserId === user?.userId && (
+                <View>
+                  {!isEnableAbout && (
+                    <TouchableOpacity onPress={() => setIsEnableAbout(true)}>
+                      <EditIcon
+                        style={{ color: Colors.blackDefault, fontSize: 25 }}
+                      />
+                    </TouchableOpacity>
+                  )}
+                  {isEnableAbout && (
+                    <TouchableOpacity onPress={saveAbout}>
+                      <span style={{ fontSize: 17 }}>Done</span>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              )}
               </View>
-              <View style={{ marginTop: 15 }}>
-                <textarea
-                  value={aboutMe}
-                  readOnly={!isEnableAbout}
-                  maxLength={1000}
-                  rows={isEnableAbout ? 30 : 2}
-                  onChange={(e) => setAboutMe(e.target.value)}
-                  placeholder={`Tell us a little about yourself and your interests.`}
-                  style={{
-                    borderRadius: 8,
-                    marginLeft: 20,
-                    fontSize: 19,
-                    color: isEnableAbout
-                      ? Colors.blackCardDarkMode
-                      : Colors.darkGray,
-                    border: "none",
-                    resize: "none",
-                    outline: isEnableDescriptionAboutMe ? `inherit` : "none",
-                  }}
-                />
-              </View>
+              {myUserId === user?.userId && isEnableAbout && (
+                <View style={{ marginTop: 15 }}>
+                  <textarea
+                    value={aboutMe}
+                    readOnly={!isEnableAbout}
+                    maxLength={1000}
+                    rows={30}
+                    onChange={(e) => setAboutMe(e.target.value)}
+                    placeholder={`Tell us a little about yourself and your interests.`}
+                    style={{
+                      borderRadius: 8,
+                      marginLeft: 20,
+                      fontSize: 19,
+                      color: isEnableAbout
+                        ? Colors.blackCardDarkMode
+                        : Colors.darkGray,
+                      border: "none",
+                      resize: "none",
+                      outline: isEnableDescriptionAboutMe ? `inherit` : "none",
+                    }}
+                  />
+                </View>
+              )}
+              {!isEnableAbout && aboutMe?.length > 0 && (
+                
+                    <div style={{ textAlign: "justify" }}>{aboutMe}</div>
+                  
+              )}
             </View>
-          )}
-
-          {myUserId !== user?.userId && aboutMe?.length > 0 && (
-            <View
-              style={{
-                marginTop: 10,
-                backgroundColor: Colors.white,
-                paddingHorizontal: 20,
-                paddingVertical: 20,
-                height: "auto",
-              }}
-            >
-              <View>
-                {/* <TextInput
-                  value={aboutMe}
-                  multiline
-                  editable={false}
-                  maxLength={500}
-                  onChangeText={setAboutMe}
-                  style={{
-                    borderRadius: 8,
-                    marginLeft: 20,
-                    maxWidth: 300,
-                    fontSize: 19,
-                  }}
-                /> */}
-                <div style={{ textAlign: "justify" }}>{aboutMe}</div>
-              </View>
-            </View>
-          )}
+          </View>
 
           {myUserId !== user?.userId && imagesCertificate.length > 0 && (
             <View
