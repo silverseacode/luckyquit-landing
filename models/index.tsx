@@ -228,6 +228,7 @@ export type Comment = {
   timeAgo: string;
   initials: string;
   backgroundColor: string;
+  idv4: string;
   replies: {
     _id: number;
     userName: string;

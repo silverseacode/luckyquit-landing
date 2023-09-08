@@ -44,7 +44,7 @@ import { getFollowersBE } from "@/helpers/followers";
 export default function PostDetail({ postId }: any) {
   const router = useRouter();
   const socket = useSocket();
-
+console.log("S", socket)
   const [postInfo, setPostInfo] = useState();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -90,18 +90,20 @@ export default function PostDetail({ postId }: any) {
     useState(true);
   useEffect(() => {
     async function getReceiverPushToken() {
+      console.log("postInfo?.userId",postInfo?.userId)
       const userRecevier = await getUser(postInfo?.userId);
-      setPushTokenReceiver(userRecevier[0].pushToken);
-      setOs(userRecevier[0].os);
-      setInitials(userRecevier[0].initials);
-      setBackgroundColor(userRecevier[0].backgroundColor);
-      setIsAllowNotificationComments(userRecevier[0].isComments);
-      setIsAllowNotificationReplies(userRecevier[0].isReplies);
-      setIsAllowNotificationLikes(userRecevier[0].isLikes);
+      console.log("USER RECIEVER123", userRecevier)
+      setPushTokenReceiver(userRecevier.response[0]?.pushToken);
+      setOs(userRecevier.response[0]?.os);
+      setInitials(userRecevier.response[0]?.initials);
+      setBackgroundColor(userRecevier.response[0]?.backgroundColor);
+      setIsAllowNotificationComments(userRecevier.response[0]?.isComments);
+      setIsAllowNotificationReplies(userRecevier.response[0]?.isReplies);
+      setIsAllowNotificationLikes(userRecevier.response[0]?.isLikes);
     }
 
     getReceiverPushToken();
-  }, []);
+  }, [postInfo]);
 
   const [userNameInInput, setUserNameInInput] = useState("");
   const [commentIdToReply, setCommentIdToReply] = useState("0");
@@ -196,8 +198,9 @@ export default function PostDetail({ postId }: any) {
 
         await sendNotification(newNotification);
         const dataSocket = {
-          receiver: user?.userId,
+          receiver: postInfo?.userId,
         };
+
 
         socket?.emit("send_notification_request", dataSocket);
         if (isAllowNotificationReplies) {
@@ -272,14 +275,17 @@ export default function PostDetail({ postId }: any) {
 
         await sendNotification(newNotification);
         const dataSocket = {
-          receiver: user?.userId,
+          receiver: postInfo?.userId,
         };
 
-        if (isAllowNotificationComments) {
-          if (os === "android") {
+        console.log("USER id13", dataSocket.receiver)
+
+        socket?.emit("send_notification_request", dataSocket);
+        //if (isAllowNotificationComments) {
+          if (os !== "android") {
             const pushNotification = {
               title: `New comment on your post`,
-              body: `@${userName} commented on your post`,
+              body: `${fullNameSender} commented on your post`,
               data: { isFrom: "Comments", postId: postId },
               token: pushTokenReceiver,
             };
@@ -287,15 +293,15 @@ export default function PostDetail({ postId }: any) {
           } else {
             const pushNotification = {
               title: `New comment on your post`,
-              body: `@${userName} commented on your post`,
+              body: `${fullNameSender} commented on your post`,
               data: { isFrom: "Comments", postId: postId },
               token: pushTokenReceiver,
             };
             sendPushNotificationAndroid(pushNotification);
           }
-        }
+       //}
 
-        socket?.emit("send_notification_request", dataSocket);
+        
       }
     }
     setComment("");
@@ -965,7 +971,7 @@ export default function PostDetail({ postId }: any) {
             const date = moment(dateItem);
             const timeAgo = date.fromNow();
             return (
-              <View key={comment?._id} style={{ marginTop: 20 }}>
+              <View key={comment?.idv4} style={{ marginTop: 20 }}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <TouchableOpacity
                     onPress={() =>

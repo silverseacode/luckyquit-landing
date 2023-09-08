@@ -51,7 +51,7 @@ const Header = ({isChangesWithoutSave,setShowModal}: IHeader) => {
       const data = await getUser();
       const user = data.response[0];
       setUser(user);
-
+      console.log("SOCKET HEADER", socket)
       if (socket !== undefined) {
         socket?.on("new_message", async function (socketData: MessageBody) {
           setNumberOfNewMessages((prev) => {
