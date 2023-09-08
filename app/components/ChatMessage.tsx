@@ -626,27 +626,27 @@ const ChatMessage = ({
     const receiverBE = await getUser(userId);
 
     const isAllowNotificationChatsLocal = receiverBE.reponse?.[0]?.isChats;
-    if (isAllowNotificationChatsLocal) {
-      if (os !== "") {
+    //if (isAllowNotificationChatsLocal) {
+      //if (os !== "") {
         if (os !== "android") {
           const data = {
             token: pushTokenReceiver,
             title: `New message`,
-            body: `@${senderFullName} write you a message`,
+            body: `${senderFullName} write you a message`,
             data: { isFrom: "Message", receiver: user?.userId },
           };
           await sendPushNotification(data);
         } else {
           const pushNotification = {
             title: `New message`,
-            body: `@${senderFullName} write you a message`,
+            body: `${senderFullName} write you a message`,
             data: { isFrom: "Message", receiver: user?.userId },
             token: pushTokenReceiver,
           };
           sendPushNotificationAndroid(pushNotification);
         }
-      }
-    }
+      //}
+    //}
   };
 
   const [reevalute, setReevalute] = useState(false);
