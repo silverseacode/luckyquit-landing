@@ -144,26 +144,40 @@ const ChatMessage = ({
       setSenderFullName(`${user.firstName} ${user.lastName}`);
       setInitials(user.initials);
       setBackgroundColor(user.backgroundColor);
-      let planEnd = new Date();
+      let planEnd = undefined;
       let isPlanEndExpireLocal;
       if (user.quitters.length > 0) {
         user.quitters.map((quitter: { userId: string; planEnd: string }) => {
           if (quitter.userId === receiver?.userId) {
-            planEnd = new Date(quitter.planEnd);
+            planEnd = quitter.planEnd;
           }
         });
         const today = new Date();
-        isPlanEndExpireLocal = today > planEnd;
+        let planEndDate;
+        if (planEnd !== undefined) {
+          const [month, day, year] = planEnd?.split("/").map(Number);
+          planEndDate = new Date(year, month - 1, day); // Month is 0-based
+        }
+
+        isPlanEndExpireLocal =
+          planEnd === undefined ? true : today > planEndDate;
         setPlanExpire(isPlanEndExpireLocal);
       } else {
         if (user.coaches.length > 0) {
           user.coaches.map((coach: { userId: string; planEnd: string }) => {
             if (coach.userId === receiver?.userId) {
-              planEnd = new Date(coach.planEnd);
+              planEnd = coach.planEnd;
             }
           });
           const today = new Date();
-          isPlanEndExpireLocal = today > planEnd;
+          let planEndDate;
+          if (planEnd !== undefined) {
+            const [month, day, year] = planEnd?.split("/").map(Number);
+            planEndDate = new Date(year, month - 1, day); // Month is 0-based
+          }
+
+          isPlanEndExpireLocal =
+            planEnd === undefined ? true : today > planEndDate;
           setPlanExpire(isPlanEndExpireLocal);
         }
       }
@@ -247,8 +261,8 @@ const ChatMessage = ({
               );
               const date = moment(dateItem);
               const timeAgo = date.fromNow();
-                console.log("item date defuat", item.dateDefault)
-              const dateMessage = new Date(item.dateDefault)
+              console.log("item date defuat", item.dateDefault);
+              const dateMessage = new Date(item.dateDefault);
               const formattedTime = dateMessage.toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -301,8 +315,7 @@ const ChatMessage = ({
                           fontSize: 12,
                         }}
                       >
-                        {"\u2022"}{" "}
-                        {formattedTime}
+                        {"\u2022"} {formattedTime}
                       </span>
                     </View>
                   )}
@@ -591,7 +604,7 @@ const ChatMessage = ({
       backgroundColorSender: user?.backgroundColor ?? "",
       initialsReceiver: `${receiver?.firstName[0]} ${receiver?.lastName[0]}`,
       backgroundColorReceiver: receiver?.backgroundColor,
-      dateDefault: new Date()
+      dateDefault: new Date(),
     };
 
     const dateItem = moment(dateTimezone, "M/D/YYYY, h:mm:ss A");
@@ -611,7 +624,7 @@ const ChatMessage = ({
       backgroundColorSender: user?.backgroundColor ?? "",
       initialsReceiver: `${receiver?.firstName[0]} ${receiver?.lastName[0]}`,
       backgroundColorReceiver: receiver?.backgroundColor,
-      dateDefault: new Date()
+      dateDefault: new Date(),
     };
     console.log("111 newMessageLocal", newMessageLocal);
     handleMessages(newMessageLocal);
@@ -627,23 +640,23 @@ const ChatMessage = ({
 
     const isAllowNotificationChatsLocal = receiverBE.reponse?.[0]?.isChats;
     if (isAllowNotificationChatsLocal) {
-        if (os !== "android") {
-          const data = {
-            token: pushTokenReceiver,
-            title: `New message`,
-            body: `${senderFullName} write you a message`,
-            data: { isFrom: "Message", receiver: user?.userId },
-          };
-          await sendPushNotification(data);
-        } else {
-          const pushNotification = {
-            title: `New message`,
-            body: `${senderFullName} write you a message`,
-            data: { isFrom: "Message", receiver: user?.userId },
-            token: pushTokenReceiver,
-          };
-          sendPushNotificationAndroid(pushNotification);
-        }
+      if (os !== "android") {
+        const data = {
+          token: pushTokenReceiver,
+          title: `New message`,
+          body: `${senderFullName} write you a message`,
+          data: { isFrom: "Message", receiver: user?.userId },
+        };
+        await sendPushNotification(data);
+      } else {
+        const pushNotification = {
+          title: `New message`,
+          body: `${senderFullName} write you a message`,
+          data: { isFrom: "Message", receiver: user?.userId },
+          token: pushTokenReceiver,
+        };
+        sendPushNotificationAndroid(pushNotification);
+      }
     }
   };
 
@@ -713,14 +726,21 @@ const ChatMessage = ({
 
   const [errorMessage, setErrorMessage] = useState("");
 
-
   const handleConfirmPayment = async () => {
     showModalConfirmPayment(false);
 
     await updatePaypalEmail(emailPaypal, user?.userId);
 
     const priceTotal = Number(price) + Number(price) * 0.1;
-    const messageNotification = `${receiver?.firstName} ${receiver?.lastName} will receive a notification with a payment link with the plan duration of ${quantity} ${active} with the total price of $${priceTotal} USD`;
+    const messageNotification = `${receiver?.firstName} ${
+      receiver?.lastName
+    } will receive a notification with a payment link with the price of $${Number(
+      price
+    ).toFixed(2)} + $${(Number(price) * 0.1).toFixed(
+      2
+    )} this last one is the fee that goes for Lucky Quit, so the total price will be $${Number(
+      priceTotal
+    ).toFixed(2)} USD, the plan will expire ${textDatePlan}`;
     const currentDatetime = new Date();
     const options = { timeZone: timezone };
     const dateTimezone = currentDatetime.toLocaleString("en-US", options);
@@ -764,8 +784,13 @@ const ChatMessage = ({
     handleMessages(newMessageLocal);
     await saveMessageBE(newMessageBE);
 
-    const body = `${senderFullName} send you a payment link with the plan duration of ${quantity} ${active} with the total price of $${priceTotal} USD`;
-
+    const body = `${senderFullName} send you a payment link with the price of $${Number(
+      price
+    ).toFixed(2)} + $${(Number(price) * 0.1).toFixed(
+      2
+    )} this last one is the fee that goes for Lucky Quit, so the total price will be $${Number(
+      priceTotal
+    ).toFixed(2)} USD, the plan will expire ${textDatePlan}`;
     const newNotification = {
       sender: sender,
       receiver: receiver?.userId,
@@ -790,7 +815,7 @@ const ChatMessage = ({
       },
       initials: user?.initials,
       backgroundColor: user?.backgroundColor,
-      expirationDate: textDatePlan
+      expirationDate: textDatePlan,
     };
 
     await sendNotification(newNotification);
@@ -968,7 +993,7 @@ const ChatMessage = ({
     }
   };
 
-  const canHaveVideoCall = user?.type === "coach" || receiver?.type === "coach"
+  const canHaveVideoCall = user?.type === "coach" || receiver?.type === "coach";
   return (
     <View style={{ backgroundColor: Colors.lightGray }}>
       <View
@@ -998,11 +1023,12 @@ const ChatMessage = ({
           </View>
         </Pressable>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          {roomId.trim() !== "-" && canHaveVideoCall &&
-          <InfoCircleOutlined
-            onClick={handleClick}
-            style={{ fontSize: 25, marginRight: 25 }}
-          />}
+          {roomId.trim() !== "-" && canHaveVideoCall && (
+            <InfoCircleOutlined
+              onClick={handleClick}
+              style={{ fontSize: 25, marginRight: 25 }}
+            />
+          )}
           <Popper id={id} open={open} anchorEl={anchorEl} transition>
             {({ TransitionProps }) => (
               <Fade {...TransitionProps} timeout={350}>
@@ -1014,7 +1040,8 @@ const ChatMessage = ({
                     bgcolor: "background.paper",
                   }}
                 >
-                  Videocalls are currently only available between web-to-web desktop.
+                  Videocalls are currently only available between web-to-web
+                  desktop.
                 </Box>
               </Fade>
             )}
@@ -1055,8 +1082,8 @@ const ChatMessage = ({
               <TouchableOpacity
                 onPress={() => {
                   if (isPlanEndExpire === false) return;
-                  setTextDatePlan("")
-                    setPrice("");
+                  setTextDatePlan("");
+                  setPrice("");
                   showPlanModal(true);
                 }}
               >
@@ -1284,6 +1311,13 @@ const ChatMessage = ({
                   </span>
                 </div>
               </div>
+              <div>
+                <InfoIcon style={{ color: "orange", fontSize: 30 }} />
+                <span>
+                  This is the final date by which you can add modules and
+                  exercises to the quitter.
+                </span>
+              </div>
               <View
                 style={{
                   flexDirection: "row",
@@ -1343,7 +1377,7 @@ const ChatMessage = ({
               >
                 <TouchableOpacity
                   onPress={() => {
-                    setTextDatePlan("")
+                    setTextDatePlan("");
                     setPrice("");
                     showPlanModal(false);
                   }}
@@ -1593,7 +1627,10 @@ const ChatMessage = ({
           showModalPickDateTime(false);
         }}
       >
-        <div style={{height: showErrorPicker.length > 0 ? 360 : 330 }} className={styles.containerModalEvent}>
+        <div
+          style={{ height: showErrorPicker.length > 0 ? 360 : 330 }}
+          className={styles.containerModalEvent}
+        >
           <View style={{ backgroundColor: Colors.white }}>
             <View
               style={{
@@ -1633,7 +1670,7 @@ const ChatMessage = ({
                       <span style={{ fontWeight: "600" }}>{textDate}</span>
                     </View>
                   )}
-                  
+
                   <View
                     style={{
                       flexDirection: "row",
@@ -1730,7 +1767,7 @@ const ChatMessage = ({
                     flexDirection: "row",
                     justifyContent: "center",
                     alignItems: "center",
-                    marginTop: showErrorPicker.length > 0 ? 15 : 40  ,
+                    marginTop: showErrorPicker.length > 0 ? 15 : 40,
                   }}
                 >
                   <TouchableOpacity
@@ -1753,7 +1790,6 @@ const ChatMessage = ({
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => {
-
                       setShowErrorPicker("");
                       if (textDate.trim() === "") {
                         setShowErrorPicker(
@@ -1771,19 +1807,20 @@ const ChatMessage = ({
                       );
                       console.log(3, datePlanWithoutFormatCall.getTime());
                       console.log(4, today.getTime());
-                      if (datePlanWithoutFormatCall.getTime() >= today.getTime()) {
+                      if (
+                        datePlanWithoutFormatCall.getTime() >= today.getTime()
+                      ) {
                         // setErrorMessage(
                         //   "The selected date cannot be less than tomorrow"
                         // );
                         // return;
                       } else {
-                        console.log("ACA")
+                        console.log("ACA");
                         setShowErrorPicker(
                           "The selected date cannot be less than tomorrow"
                         );
                         return;
                       }
-
 
                       showModalPickDateTime(false);
                       handleConfirmVideoCall();
