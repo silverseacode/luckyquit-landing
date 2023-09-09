@@ -1,17 +1,12 @@
 import { Colors } from "@/app/colors";
 import styles from "./chat.module.css";
-import {
-  View,
-  Pressable,
-  ScrollView,
-  TextInput,
-} from "react-native";
+import { View, Pressable, ScrollView, TextInput } from "react-native";
 import { useEffect, useState } from "react";
 import { Message, User } from "@/models";
 import { getFollowersBE } from "@/helpers/followers";
 import { getChatsBE } from "@/helpers/chats";
 import { SearchOutlined } from "@ant-design/icons";
-import ChatMessage  from "../components/ChatMessage";
+import ChatMessage from "../components/ChatMessage";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import Image from "next/image";
 interface IProps {
@@ -43,10 +38,10 @@ const Chat = ({
       backgroundColor: string;
     }[]
   >([]);
-    const[isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     async function getInitialData() {
-      setIsLoading(true)
+      setIsLoading(true);
       const itemUUID = localStorage.getItem("UUID");
       const UUID = itemUUID ? itemUUID : null;
       const dataFollowers = await getFollowersBE(UUID);
@@ -54,7 +49,7 @@ const Chat = ({
       // if (dataFollowers.response?.users.length > 0) {
       //   setReceiver({ receiver: dataFollowers.response?.users[0] });
       // }
-      setIsLoading(false)
+      setIsLoading(false);
     }
 
     getInitialData();
@@ -115,7 +110,7 @@ const Chat = ({
                       maxWidth: 400,
                       paddingBottom: 20,
                       flexDirection: "row",
-                      display: "inline-flex"
+                      display: "inline-flex",
                     }}
                     key={item.userId}
                   >
@@ -127,8 +122,8 @@ const Chat = ({
                         {item.profilePicture !== "" &&
                         item.profilePicture !== undefined ? (
                           <Image
-                          alt="profile picture"
-                            src={item.profilePicture }
+                            alt="profile picture"
+                            src={item.profilePicture}
                             height={60}
                             width={60}
                             style={{
@@ -151,8 +146,7 @@ const Chat = ({
                             <span
                               style={{
                                 color: Colors.blackDefault,
-                                fontSize: 16
-                                
+                                fontSize: 16,
                               }}
                             >
                               {item.initials}
@@ -161,8 +155,8 @@ const Chat = ({
                         )}
                       </Pressable>
                       <View style={{ marginLeft: 10, marginTop: 20 }}>
-                        <span >{item.firstName}</span>
-                        <span >{item.lastName}</span>
+                        <span>{item.firstName}</span>
+                        <span>{item.lastName}</span>
                       </View>
                     </View>
                     {item.isConnected && (
@@ -188,35 +182,35 @@ const Chat = ({
         {followers.length === 0 && (
           <div className={styles.containerEmptyState}>
             {isLoading ? (
-            <div className={styles.spinnerOverlay}>
-              <div className={styles.spinnerContainer}></div>
-            </div>
-          ) : (
-            <>
-            <PeopleAltIcon
-              style={{
-                fontSize: 50,
-                color: Colors.darkGray,
-                textAlign: "center",
-              }}
-            />
-            <p
-              style={{
-                textAlign: "center",
-                fontSize: 18,
-                color: Colors.darkGray,
-              }}
-            >
-              You don't have any connections at the moment. Start connecting
-              with people, and they will appear here.
-            </p>
-            </>
-          )}
+              <div className={styles.spinnerOverlay}>
+                <div className={styles.spinnerContainer}></div>
+              </div>
+            ) : (
+              <>
+                <PeopleAltIcon
+                  style={{
+                    fontSize: 50,
+                    color: Colors.darkGray,
+                    textAlign: "center",
+                  }}
+                />
+                <p
+                  style={{
+                    textAlign: "center",
+                    fontSize: 18,
+                    color: Colors.darkGray,
+                  }}
+                >
+                  You don't have any connections at the moment. Start connecting
+                  with people, and they will appear here.
+                </p>
+              </>
+            )}
           </div>
         )}
       </div>
 
-      {receiver && (
+      {receiver ? (
         <ChatMessage
           user={user}
           setTriggerChange={setTriggerChange}
@@ -224,9 +218,23 @@ const Chat = ({
           setMessageSend={setMessageSend}
           receiverParam={receiver}
         />
+      ) : (
+        <div style={{backgroundColor: Colors.white, height: 350, width: "100%", display: "flex", justifyContent: "center", alignItems: "center", marginTop: 40, }}>
+          <p
+            style={{
+              textAlign: "center",
+              fontSize: 18,
+              color: Colors.darkGray,
+              paddingRight: 40,
+              paddingLeft: 40
+            }}
+          >
+            You don't have any conversation at the moment.
+          </p>
+        </div>
       )}
     </>
   );
 };
 
-export default Chat
+export default Chat;
