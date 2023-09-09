@@ -850,13 +850,6 @@ const ChatMessage = ({
         sendPushNotificationAndroid(pushNotification);
       }
     }
-    mixpanel.track("Payment web", {
-      amountPayment: Number(price),
-      payment: {
-        type: active,
-        quantity: Number(quantity),
-      },
-    });
   };
 
   const [isOpenPickerDateTime, showModalPickDateTime] = useState(false);
@@ -990,6 +983,21 @@ const ChatMessage = ({
       const formattedResult = `${month}/${day}/${year}`;
       setTextDatePlan(formattedResult);
       showDatePickerPlan(false);
+    }
+  };
+  const [isErrorEmail, setIsErrorEmail] = useState(false);
+
+  const handleValidationEmail = (value: string) => {
+    setEmailPaypal(value);
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (value.trim().length > 0) {
+      if (regex.test(value)) {
+        setIsErrorEmail(false);
+      } else {
+        setIsErrorEmail(true);
+      }
+    } else {
+      setIsErrorEmail(false);
     }
   };
 
@@ -1214,7 +1222,14 @@ const ChatMessage = ({
       >
         <div className={styles.containerModal}>
           <div className={styles.modal}>
-            <View style={{ marginTop: 20, width: 580, paddingLeft: 40, marginRight: 45 }}>
+            <View
+              style={{
+                marginTop: 20,
+                width: 580,
+                paddingLeft: 40,
+                marginRight: 45,
+              }}
+            >
               <span
                 style={{
                   color: Colors.blackDefault,
@@ -1311,8 +1326,17 @@ const ChatMessage = ({
                   </span>
                 </div>
               </div>
-              <div style={{display: "flex", alignItems: "center", width: 550, marginTop: 20}}>
-                <InfoIcon style={{ color: "orange", fontSize: 30, marginRight: 5 }} />
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  width: 550,
+                  marginTop: 20,
+                }}
+              >
+                <InfoIcon
+                  style={{ color: "orange", fontSize: 30, marginRight: 5 }}
+                />
                 <span>
                   This is the final date by which you can add modules and
                   exercises to the quitter.
@@ -1323,10 +1347,12 @@ const ChatMessage = ({
                   flexDirection: "row",
                   marginTop: 20,
                   alignItems: "center",
-                  width: 550
+                  width: 550,
                 }}
               >
-                <InfoIcon style={{ color: "orange", fontSize: 30,marginRight: 5 }} />
+                <InfoIcon
+                  style={{ color: "orange", fontSize: 30, marginRight: 5 }}
+                />
                 <span style={{ maxWidth: 550 }}>
                   Take in consideration that it is a one time payment{" "}
                   <span style={{ fontWeight: "600" }}>not a subscription</span>.
@@ -1340,9 +1366,9 @@ const ChatMessage = ({
                 }}
               >
                 <InfoIcon style={{ color: "grey", fontSize: 25 }} />
-                <span style={{marginLeft: 10, width: 550 }}>
-                A 10% charge will be applied to the price for quitters,
-                and this amount will contribute to the Lucky Quit fund.
+                <span style={{ marginLeft: 10, width: 550 }}>
+                  A 10% charge will be applied to the price for quitters, and
+                  this amount will contribute to the Lucky Quit fund.
                 </span>
               </View>
               <View
@@ -1511,7 +1537,13 @@ const ChatMessage = ({
               </View>
               <>
                 <View>
-                  <span style={{ fontWeight: "600", marginTop: 20, marginBottom: 15 }}>
+                  <span
+                    style={{
+                      fontWeight: "600",
+                      marginTop: 20,
+                      marginBottom: 15,
+                    }}
+                  >
                     Is this your email of PayPal?
                   </span>
                 </View>
@@ -1521,7 +1553,7 @@ const ChatMessage = ({
                     value={emailPaypal}
                     autoCorrect={false}
                     autoCapitalize="none"
-                    onChangeText={setEmailPaypal}
+                    onChangeText={handleValidationEmail}
                     placeholder="Your PayPal email"
                     style={{
                       borderRadius: 8,
@@ -1533,6 +1565,11 @@ const ChatMessage = ({
                     }}
                   />
                 </View>
+                {isErrorEmail && (
+                  <span style={{ color: Colors.red, textAlign: "center", marginBottom: 15 }}>
+                    Invalid email format.
+                  </span>
+                )}
                 <View style={{ flexDirection: "row", marginBottom: 10 }}>
                   <InfoIcon style={{ color: "orange", fontSize: 25 }} />
                   <span style={{ marginLeft: 10, fontWeight: "600" }}>
@@ -1599,7 +1636,12 @@ const ChatMessage = ({
                     <span style={{ color: Colors.white }}>Cancel</span>
                   </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleConfirmPayment()}>
+                <TouchableOpacity
+                  onPress={() => {
+                    if (isErrorEmail) return;
+                    handleConfirmPayment();
+                  }}
+                >
                   <View
                     style={{
                       backgroundColor: Colors.primary,
