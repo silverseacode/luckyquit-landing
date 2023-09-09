@@ -312,7 +312,7 @@ const PostsHome = ({
         };
 
         await sendNotification(newNotification);
-        //if (value.isAllowLikesNotification) {
+        if (value.isAllowLikesNotification) {
           if (value.os !== "android") {
             const data = {
               token: value.ownerPostToken,
@@ -330,7 +330,7 @@ const PostsHome = ({
             };
             await sendPushNotificationAndroid(pushNotification);
           }
-        //}
+        }
       }
       const dataSocket = {
         receiver: user?.userId,

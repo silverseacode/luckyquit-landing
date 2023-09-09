@@ -378,8 +378,8 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
       date: new Date(),
     };
     const response = await createInvitationBE(data);
-
-    if (user?.isFollowers) {
+    const userBE = await getUser(user?.userId);
+    if (userBE.response[0]?.isFollowers) {
       if (user?.os !== "android") {
         const dataPush = {
           token: user?.pushToken,
