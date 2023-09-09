@@ -157,7 +157,8 @@ const CardPost = ({
   const shareOnApp = async () => {
     //activeUserToShae save here item entero para campos receiver
     // hacer get user UUID para sender
-console.log("ENTA SHARE OON APP")
+    const data =  await getUser(activeUserToShare?.userId);
+    const activeUserToShareBE: User = data.response[0];
     const userData = await getUser();
     const userSender: User = userData.response[0];
     console.log(1,userSender)
@@ -165,25 +166,25 @@ console.log("ENTA SHARE OON APP")
     const messageRamdomToGenerateNewMessage = newUUID;
 
     const currentDatetime = new Date();
-    const options = { timeZone: activeUserToShare?.timezone[0] };
+    const options = { timeZone: activeUserToShareBE?.timezone[0] };
     const dateTimezone = currentDatetime.toLocaleString("en-US", options);
     const newMessageBE = {
       sender: userSender.userId,
-      receiver: activeUserToShare?.userId,
+      receiver: activeUserToShareBE?.userId,
       message: messageRamdomToGenerateNewMessage, ///TODO COMPLETE
       date: currentDatetime,
       profilePicture:
         userSender.profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
       isNotification: false,
       senderFullName: `${userSender?.firstName} ${userSender?.lastName}`,
-      receiverFullName: `${activeUserToShare?.firstName} ${activeUserToShare?.lastName}`,
+      receiverFullName: `${activeUserToShareBE?.firstName} ${activeUserToShareBE?.lastName}`,
       receiverProfilePicture:
-        activeUserToShare?.profilePicture.split?.("/")?.[3]?.split?.("?")?.[0] ??
+        activeUserToShareBE?.profilePicture.split?.("/")?.[3]?.split?.("?")?.[0] ??
         "",
       initialsSender: `${userSender?.firstName[0]} ${userSender?.lastName[0]}`,
       backgroundColorSender: userSender?.backgroundColor,
-      initialsReceiver: `${activeUserToShare?.firstName[0]} ${activeUserToShare?.lastName[0]}`,
-      backgroundColorReceiver: activeUserToShare?.backgroundColor,
+      initialsReceiver: `${activeUserToShareBE?.firstName[0]} ${activeUserToShareBE?.lastName[0]}`,
+      backgroundColorReceiver: activeUserToShareBE?.backgroundColor,
       isShare: true,
       fullNameOwnerPost: `${infoOwnerPostShare?.firstName} ${infoOwnerPostShare?.lastName}`,
       profilePictureOwnerPost:
@@ -205,32 +206,30 @@ console.log("ENTA SHARE OON APP")
     //handleSendToSocketMessage(newMessageBE);
     socket?.emit("send_message", newMessageBE);
     await saveMessageBE(newMessageBE);
-    console.log("ACTIVE", activeUserToShare);
+    console.log("ACTIVE", activeUserToShareBE);
 
     if (
-      activeUserToShare?.isChats &&
-      activeUserToShare?.pushToken !== "" &&
-      activeUserToShare?.pushToken !== undefined
+      activeUserToShareBE?.isChats
     ) {
-      if (activeUserToShare?.os !== "") {
-        if (activeUserToShare?.os !== "android") {
+      //if (activeUserToShare?.os !== "") {
+        if (activeUserToShareBE?.os !== "android") {
           const data = {
-            token: activeUserToShare?.pushToken,
+            token: activeUserToShareBE?.pushToken,
             title: `New message`,
-            body: `@${activeUserToShare?.userName} share a post`,
+            body: `${activeUserToShareBE?.firstName} ${activeUserToShareBE?.lastName} share a post`,
             data: { isFrom: "Message", receiver: userSender.userId },
           };
           await sendPushNotification(data);
         } else {
           const pushNotification = {
             title: `New message`,
-            body: `@${activeUserToShare?.userName} share a post`,
+            body: `${activeUserToShareBE?.firstName} ${activeUserToShareBE?.lastName} share a post`,
             data: { isFrom: "Message", receiver: userSender.userId },
-            token: activeUserToShare?.pushToken,
+            token: activeUserToShareBE?.pushToken,
           };
           await sendPushNotificationAndroid(pushNotification);
         }
-      }
+      //}
     }
 
     setOpenModalShare(false);

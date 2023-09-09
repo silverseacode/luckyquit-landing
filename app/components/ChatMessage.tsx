@@ -626,8 +626,7 @@ const ChatMessage = ({
     const receiverBE = await getUser(userId);
 
     const isAllowNotificationChatsLocal = receiverBE.reponse?.[0]?.isChats;
-    //if (isAllowNotificationChatsLocal) {
-      //if (os !== "") {
+    if (isAllowNotificationChatsLocal) {
         if (os !== "android") {
           const data = {
             token: pushTokenReceiver,
@@ -645,8 +644,7 @@ const ChatMessage = ({
           };
           sendPushNotificationAndroid(pushNotification);
         }
-      //}
-    //}
+    }
   };
 
   const [reevalute, setReevalute] = useState(false);
