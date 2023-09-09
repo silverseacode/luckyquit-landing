@@ -459,7 +459,6 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
 
   const uploadPhotoCertificates = async (url: string, file: File) => {
     setIsUploadingCertificate(true);
-    
 
     const formData = new FormData();
     formData.append("image", file);
@@ -615,8 +614,22 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
     setIsUploadingCertificate(false);
   };
 
+  const [isErrorEmail, setIsErrorEmail] = useState(false);
 
-  const [errorSameCert,showErrorSameCert] = useState("")
+  const handleValidationEmail = (value: string) => {
+    setEmailPaypal(value);
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (value.trim().length > 0) {
+      if (regex.test(value)) {
+        setIsErrorEmail(false);
+      } else {
+        setIsErrorEmail(true);
+      }
+    } else {
+      setIsErrorEmail(false);
+    }
+  };
+
   return (
     <>
       {isLoadingInitial ? (
@@ -1052,7 +1065,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                         style={{
                           flexDirection: "row",
                           alignItems: "center",
-                          width: 920,
+                          width: 820,
                         }}
                       >
                         <textarea
@@ -1061,11 +1074,13 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                           readOnly={!isEnableDescriptionAboutMe}
                           maxLength={55}
                           rows={1}
-                          onChange={(e) => setEmailPaypal(e.target.value)}
+                          onChange={(e) =>
+                            handleValidationEmail(e.target.value)
+                          }
                           style={{
                             borderRadius: 8,
                             marginLeft: 0,
-                            width: 640,
+                            width: 540,
                             fontSize: 19,
                             marginRight: 15,
                             position: "relative",
@@ -1076,6 +1091,11 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                               : "none",
                           }}
                         />
+                        {isErrorEmail && (
+                          <span style={{ color: Colors.red }}>
+                            Invalid email format
+                          </span>
+                        )}
                       </View>
                     </>
                   )}
@@ -1338,49 +1358,44 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                     alignItems: "center",
                   }}
                 >
-                  
-                    <View
-                      style={{
-                        borderRadius: 8,
-                        marginRight: 15,
-                        borderColor: Colors.primary,
-                        borderWidth: 1,
-                        paddingHorizontal: 15,
-                        paddingVertical: 10,
-                      }}
-                    >
-                      <View>
-                        <label className={styles.label}>
-                          <input
-                            onChange={(event) => {
-                              if (isUploadingCertificate) {
-                                return;
-                              }
-                              const file = event.target.files[0];
-                              const url = URL.createObjectURL(file);
-                              (event.target as HTMLInputElement).value = '';
+                  <View
+                    style={{
+                      borderRadius: 8,
+                      marginRight: 15,
+                      borderColor: Colors.primary,
+                      borderWidth: 1,
+                      paddingHorizontal: 15,
+                      paddingVertical: 10,
+                    }}
+                  >
+                    <View>
+                      <label className={styles.label}>
+                        <input
+                          onChange={(event) => {
+                            if (isUploadingCertificate) {
+                              return;
+                            }
+                            const file = event.target.files[0];
+                            const url = URL.createObjectURL(file);
+                            (event.target as HTMLInputElement).value = "";
 
-                              uploadPhotoCertificates(url, file);
-
-                            }}
-                            id="file"
-                            accept="image/jpeg,image/png"
-                            name="fileToUpload"
-                            type="file"
-                          />
-                          <span style={{ color: Colors.primary }}>
-                            {isUploadingCertificate
-                              ? "Uplading..."
-                              : "Upload Photo"}
-                          </span>
-                        </label>
-                        
-                      </View>
+                            uploadPhotoCertificates(url, file);
+                          }}
+                          id="file"
+                          accept="image/jpeg,image/png"
+                          name="fileToUpload"
+                          type="file"
+                        />
+                        <span style={{ color: Colors.primary }}>
+                          {isUploadingCertificate
+                            ? "Uplading..."
+                            : "Upload Photo"}
+                        </span>
+                      </label>
                     </View>
-                  
+                  </View>
                 </View>
               )}
-              {errorSameCert.length > 0 && <span style={{color:Colors.red}}>{errorSameCert}</span>}
 
               <View
                 style={{
@@ -1409,7 +1424,11 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                         <Image
                           height={400}
                           width={500}
-                          style={{ height: 400, width: 500, objectFit: "cover" }}
+                          style={{
+                            height: 400,
+                            width: 500,
+                            objectFit: "cover",
+                          }}
                           src={image.image}
                           alt="image"
                         />
