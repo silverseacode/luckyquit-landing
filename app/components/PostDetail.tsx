@@ -44,7 +44,7 @@ import { getFollowersBE } from "@/helpers/followers";
 export default function PostDetail({ postId }: any) {
   const router = useRouter();
   const socket = useSocket();
-console.log("S", socket)
+  console.log("S", socket);
   const [postInfo, setPostInfo] = useState();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -90,9 +90,9 @@ console.log("S", socket)
     useState(true);
   useEffect(() => {
     async function getReceiverPushToken() {
-      console.log("postInfo?.userId",postInfo?.userId)
+      console.log("postInfo?.userId", postInfo?.userId);
       const userRecevier = await getUser(postInfo?.userId);
-      console.log("USER RECIEVER123", userRecevier)
+      console.log("USER RECIEVER123", userRecevier);
       setPushTokenReceiver(userRecevier.response[0]?.pushToken);
       setOs(userRecevier.response[0]?.os);
       setInitials(userRecevier.response[0]?.initials);
@@ -146,6 +146,10 @@ console.log("S", socket)
     const options = { timeZone: user?.timezone[0] };
     const dateTimezone = date.toLocaleString("en-US", options);
     const idv4 = uuidv4();
+
+    const userRecevier = await getUser(postInfo?.userId);
+    const isAllowCommentsNotif = userRecevier[0]?.isComments;
+    const isAllowRepliesNotif = userRecevier[0]?.isReplies;
 
     if (regex.test(comment) && userNameInInput !== "") {
       let newReplyLocal = {
@@ -201,13 +205,12 @@ console.log("S", socket)
           receiver: postInfo?.userId,
         };
 
-
         socket?.emit("send_notification_request", dataSocket);
-        if (isAllowNotificationReplies) {
+        if (isAllowRepliesNotif) {
           if (os !== "android") {
             const pushNotification = {
               title: `New reply on your comment`,
-              body: `@${userName} replied your comment`,
+              body: `${fullNameSender} replied your comment`,
               data: { isFrom: "Comments", postId: postId },
               token: pushTokenReceiver,
             };
@@ -215,7 +218,7 @@ console.log("S", socket)
           } else {
             const pushNotification = {
               title: `New reply on your comment`,
-              body: `@${userName} replied your comment`,
+              body: `${fullNameSender} replied your comment`,
               data: { isFrom: "Comments", postId: postId },
               token: pushTokenReceiver,
             };
@@ -278,10 +281,10 @@ console.log("S", socket)
           receiver: postInfo?.userId,
         };
 
-        console.log("USER id13", dataSocket.receiver)
+        console.log("USER id13", dataSocket.receiver);
 
         socket?.emit("send_notification_request", dataSocket);
-        //if (isAllowNotificationComments) {
+        if (isAllowCommentsNotif) {
           if (os !== "android") {
             const pushNotification = {
               title: `New comment on your post`,
@@ -299,9 +302,7 @@ console.log("S", socket)
             };
             sendPushNotificationAndroid(pushNotification);
           }
-       //}
-
-        
+        }
       }
     }
     setComment("");
@@ -465,13 +466,14 @@ console.log("S", socket)
         const dataSocket = {
           receiver: user?.userId,
         };
-
+        const userRecevier = await getUser(postInfo?.userId);
+        const isAllowLikesNotif = userRecevier[0]?.isLikes;
         socket?.emit("send_notification_request", dataSocket);
-        if (isAllowNotificationLikes) {
+        if (isAllowLikesNotif) {
           if (os !== "android") {
             const pushNotification = {
               title: `New like on your post`,
-              body: `@${userName} liked your post`,
+              body: `${fullNameSender} liked your post`,
               data: { isFrom: "Likes", postId: postId },
               token: pushTokenReceiver,
             };
@@ -479,7 +481,7 @@ console.log("S", socket)
           } else {
             const pushNotification = {
               title: `New like on your post`,
-              body: `@${userName} liked your post`,
+              body: `${fullNameSender} liked your post`,
               data: { isFrom: "Comments", postId: postId },
               token: pushTokenReceiver,
             };
@@ -574,6 +576,8 @@ console.log("S", socket)
   }
 
   const shareOnApp = async () => {
+    const data = await getUser(activeUserToShare?.userId);
+    const activeUserToShareBE: User = data.response[0];
     const userData = await getUser();
     const userSender: User = userData.response[0];
     const newUUID = uuidv4();
@@ -583,21 +587,22 @@ console.log("S", socket)
     const dateTimezone = currentDatetime.toLocaleString("en-US", options);
     const newMessageBE = {
       sender: userSender.userId,
-      receiver: activeUserToShare?.userId,
-      message: messageRamdomToGenerateNewMessage,
-      date: dateTimezone,
+      receiver: activeUserToShareBE?.userId,
+      message: messageRamdomToGenerateNewMessage, ///TODO COMPLETE
+      date: currentDatetime,
       profilePicture:
         userSender.profilePicture?.split?.("/")?.[3]?.split?.("?")?.[0] ?? "",
       isNotification: false,
       senderFullName: `${userSender?.firstName} ${userSender?.lastName}`,
-      receiverFullName: `${activeUserToShare?.firstName} ${activeUserToShare?.lastName}`,
+      receiverFullName: `${activeUserToShareBE?.firstName} ${activeUserToShareBE?.lastName}`,
       receiverProfilePicture:
-        activeUserToShare?.profilePicture.split?.("/")?.[3]?.split?.("?")?.[0] ??
-        "",
+        activeUserToShareBE?.profilePicture
+          .split?.("/")?.[3]
+          ?.split?.("?")?.[0] ?? "",
       initialsSender: `${userSender?.firstName[0]} ${userSender?.lastName[0]}`,
       backgroundColorSender: userSender?.backgroundColor,
-      initialsReceiver: `${activeUserToShare?.firstName[0]} ${activeUserToShare?.lastName[0]}`,
-      backgroundColorReceiver: activeUserToShare?.backgroundColor,
+      initialsReceiver: `${activeUserToShareBE?.firstName[0]} ${activeUserToShareBE?.lastName[0]}`,
+      backgroundColorReceiver: activeUserToShareBE?.backgroundColor,
       isShare: true,
       fullNameOwnerPost: `${infoOwnerPostShare?.firstName} ${infoOwnerPostShare?.lastName}`,
       profilePictureOwnerPost:
@@ -613,35 +618,30 @@ console.log("S", socket)
       postIdOwnerPost: infoOwnerPostShare?.idv4,
       postUserIdOwnerPost: infoOwnerPostShare?.userId,
       likesOwnerPost: infoOwnerPostShare?.likes,
+      dateDefault: new Date(),
     };
 
     socket?.emit("send_message", newMessageBE);
 
     await saveMessageBE(newMessageBE);
 
-    if (
-      activeUserToShare?.isChats &&
-      activeUserToShare?.pushToken !== "" &&
-      activeUserToShare?.pushToken !== undefined
-    ) {
-      if (activeUserToShare?.os !== "") {
-        if (activeUserToShare?.os !== "android") {
-          const data = {
-            token: activeUserToShare?.pushToken,
-            title: `New message`,
-            body: `@${activeUserToShare?.userName} share a post`,
-            data: { isFrom: "Message", receiver: userSender.userId },
-          };
-          await sendPushNotification(data);
-        } else {
-          const pushNotification = {
-            title: `New message`,
-            body: `@${activeUserToShare?.userName} share a post`,
-            data: { isFrom: "Message", receiver: userSender.userId },
-            token: activeUserToShare?.pushToken,
-          };
-          sendPushNotificationAndroid(pushNotification);
-        }
+    if (activeUserToShareBE?.isChats) {
+      if (activeUserToShareBE?.os !== "android") {
+        const data = {
+          token: activeUserToShareBE?.pushToken,
+          title: `New message`,
+          body: `${activeUserToShareBE?.firstName} ${activeUserToShareBE?.lastName} share a post`,
+          data: { isFrom: "Message", receiver: userSender.userId },
+        };
+        await sendPushNotification(data);
+      } else {
+        const pushNotification = {
+          title: `New message`,
+          body: `${activeUserToShareBE?.firstName} ${activeUserToShareBE?.lastName} share a post`,
+          data: { isFrom: "Message", receiver: userSender.userId },
+          token: activeUserToShareBE?.pushToken,
+        };
+        sendPushNotificationAndroid(pushNotification);
       }
     }
     setOpenModalShare(false);
@@ -1549,7 +1549,12 @@ console.log("S", socket)
               className={styles.inputAddComment}
               onChange={(e) => handleTextChange(e.target.value)}
               placeholder={`Add comment for ${postInfo?.firstName} ${postInfo?.lastName}`}
-              style={{ borderRadius: 8, width: 500, outline: "none !important", border: "none !important" }}
+              style={{
+                borderRadius: 8,
+                width: 500,
+                outline: "none !important",
+                border: "none !important",
+              }}
             />
 
             <TouchableOpacity onPress={() => sendComment()}>
@@ -1625,9 +1630,7 @@ console.log("S", socket)
                     name="search1"
                   />
                 </View>
-                <div
-                  className={styles.wrapperFollowers}
-                >
+                <div className={styles.wrapperFollowers}>
                   {followers
                     ?.filter(
                       (item) =>
@@ -1660,9 +1663,7 @@ console.log("S", socket)
                             borderBottomColor: Colors.lightGray,
                           }}
                         >
-                          <Pressable
-                            onPress={() => setActiveUserToShare(item)}
-                          >
+                          <Pressable onPress={() => setActiveUserToShare(item)}>
                             <View
                               style={{
                                 flexDirection: "row",
@@ -1759,7 +1760,6 @@ console.log("S", socket)
                         justifyContent: "flex-end",
                         flexDirection: "row",
                         marginRight: 20,
-                        
                       }}
                     >
                       <Pressable
