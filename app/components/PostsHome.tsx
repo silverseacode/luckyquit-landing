@@ -312,25 +312,25 @@ const PostsHome = ({
         };
 
         await sendNotification(newNotification);
-        if (value.isAllowLikesNotification) {
+        //if (value.isAllowLikesNotification) {
           if (value.os !== "android") {
             const data = {
               token: value.ownerPostToken,
               title: `New like on your post`,
-              body: `@${value.like.userName} liked your post`,
+              body: `@${value.like.fullName} liked your post`,
               data: { isFrom: "Likes", postId: value.postId },
             };
             await sendPushNotification(data);
           } else {
             const pushNotification = {
               title: `New like on your post`,
-              body: `@${value.like.userName} liked your post`,
+              body: `@${value.like.fullName} liked your post`,
               data: { isFrom: "Likes", postId: value.postId },
               token: value.ownerPostToken,
             };
             await sendPushNotificationAndroid(pushNotification);
           }
-        }
+        //}
       }
       const dataSocket = {
         receiver: user?.userId,

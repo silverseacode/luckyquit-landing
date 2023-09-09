@@ -99,6 +99,7 @@ const CardPost = ({
   const toggleLike = () => {
     const like = {
       userName: user?.userName,
+      fullName: `${user?.firstName} ${user?.lastName}`,
       profilePictureAws:
         user?.profilePicture?.split("/")[3]?.split("?")[0] ?? "",
       profilePicture: user?.profilePicture,
