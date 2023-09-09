@@ -1214,7 +1214,7 @@ const ChatMessage = ({
       >
         <div className={styles.containerModal}>
           <div className={styles.modal}>
-            <View style={{ marginTop: 20 }}>
+            <View style={{ marginTop: 20, width: 580, paddingLeft: 40, marginRight: 45 }}>
               <span
                 style={{
                   color: Colors.blackDefault,
@@ -1311,8 +1311,8 @@ const ChatMessage = ({
                   </span>
                 </div>
               </div>
-              <div>
-                <InfoIcon style={{ color: "orange", fontSize: 30 }} />
+              <div style={{display: "flex", alignItems: "center", width: 550, marginTop: 20}}>
+                <InfoIcon style={{ color: "orange", fontSize: 30, marginRight: 5 }} />
                 <span>
                   This is the final date by which you can add modules and
                   exercises to the quitter.
@@ -1323,10 +1323,11 @@ const ChatMessage = ({
                   flexDirection: "row",
                   marginTop: 20,
                   alignItems: "center",
+                  width: 550
                 }}
               >
-                <InfoIcon style={{ color: "orange", fontSize: 30 }} />
-                <span style={{ maxWidth: 400, textAlign: "center" }}>
+                <InfoIcon style={{ color: "orange", fontSize: 30,marginRight: 5 }} />
+                <span style={{ maxWidth: 550 }}>
                   Take in consideration that it is a one time payment{" "}
                   <span style={{ fontWeight: "600" }}>not a subscription</span>.
                 </span>
@@ -1339,8 +1340,9 @@ const ChatMessage = ({
                 }}
               >
                 <InfoIcon style={{ color: "grey", fontSize: 25 }} />
-                <span style={{ textAlign: "center", marginLeft: 10 }}>
-                  The 10% of the price you put will go for Lucky Quit.
+                <span style={{marginLeft: 10, width: 550 }}>
+                A 10% charge will be applied to the price for quitters,
+                and this amount will contribute to the Lucky Quit fund.
                 </span>
               </View>
               <View
@@ -1509,7 +1511,7 @@ const ChatMessage = ({
               </View>
               <>
                 <View>
-                  <span style={{ fontWeight: "600", marginVertical: 10 }}>
+                  <span style={{ fontWeight: "600", marginTop: 20, marginBottom: 15 }}>
                     Is this your email of PayPal?
                   </span>
                 </View>
