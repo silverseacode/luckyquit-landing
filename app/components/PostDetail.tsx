@@ -412,7 +412,7 @@ console.log("S", socket)
       (like: { userName: string }) => like?.userName === userName
     );
     setIsLiked(isAlreadyLiked);
-  }, [postInfo]);
+  }, [postInfo, userName]);
 
   const toggleLike = async () => {
     if (isLoading) return;
