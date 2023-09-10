@@ -4,6 +4,8 @@ import styles from "../page.module.css";
 import VideoFaqCoaches5 from "./VideoFaqCoaches5";
 import VideoFaqCoaches4 from "./VideoFaqCoaches4";
 import VideoFaqCoaches1 from "./VideoFaqCoaches1";
+import VideoFaqQuitters4 from "./VideoFaqQuitters4";
+import VideoFaqQuitters1 from "./VideoFaqQuitters1";
 
 const AccordionItem = ({ title, content, id }: any) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,6 +26,8 @@ const AccordionItem = ({ title, content, id }: any) => {
           <div style={{flexDirection: "row", display: "flex", justifyContent: "center", alignItems: "center"}}>{id === "faq-coaches-5" && <VideoFaqCoaches5 />}</div>
           <div style={{flexDirection: "row", display: "flex", justifyContent: "center", alignItems: "center"}}>{id === "faq-coaches-4" && <VideoFaqCoaches4 />}</div>
           <div style={{flexDirection: "row", display: "flex", justifyContent: "center", alignItems: "center"}}>{id === "faq-coaches-1" && <VideoFaqCoaches1 />}</div>
+          <div style={{flexDirection: "row", display: "flex", justifyContent: "center", alignItems: "center"}}>{id === "faq-quitters-4" && <VideoFaqQuitters4 />}</div>
+          <div style={{flexDirection: "row", display: "flex", justifyContent: "center", alignItems: "center"}}>{id === "faq-quitters-1" && <VideoFaqQuitters1 />}</div>
         
         </>
       )}

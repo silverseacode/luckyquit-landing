@@ -143,6 +143,11 @@ export default function Landing() {
         </div>
         <div className={styles.containerFaq}>
           <div className="accordion">
+          <AccordionItem
+              title="How does the tracking feature work?"
+              content="Effortlessly log the time elapsed since your previous cigarette. Instantly calculate and showcase your financial dedication to your newfound freedom. Witness remarkable improvements in your health with each smoke-free milestone."
+              id="faq-quitters-1"
+            />
             <AccordionItem
               title="What can I do in the Communities section"
               content="The Communities section is similar to a social network where you can post your progress, your mood, or anything you'd like to share with fellow quitters like yourself, all in an effort to support each other in quitting smoking. You can follow others and have private chats through messaging. Here, you'll also find coaches who offer their services."
@@ -159,6 +164,7 @@ export default function Landing() {
             <AccordionItem
               title="How do I pay the coach through the app?"
               content="Payments must be made exclusively through the app. The coach will send you a payment link with the specified amount, plan expiration date, and the additional app charge. After verifying the details, you can proceed to make the payment through PayPal, either using your own PayPal account or a credit card."
+              id="faq-quitters-4"
             />
             <AccordionItem
               title="How do I view the modules and exercises sent by the coach?"
