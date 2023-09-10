@@ -23,9 +23,9 @@ body {
     border: 1px solid #7D5FCE !important;
   } */
 
-  textarea:focus {
+  /* textarea:focus {
     border: 1px solid #7D5FCE !important;
-  }
+  } */
   
   .animation-container {
     display: flex;

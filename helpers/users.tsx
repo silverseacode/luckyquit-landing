@@ -544,3 +544,37 @@ export const savePostIdLucky = async (post: Post, userId: string) => {
   const res = await response.json();
   return res;
 };
+
+export const updateSocialProfileBE = async (data: {
+  userId: string;
+  facebookUrl: string | undefined;
+  instagramUrl: string | undefined;
+  linkedinUrl: string | undefined;
+}) => {
+  const itemToken = localStorage.getItem("jwtToken");
+    let token = itemToken ? itemToken : false;
+
+    const itemEmail = localStorage.getItem("email");
+    const email = itemEmail ? itemEmail : "";
+
+    const tokenBE = await getTokenExpired(token, email);
+    if (tokenBE.isNew) {
+      localStorage.setItem("jwtToken", tokenBE.token);
+      token = tokenBE.token;
+    }
+  const dataSend = { data };
+  try {
+    const response = await fetch("/api/users/social-media", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token
+      },
+      body: JSON.stringify(dataSend),
+    });
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    console.error(error);
+  }
+};

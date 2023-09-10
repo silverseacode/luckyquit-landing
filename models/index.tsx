@@ -15,6 +15,9 @@ export type User = {
   aboutMe: string;
   type: string;
   userName: string;
+  facebookUrl: string
+  instagramUrl: string
+  linkedinUrl: string
   isAchievements: boolean; //push notif
   isChats: boolean; //push notif
   isComments: boolean; //push notif
