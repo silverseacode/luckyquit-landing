@@ -524,6 +524,7 @@ const ChatMessage = ({
           receiverProfilePicture: messageSocket.receiverProfilePicture,
           initialsReceiver: messageSocket.initialsReceiver,
           backgroundColorReceiver: messageSocket.backgroundColorReceiver,
+          dateDefault: messageSocket.dateDefault
         });
 
         const existingMessage = {
@@ -538,6 +539,7 @@ const ChatMessage = ({
           receiverProfilePicture: messageSocket.receiverProfilePicture,
           initialsReceiver: messageSocket.initialsReceiver,
           backgroundColorReceiver: messageSocket.backgroundColorReceiver,
+          dateDefault: messageSocket.dateDefault
         };
         console.log("111 existing", existingMessage);
 
@@ -566,6 +568,7 @@ const ChatMessage = ({
               initialsSender: messageSocket.initialsSender,
               backgroundColorSender: messageSocket.backgroundColorSender,
               isRead: false,
+              dateDefault: messageSocket.dateDefault,
               receiverFullName: messageSocket.receiverFullName,
               receiverProfilePicture: messageSocket.receiverProfilePicture,
               initialsReceiver: messageSocket.initialsReceiver,
@@ -688,6 +691,7 @@ const ChatMessage = ({
         backgroundColorSender: socketData.backgroundColorSender,
         initialsReceiver: socketData.initialsReceiver,
         backgroundColorReceiver: socketData.backgroundColorReceiver,
+        dateDefault: new Date(),
       };
       const dataBE = await saveMessageBETrue(newMessage);
       console.log("NEW_MESSAGE BE123!!", dataBE);
