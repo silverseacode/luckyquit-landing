@@ -480,7 +480,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
 
     setIsUploadingCertificate(false);
   };
-
+console.log("LENGTH", imagesCertificate)
   useEffect(() => {
     setEnableSwitch(user?.lookingQuitters);
   }, [user]);
@@ -1697,7 +1697,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
               >
                 Certificates
               </span>
-              {imagesCertificate.length <= 3 && (
+              {imagesCertificate.length < 3 && (
                 <View
                   style={{
                     flexDirection: "row",
