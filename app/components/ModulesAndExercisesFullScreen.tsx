@@ -198,7 +198,7 @@ const ModulesAndExercisesFullScreen = ({
     setImage("");
     handleSaveVideo(event, index, isEx);
   };
-  const checkSizeOfImageFile = async (event: any) => {
+  const checkSizeOfImageFile = (event: any) => {
     const maxSizeAllowed = 50 * 1024 * 1024;
     const file = event.target.files[0];
     const fileSizeInBytes = file.size;
@@ -341,7 +341,8 @@ const ModulesAndExercisesFullScreen = ({
                       <label className={styles.label}>
                         <input
                           onChange={(event) => {
-                            checkSizeOfImageFile(event)
+                            checkSizeOfImageFile(event);
+                            (event.target as HTMLInputElement).value = "";
                           }}
                           id="file"
                           accept="image/jpeg,image/png"
@@ -368,6 +369,7 @@ const ModulesAndExercisesFullScreen = ({
                           ref={fileInputRef}
                           onChange={async (event) => {
                             checkSizeOfVideoFile(event);
+                            (event.target as HTMLInputElement).value = "";
                           }}
                           id="fileVideo"
                           accept="video/mp4"
