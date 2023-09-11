@@ -947,6 +947,31 @@ const ModulesAndExercises = ({
     };
   }, [isChangesWithoutSave]);
   const [quitterIdToChange, setIsChangingQuitter] = useState("");
+
+  const [errorMaxSize, setErrorMaxSize] = useState("");
+  const [isExercise, setIsExercise] = useState();
+  const [indexError, setIndexError] = useState();
+  const checkSizeOfThumbFile = async (
+    event: any,
+    index: number,
+    isEx: boolean
+  ) => {
+    const maxSizeAllowed = 50 * 1024 * 1024;
+    const file = event.target.files[0];
+    const fileSizeInBytes = file.size;
+    const fileSizeInMB = (fileSizeInBytes / (1024 * 1024)).toFixed(2);
+    if (file && file.size > maxSizeAllowed) {
+      setErrorMaxSize(
+        `Your file is ${fileSizeInMB}MB in size, while the maximum allowed size is 50MB.`
+      );
+      setIsExercise(isEx);
+      setIndexError(index);
+      return;
+    }
+
+    handleSaveImage(event, index, isEx);
+  };
+
   return (
     <>
       <View
@@ -1327,122 +1352,141 @@ const ModulesAndExercises = ({
                   return (
                     <>
                       {!isOpenFull && (
-                        <View
-                          style={{
-                            marginTop: 20,
-                            flexDirection: "row",
-                            borderWidth: 1,
-                            borderColor: Colors.darkGray,
-                          }}
-                        >
-                          {isLoadingIn.key === currentDay &&
-                          isLoadingIn.index === index &&
-                          isLoadingIn.isExercise === false ? (
-                            <View
-                              style={{
-                                height: 100,
-                                width: 100,
-                                backgroundColor: Colors.lightGray,
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                            >
-                              <div className={styles.spinnerOverlay}>
-                                <div className={styles.spinnerContainer}></div>
-                              </div>
-                            </View>
-                          ) : (
-                            <>
-                              {value.thumb === "" ? (
-                                <Pressable>
-                                  <View
-                                    style={{
-                                      height: 100,
-                                      width: 100,
-                                      backgroundColor: Colors.lightGray,
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                    }}
-                                  >
-                                    <label className={styles.label}>
-                                      <input
-                                        onChange={(event) => {
-                                          handleSaveImage(event, index, false);
-                                        }}
-                                        id="file"
-                                        accept="image/jpeg,image/png"
-                                        name="fileToUpload"
-                                        type="file"
-                                      />
-                                      <div
-                                        style={{
-                                          textAlign: "center",
-                                          fontSize: 15,
-                                          padding: "0px 20px",
-                                        }}
-                                      >
-                                        <span>Choose a file</span>
-                                      </div>
-                                    </label>
-                                  </View>
-                                </Pressable>
-                              ) : (
-                                <div className={styles.containerImage}>
-                                  <Image
-                                    src={imageUrl}
-                                    height={100}
-                                    width={100}
-                                    alt="Image"
-                                    style={{
-                                      height: 100,
-                                      width: 100,
-                                      backgroundColor: Colors.lightGray,
-                                      zIndex: 1,
-                                    }}
-                                  />
-                                  <div className={styles.overlay}>
-                                    <label className={styles.label}>
-                                      <input
-                                        onChange={(event) => {
-                                          handleSaveImage(event, index, false);
-                                        }}
-                                        id="file"
-                                        accept="image/jpeg,image/png"
-                                        name="fileToUpload"
-                                        type="file"
-                                      />
-                                      <div
-                                        style={{
-                                          textAlign: "center",
-                                          fontSize: 15,
-                                          padding: "0px 20px",
-                                        }}
-                                        className={styles.chooseFile}
-                                      >
-                                        <span>Choose a file</span>
-                                      </div>
-                                    </label>
-                                  </div>
-                                </div>
-                              )}
-                            </>
-                          )}
+                        <>
                           <View
                             style={{
-                              marginLeft: 15,
-                              width: "90%",
+                              marginTop: 20,
+                              flexDirection: "row",
+                              borderWidth: 1,
+                              borderColor: Colors.darkGray,
                             }}
                           >
+                            {isLoadingIn.key === currentDay &&
+                            isLoadingIn.index === index &&
+                            isLoadingIn.isExercise === false ? (
+                              <View
+                                style={{
+                                  height: 100,
+                                  width: 100,
+                                  backgroundColor: Colors.lightGray,
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <div className={styles.spinnerOverlay}>
+                                  <div
+                                    className={styles.spinnerContainer}
+                                  ></div>
+                                </div>
+                              </View>
+                            ) : (
+                              <>
+                                {value.thumb === "" ? (
+                                  <Pressable>
+                                    <View
+                                      style={{
+                                        height: 100,
+                                        width: 100,
+                                        backgroundColor: Colors.lightGray,
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                      }}
+                                    >
+                                      <label className={styles.label}>
+                                        <input
+                                          onChange={(event) => {
+                                            setErrorMaxSize("");
+                                            setIsExercise(undefined);
+                                            setIndexError(-1);
+                                            checkSizeOfThumbFile(
+                                              event,
+                                              index,
+                                              false
+                                            );
+                                            (event.target as HTMLInputElement).value = "";
+                                          }}
+                                          id="file"
+                                          accept="image/jpeg,image/png"
+                                          name="fileToUpload"
+                                          type="file"
+                                        />
+                                        <div
+                                          style={{
+                                            textAlign: "center",
+                                            fontSize: 15,
+                                            padding: "0px 20px",
+                                          }}
+                                        >
+                                          <span>Choose a file</span>
+                                        </div>
+                                      </label>
+                                    </View>
+                                  </Pressable>
+                                ) : (
+                                  <div className={styles.containerImage}>
+                                    <Image
+                                      src={imageUrl}
+                                      height={100}
+                                      width={100}
+                                      alt="Image"
+                                      style={{
+                                        height: 100,
+                                        width: 100,
+                                        backgroundColor: Colors.lightGray,
+                                        zIndex: 1,
+                                      }}
+                                    />
+                                    <div className={styles.overlay}>
+                                      <label className={styles.label}>
+                                        <input
+                                          onChange={(event) => {
+                                            setErrorMaxSize("");
+                                            setIsExercise(undefined);
+                                            setIndexError(-1);
+                                            checkSizeOfThumbFile(
+                                              event,
+                                              index,
+                                              false
+                                            );
+                                            (event.target as HTMLInputElement).value = "";
+                                          }}
+                                          id="file"
+                                          accept="image/jpeg,image/png"
+                                          name="fileToUpload"
+                                          type="file"
+                                        />
+                                        <div
+                                          style={{
+                                            textAlign: "center",
+                                            fontSize: 15,
+                                            padding: "0px 20px",
+                                          }}
+                                          className={styles.chooseFile}
+                                        >
+                                          <span>Choose a file</span>
+                                        </div>
+                                      </label>
+                                    </div>
+                                  </div>
+                                )}
+                              </>
+                            )}
                             <View
                               style={{
-                                marginTop: 20,
-                                flexDirection: "row",
-                                justifyContent: "space-between",
+                                marginLeft: 15,
                                 width: "90%",
-                                height: 140,
                               }}
                             >
-                              {/* <textarea
+                              <View
+                                style={{
+                                  marginTop: 20,
+                                  flexDirection: "row",
+                                  justifyContent: "space-between",
+                                  width: "90%",
+                                  height: 140,
+                                }}
+                              >
+                                {/* <textarea
                                 style={{
                                   fontSize: 20,
                                   width: "90%",
@@ -1462,116 +1506,133 @@ const ModulesAndExercises = ({
                                   )
                                 }
                               /> */}
-                              <ReactQuill
-                                onKeyDown={checkCharacterCount}
-                                ref={reactQuillRef}
-                                theme="snow"
-                                value={value.title}
-                                onChange={(value) => {
-                                  handleInputChangeTitle(value, index, false);
-                                }}
-                                style={{ width: "100%", height: 100 }}
-                                modules={{
-                                  toolbar: [
-                                    [{ header: [1, 2, false] }],
-                                    [
-                                      "bold",
-                                      "italic",
-                                      "underline",
-                                      "strike",
-                                      "blockquote",
+                                <ReactQuill
+                                  onKeyDown={checkCharacterCount}
+                                  ref={reactQuillRef}
+                                  theme="snow"
+                                  value={value.title}
+                                  onChange={(value) => {
+                                    handleInputChangeTitle(value, index, false);
+                                  }}
+                                  style={{ width: "100%", height: 100 }}
+                                  modules={{
+                                    toolbar: [
+                                      [{ header: [1, 2, false] }],
+                                      [
+                                        "bold",
+                                        "italic",
+                                        "underline",
+                                        "strike",
+                                        "blockquote",
+                                      ],
+                                      [
+                                        {
+                                          color: [
+                                            "#000000",
+                                            "#e60000",
+                                            "#ff9900",
+                                            "#ffff00",
+                                            "#008a00",
+                                            "#0066cc",
+                                            "#9933ff",
+                                            "#ffffff",
+                                            "#facccc",
+                                            "#ffebcc",
+                                            "#ffffcc",
+                                            "#cce8cc",
+                                            "#cce0f5",
+                                            "#ebd6ff",
+                                            "#bbbbbb",
+                                            "#f06666",
+                                            "#ffc266",
+                                            "#ffff66",
+                                            "#66b966",
+                                            "#66a3e0",
+                                            "#c285ff",
+                                            "#888888",
+                                            "#a10000",
+                                            "#b26b00",
+                                            "#b2b200",
+                                            "#006100",
+                                            "#0047b2",
+                                            "#6b24b2",
+                                            "#444444",
+                                            "#5c0000",
+                                            "#663d00",
+                                            "#666600",
+                                            "#003700",
+                                            "#002966",
+                                            "#3d1466",
+                                            "custom-color",
+                                          ],
+                                        },
+                                      ],
+                                      [{ list: "ordered" }, { list: "bullet" }],
+                                      ["clean"],
                                     ],
-                                    [
-                                      {
-                                        color: [
-                                          "#000000",
-                                          "#e60000",
-                                          "#ff9900",
-                                          "#ffff00",
-                                          "#008a00",
-                                          "#0066cc",
-                                          "#9933ff",
-                                          "#ffffff",
-                                          "#facccc",
-                                          "#ffebcc",
-                                          "#ffffcc",
-                                          "#cce8cc",
-                                          "#cce0f5",
-                                          "#ebd6ff",
-                                          "#bbbbbb",
-                                          "#f06666",
-                                          "#ffc266",
-                                          "#ffff66",
-                                          "#66b966",
-                                          "#66a3e0",
-                                          "#c285ff",
-                                          "#888888",
-                                          "#a10000",
-                                          "#b26b00",
-                                          "#b2b200",
-                                          "#006100",
-                                          "#0047b2",
-                                          "#6b24b2",
-                                          "#444444",
-                                          "#5c0000",
-                                          "#663d00",
-                                          "#666600",
-                                          "#003700",
-                                          "#002966",
-                                          "#3d1466",
-                                          "custom-color",
-                                        ],
-                                      },
-                                    ],
-                                    [{ list: "ordered" }, { list: "bullet" }],
-                                    ["clean"],
-                                  ],
-                                }}
-                                formats={[
-                                  "header",
-                                  "bold",
-                                  "italic",
-                                  "underline",
-                                  "strike",
-                                  "blockquote",
-                                  "list",
-                                  "bullet",
-                                  "image",
-                                  "color",
-                                ]}
-                              />
-                              <View style={{ marginLeft: 40 }}>
-                                <Pressable
-                                  style={{ marginBottom: 10 }}
-                                  onPress={() => removeModule(index, false)}
-                                >
-                                  <View>
-                                    <MinusSquareFilled
+                                  }}
+                                  formats={[
+                                    "header",
+                                    "bold",
+                                    "italic",
+                                    "underline",
+                                    "strike",
+                                    "blockquote",
+                                    "list",
+                                    "bullet",
+                                    "image",
+                                    "color",
+                                  ]}
+                                />
+                                <View style={{ marginLeft: 40 }}>
+                                  <Pressable
+                                    style={{ marginBottom: 10 }}
+                                    onPress={() => removeModule(index, false)}
+                                  >
+                                    <View>
+                                      <MinusSquareFilled
+                                        style={{
+                                          color: Colors.red,
+                                          fontSize: 30,
+                                        }}
+                                      />
+                                    </View>
+                                  </Pressable>
+                                  <Pressable
+                                    onPress={() => {
+                                      setOpenFull(true);
+                                      showFullModule(true);
+                                      saveValueModule({ value, index });
+                                    }}
+                                  >
+                                    <OpenInNewIcon
                                       style={{
-                                        color: Colors.red,
+                                        color: Colors.primary,
                                         fontSize: 30,
                                       }}
                                     />
-                                  </View>
-                                </Pressable>
-                                <Pressable
-                                  onPress={() => {
-                                    setOpenFull(true);
-                                    showFullModule(true);
-                                    saveValueModule({ value, index });
-                                  }}
-                                >
-                                  <OpenInNewIcon
-                                    style={{
-                                      color: Colors.primary,
-                                      fontSize: 30,
-                                    }}
-                                  />
-                                </Pressable>
+                                  </Pressable>
+                                </View>
                               </View>
                             </View>
                           </View>
-                        </View>
+                          {errorMaxSize.length > 0 &&
+                            !isExercise &&
+                            index === indexError && (
+                              <div style={{ marginTop: 20 }}>
+                                <span
+                                  style={{
+                                    color: Colors.red,
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  {errorMaxSize}
+                                </span>
+                              </div>
+                            )}
+                        </>
                       )}
                     </>
                   );
@@ -1579,7 +1640,7 @@ const ModulesAndExercises = ({
               })}
             {isOpenFull && isModuleShow && !isExerciseShow && (
               <ModulesAndExercisesFullScreen
-              uploadProgress={uploadProgress}
+                uploadProgress={uploadProgress}
                 handleSaveUploadedImage={(text, index, ex) => {
                   handleSaveUploadedImage(text, index, ex);
                 }}
@@ -1676,112 +1737,131 @@ const ModulesAndExercises = ({
                 return (
                   <>
                     {!isOpenFull && (
-                      <View
-                        style={{
-                          marginTop: 20,
-                          flexDirection: "row",
-                          borderWidth: 1,
-                          borderColor: Colors.darkGray,
-                        }}
-                      >
-                        {isLoadingIn.key === currentDay &&
-                        isLoadingIn.index === index &&
-                        isLoadingIn.isExercise === true ? (
-                          <View
-                            style={{
-                              height: 100,
-                              width: 100,
-                              backgroundColor: Colors.lightGray,
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <div className={styles.spinnerOverlay}>
-                              <div className={styles.spinnerContainer}></div>
-                            </div>
-                          </View>
-                        ) : (
-                          <>
-                            {(value?.thumbLocal === "" ||
-                              value.thumbLocal === undefined) &&
-                            value.thumb === "" ? (
-                              <Pressable>
-                                <View
-                                  style={{
-                                    height: 100,
-                                    width: 100,
-                                    backgroundColor: Colors.lightGray,
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <label className={styles.label}>
-                                    <input
-                                      onChange={(event) => {
-                                        handleSaveImage(event, index, true);
-                                      }}
-                                      id="file"
-                                      accept="image/jpeg,image/png"
-                                      name="fileToUpload"
-                                      type="file"
-                                    />
-                                    <div
-                                      style={{
-                                        textAlign: "center",
-                                        fontSize: 15,
-                                        padding: "0px 20px",
-                                      }}
-                                    >
-                                      <span>Choose a file</span>
-                                    </div>
-                                  </label>
-                                </View>
-                              </Pressable>
-                            ) : (
-                              <div className={styles.containerImage}>
-                                <Image
-                                  src={isValueThumbFile ? valueThumb : imageUrl}
-                                  height={100}
-                                  width={100}
-                                  alt="Image"
-                                  style={{
-                                    height: 100,
-                                    width: 100,
-                                    backgroundColor: Colors.lightGray,
-                                    zIndex: 1,
-                                  }}
-                                />
-                                <div className={styles.overlay}>
-                                  <label className={styles.label}>
-                                    <input
-                                      onChange={(event) => {
-                                        handleSaveImage(event, index, true);
-                                      }}
-                                      id="file"
-                                      accept="image/jpeg,image/png"
-                                      name="fileToUpload"
-                                      type="file"
-                                    />
-                                    <div className={styles.chooseFile}>
-                                      <span>Choose a file</span>
-                                    </div>
-                                  </label>
-                                </div>
+                      <>
+                        <View
+                          style={{
+                            marginTop: 20,
+                            flexDirection: "row",
+                            borderWidth: 1,
+                            borderColor: Colors.darkGray,
+                          }}
+                        >
+                          {isLoadingIn.key === currentDay &&
+                          isLoadingIn.index === index &&
+                          isLoadingIn.isExercise === true ? (
+                            <View
+                              style={{
+                                height: 100,
+                                width: 100,
+                                backgroundColor: Colors.lightGray,
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <div className={styles.spinnerOverlay}>
+                                <div className={styles.spinnerContainer}></div>
                               </div>
-                            )}
-                          </>
-                        )}
-                        <View style={{ marginLeft: 15, width: "95%" }}>
-                          <View
-                            style={{
-                              marginTop: 20,
-                              flexDirection: "row",
-                              justifyContent: "space-between",
-                              width: "90%",
-                              height: 140,
-                            }}
-                          >
-                            {/* <textarea
+                            </View>
+                          ) : (
+                            <>
+                              {(value?.thumbLocal === "" ||
+                                value.thumbLocal === undefined) &&
+                              value.thumb === "" ? (
+                                <Pressable>
+                                  <View
+                                    style={{
+                                      height: 100,
+                                      width: 100,
+                                      backgroundColor: Colors.lightGray,
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                    }}
+                                  >
+                                    <label className={styles.label}>
+                                      <input
+                                        onChange={(event) => {
+                                          setErrorMaxSize("");
+                                          setIsExercise(undefined);
+                                          setIndexError(-1);
+                                          checkSizeOfThumbFile(
+                                            event,
+                                            index,
+                                            true
+                                          );
+                                          (event.target as HTMLInputElement).value = "";
+                                        }}
+                                        id="file"
+                                        accept="image/jpeg,image/png"
+                                        name="fileToUpload"
+                                        type="file"
+                                      />
+                                      <div
+                                        style={{
+                                          textAlign: "center",
+                                          fontSize: 15,
+                                          padding: "0px 20px",
+                                        }}
+                                      >
+                                        <span>Choose a file</span>
+                                      </div>
+                                    </label>
+                                  </View>
+                                </Pressable>
+                              ) : (
+                                <div className={styles.containerImage}>
+                                  <Image
+                                    src={
+                                      isValueThumbFile ? valueThumb : imageUrl
+                                    }
+                                    height={100}
+                                    width={100}
+                                    alt="Image"
+                                    style={{
+                                      height: 100,
+                                      width: 100,
+                                      backgroundColor: Colors.lightGray,
+                                      zIndex: 1,
+                                    }}
+                                  />
+                                  <div className={styles.overlay}>
+                                    <label className={styles.label}>
+                                      <input
+                                        onChange={(event) => {
+                                          setErrorMaxSize("");
+                                          setIsExercise(undefined);
+                                          setIndexError(-1);
+                                          checkSizeOfThumbFile(
+                                            event,
+                                            index,
+                                            true
+                                          );
+                                          (event.target as HTMLInputElement).value = "";
+                                        }}
+                                        id="file"
+                                        accept="image/jpeg,image/png"
+                                        name="fileToUpload"
+                                        type="file"
+                                      />
+                                      <div className={styles.chooseFile}>
+                                        <span>Choose a file</span>
+                                      </div>
+                                    </label>
+                                  </div>
+                                </div>
+                              )}
+                            </>
+                          )}
+                          <View style={{ marginLeft: 15, width: "95%" }}>
+                            <View
+                              style={{
+                                marginTop: 20,
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                width: "90%",
+                                height: 140,
+                              }}
+                            >
+                              {/* <textarea
                               style={{
                                 fontSize: 20,
                                 width: "90%",
@@ -1801,113 +1881,133 @@ const ModulesAndExercises = ({
                                 )
                               }
                             /> */}
-                            <ReactQuill
-                              onKeyDown={checkCharacterCount}
-                              ref={reactQuillRef}
-                              theme="snow"
-                              value={value.title}
-                              onChange={(value) => {
-                                handleInputChangeTitle(value, index, true);
-                              }}
-                              style={{ width: "100%", height: 100 }}
-                              modules={{
-                                toolbar: [
-                                  [{ header: [1, 2, false] }],
-                                  [
-                                    "bold",
-                                    "italic",
-                                    "underline",
-                                    "strike",
-                                    "blockquote",
-                                  ],
-                                  [
-                                    {
-                                      color: [
-                                        "#000000",
-                                        "#e60000",
-                                        "#ff9900",
-                                        "#ffff00",
-                                        "#008a00",
-                                        "#0066cc",
-                                        "#9933ff",
-                                        "#ffffff",
-                                        "#facccc",
-                                        "#ffebcc",
-                                        "#ffffcc",
-                                        "#cce8cc",
-                                        "#cce0f5",
-                                        "#ebd6ff",
-                                        "#bbbbbb",
-                                        "#f06666",
-                                        "#ffc266",
-                                        "#ffff66",
-                                        "#66b966",
-                                        "#66a3e0",
-                                        "#c285ff",
-                                        "#888888",
-                                        "#a10000",
-                                        "#b26b00",
-                                        "#b2b200",
-                                        "#006100",
-                                        "#0047b2",
-                                        "#6b24b2",
-                                        "#444444",
-                                        "#5c0000",
-                                        "#663d00",
-                                        "#666600",
-                                        "#003700",
-                                        "#002966",
-                                        "#3d1466",
-                                        "custom-color",
-                                      ],
-                                    },
-                                  ],
-                                  [{ list: "ordered" }, { list: "bullet" }],
-                                  ["clean"],
-                                ],
-                              }}
-                              formats={[
-                                "header",
-                                "bold",
-                                "italic",
-                                "underline",
-                                "strike",
-                                "blockquote",
-                                "list",
-                                "bullet",
-                                "image",
-                                "color",
-                              ]}
-                            />
-                            <View style={{ marginLeft: 40 }}>
-                              <Pressable
-                                style={{ marginBottom: 10 }}
-                                onPress={() => removeModule(index, true)}
-                              >
-                                <View>
-                                  <MinusSquareFilled
-                                    style={{ color: Colors.red, fontSize: 30 }}
-                                  />
-                                </View>
-                              </Pressable>
-                              <Pressable
-                                onPress={() => {
-                                  setOpenFull(true);
-                                  showFullExercise(true);
-                                  saveValueEx({ value, index });
+                              <ReactQuill
+                                onKeyDown={checkCharacterCount}
+                                ref={reactQuillRef}
+                                theme="snow"
+                                value={value.title}
+                                onChange={(value) => {
+                                  handleInputChangeTitle(value, index, true);
                                 }}
-                              >
-                                <OpenInNewIcon
-                                  style={{
-                                    color: Colors.primary,
-                                    fontSize: 30,
+                                style={{ width: "100%", height: 100 }}
+                                modules={{
+                                  toolbar: [
+                                    [{ header: [1, 2, false] }],
+                                    [
+                                      "bold",
+                                      "italic",
+                                      "underline",
+                                      "strike",
+                                      "blockquote",
+                                    ],
+                                    [
+                                      {
+                                        color: [
+                                          "#000000",
+                                          "#e60000",
+                                          "#ff9900",
+                                          "#ffff00",
+                                          "#008a00",
+                                          "#0066cc",
+                                          "#9933ff",
+                                          "#ffffff",
+                                          "#facccc",
+                                          "#ffebcc",
+                                          "#ffffcc",
+                                          "#cce8cc",
+                                          "#cce0f5",
+                                          "#ebd6ff",
+                                          "#bbbbbb",
+                                          "#f06666",
+                                          "#ffc266",
+                                          "#ffff66",
+                                          "#66b966",
+                                          "#66a3e0",
+                                          "#c285ff",
+                                          "#888888",
+                                          "#a10000",
+                                          "#b26b00",
+                                          "#b2b200",
+                                          "#006100",
+                                          "#0047b2",
+                                          "#6b24b2",
+                                          "#444444",
+                                          "#5c0000",
+                                          "#663d00",
+                                          "#666600",
+                                          "#003700",
+                                          "#002966",
+                                          "#3d1466",
+                                          "custom-color",
+                                        ],
+                                      },
+                                    ],
+                                    [{ list: "ordered" }, { list: "bullet" }],
+                                    ["clean"],
+                                  ],
+                                }}
+                                formats={[
+                                  "header",
+                                  "bold",
+                                  "italic",
+                                  "underline",
+                                  "strike",
+                                  "blockquote",
+                                  "list",
+                                  "bullet",
+                                  "image",
+                                  "color",
+                                ]}
+                              />
+                              <View style={{ marginLeft: 40 }}>
+                                <Pressable
+                                  style={{ marginBottom: 10 }}
+                                  onPress={() => removeModule(index, true)}
+                                >
+                                  <View>
+                                    <MinusSquareFilled
+                                      style={{
+                                        color: Colors.red,
+                                        fontSize: 30,
+                                      }}
+                                    />
+                                  </View>
+                                </Pressable>
+                                <Pressable
+                                  onPress={() => {
+                                    setOpenFull(true);
+                                    showFullExercise(true);
+                                    saveValueEx({ value, index });
                                   }}
-                                />
-                              </Pressable>
+                                >
+                                  <OpenInNewIcon
+                                    style={{
+                                      color: Colors.primary,
+                                      fontSize: 30,
+                                    }}
+                                  />
+                                </Pressable>
+                              </View>
                             </View>
                           </View>
                         </View>
-                      </View>
+                        {errorMaxSize.length > 0 &&
+                          isExercise &&
+                          indexError === index && (
+                            <div style={{ marginTop: 20 }}>
+                              <span
+                                style={{
+                                  color: Colors.red,
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                              >
+                                {errorMaxSize}
+                              </span>
+                            </div>
+                          )}
+                      </>
                     )}
                   </>
                 );
@@ -1915,7 +2015,7 @@ const ModulesAndExercises = ({
             })}
           {isOpenFull && isExerciseShow && !isModuleShow && (
             <ModulesAndExercisesFullScreen
-            uploadProgress={uploadProgress}
+              uploadProgress={uploadProgress}
               handleSaveVideo={handleSaveVideo}
               handleSaveUploadedImage={handleSaveUploadedImage}
               handleSaveVideoId={handleSaveVideoId}
