@@ -480,7 +480,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
 
     setIsUploadingCertificate(false);
   };
-console.log("LENGTH", imagesCertificate)
+  console.log("LENGTH", imagesCertificate);
   useEffect(() => {
     setEnableSwitch(user?.lookingQuitters);
   }, [user]);
@@ -643,8 +643,19 @@ console.log("LENGTH", imagesCertificate)
   useEffect(() => {
     if (user !== undefined) {
       setFacebook(user.facebookUrl);
+      if (user.facebookUrl.length > 0) {
+        validateFacebookUrl(user.facebookUrl);
+      }
       setInstagram(user.instagramUrl);
+
+      if (user.instagramUrl.length > 0) {
+        validateInstagramUrl(user.instagramUrl);
+      }
       setLinkdn(user.linkedinUrl);
+
+      if (user.linkedinUrl.length > 0) {
+        validateLinkedinUrl(user.linkedinUrl);
+      }
     }
   }, [user]);
   const [showErrorSocial, setShowErrorSocial] = useState("");
@@ -658,6 +669,10 @@ console.log("LENGTH", imagesCertificate)
     if (!isValidLinkedin && linkedinUrl.length > 0) {
       return;
     }
+
+    validateFacebookUrl(facebookUrl)
+    validateInstagramUrl(instagramUrl)
+    validateLinkedinUrl(linkedinUrl)
 
     setIsEnableSocial(false);
     await updateSocialProfileBE({
@@ -761,7 +776,7 @@ console.log("LENGTH", imagesCertificate)
               )}
             </View>
           )}
-          
+
           {!isLoadingInitial && (
             <View
               style={{
@@ -864,7 +879,7 @@ console.log("LENGTH", imagesCertificate)
                                   <label className={styles.label}>
                                     <input
                                       onChange={(event) => {
-                                        setErrorMaxSize("")
+                                        setErrorMaxSize("");
                                         const isBiggerThanAllowed =
                                           checkSizeOfUserImage(event);
                                         if (isBiggerThanAllowed.isBigger) {
@@ -877,7 +892,9 @@ console.log("LENGTH", imagesCertificate)
                                         }
                                         const file = event.target.files[0];
                                         const url = URL.createObjectURL(file);
-                                        (event.target as HTMLInputElement).value = "";
+                                        (
+                                          event.target as HTMLInputElement
+                                        ).value = "";
                                         pickImage(true, url, file);
                                       }}
                                       id="file"
@@ -901,15 +918,17 @@ console.log("LENGTH", imagesCertificate)
                         </View>
                       )}
                       {errorMaxSize.length > 0 && (
-                    <div
-                      style={{
-                        display: "flex",
-                        marginTop: 120,
-                      }}
-                    >
-                      <span style={{ color: Colors.red }}>{errorMaxSize}</span>
-                    </div>
-                  )}
+                        <div
+                          style={{
+                            display: "flex",
+                            marginTop: 120,
+                          }}
+                        >
+                          <span style={{ color: Colors.red }}>
+                            {errorMaxSize}
+                          </span>
+                        </div>
+                      )}
                       {myUserId !== user?.userId && (
                         <View>
                           <TouchableOpacity
@@ -976,7 +995,6 @@ console.log("LENGTH", imagesCertificate)
                         </View>
                       )}
                     </View>
-                    
 
                     {myUserId === user?.userId && (
                       <TouchableOpacity>
@@ -1015,7 +1033,7 @@ console.log("LENGTH", imagesCertificate)
                             <label className={styles.label}>
                               <input
                                 onChange={(event) => {
-                                  setErrorMaxSize("")
+                                  setErrorMaxSize("");
                                   const isBiggerThanAllowed =
                                     checkSizeOfUserImage(event);
                                   if (isBiggerThanAllowed.isBigger) {
@@ -1024,7 +1042,7 @@ console.log("LENGTH", imagesCertificate)
                                     );
                                     return;
                                   } else {
-                                    setErrorMaxSize("")
+                                    setErrorMaxSize("");
                                   }
                                   const file = event.target.files[0];
                                   const url = URL.createObjectURL(file);
@@ -1052,7 +1070,7 @@ console.log("LENGTH", imagesCertificate)
                       </TouchableOpacity>
                     )}
                   </View>
-                  
+
                   {!isLoadingInitial && (
                     <View
                       style={{
@@ -1436,13 +1454,19 @@ console.log("LENGTH", imagesCertificate)
                         <TouchableOpacity
                           style={{ marginRight: 15 }}
                           onPress={() => {
-                            setValidFacebook(undefined);
-                            setValidInstagram(undefined);
-                            setValidLinkedin(undefined);
-                            setShowErrorSocial("");
-                            // setFacebook("");
-                            // setInstagram("");
-                            // setLinkdn("");
+                            validateFacebookUrl(facebookUrl)
+                            validateInstagramUrl(instagramUrl)
+                            validateLinkedinUrl(linkedinUrl)
+                            if (!isValidFacebook) {
+                              setFacebook("");
+                            }
+                            if (!isValidInstagram) {
+                              setInstagram("");
+                            }
+                            if (!isValidLinkedin) {
+                              setLinkdn("");
+                            }
+                          
                             setShowErrorSocial("");
                             setIsEnableSocial(false);
                           }}
