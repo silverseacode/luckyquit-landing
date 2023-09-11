@@ -279,7 +279,7 @@ const ModulesAndExercisesFullScreen = ({
                 >
                   <Image
                     fill
-                    style={{ objectFit: "cover" }}
+                    style={{ objectFit: "contain" }}
                     alt="uploaded image"
                     src={image}
                   />
