@@ -48,7 +48,7 @@ const ModulesAndExercisesFullScreen = ({
   short,
   index,
   isSavingMainAsset,
-  uploadProgress
+  uploadProgress,
 }: IProps) => {
   const [textTitle, setTextTitle] = useState(title);
   const [textShort, setTextShort] = useState(short);
@@ -172,13 +172,13 @@ const ModulesAndExercisesFullScreen = ({
   const [errorMaxSize, setErrorMaxSize] = useState("");
 
   const checkSizeOfVideoFile = async (event: any) => {
-    const maxSizeAllowed = 500 * 1024 * 1024;
+    const maxSizeAllowed = 50 * 1024 * 1024;
     const file = event.target.files[0];
     const fileSizeInBytes = file.size;
     const fileSizeInMB = (fileSizeInBytes / (1024 * 1024)).toFixed(2);
     if (file && file.size > maxSizeAllowed) {
       setErrorMaxSize(
-        `Your file has the size of ${fileSizeInMB}MB, the max allowed is 500MB.`
+        `Your file is ${fileSizeInMB}MB in size, while the maximum allowed size is 50MB.`
       );
       return;
     } else {
@@ -197,6 +197,32 @@ const ModulesAndExercisesFullScreen = ({
     setVideo(url);
     setImage("");
     handleSaveVideo(event, index, isEx);
+  };
+  const checkSizeOfImageFile = async (event: any) => {
+    const maxSizeAllowed = 50 * 1024 * 1024;
+    const file = event.target.files[0];
+    const fileSizeInBytes = file.size;
+    const fileSizeInMB = (fileSizeInBytes / (1024 * 1024)).toFixed(2);
+    if (file && file.size > maxSizeAllowed) {
+      setErrorMaxSize(
+        `Your file is ${fileSizeInMB}MB in size, while the maximum allowed size is 50MB.`
+      );
+      return;
+    } else {
+      setErrorMaxSize("");
+    }
+
+    let isEx = false;
+    if (isExerciseShow) {
+      isEx = true;
+    }
+    if (isModuleShow) {
+      isEx = false;
+    }
+    const url = URL.createObjectURL(file);
+    setImage(url);
+    handleRemoveVideo();
+    handleSaveUploadedImage(event, index, isEx);
   };
 
   if (!isMounted) return null;
@@ -251,7 +277,12 @@ const ModulesAndExercisesFullScreen = ({
                     height: 300,
                   }}
                 >
-                  <Image fill style={{objectFit: "cover"}} alt="uploaded image" src={image} />
+                  <Image
+                    fill
+                    style={{ objectFit: "cover" }}
+                    alt="uploaded image"
+                    src={image}
+                  />
                 </View>
               )}
 
@@ -274,6 +305,7 @@ const ModulesAndExercisesFullScreen = ({
                 </video>
               </View>
             )}
+            <div style={{display:"flex", color: Colors.darkGray, justifyContent: "center", alignItems: "center", marginTop: 20}}><span>The maximum allowed size for images and videos is 50MB.</span></div>
             {errorMaxSize !== "" && (
               <div
                 style={{
@@ -309,18 +341,7 @@ const ModulesAndExercisesFullScreen = ({
                       <label className={styles.label}>
                         <input
                           onChange={(event) => {
-                            let isEx = false;
-                            if (isExerciseShow) {
-                              isEx = true;
-                            }
-                            if (isModuleShow) {
-                              isEx = false;
-                            }
-                            const file = event.target.files[0];
-                            const url = URL.createObjectURL(file);
-                            setImage(url);
-                            handleRemoveVideo();
-                            handleSaveUploadedImage(event, index, isEx);
+                            checkSizeOfImageFile(event)
                           }}
                           id="file"
                           accept="image/jpeg,image/png"
