@@ -640,8 +640,7 @@ const ChatMessage = ({
       ? receiverParam.userId
       : receiverParam;
     const receiverBE = await getUser(userId);
-
-    const isAllowNotificationChatsLocal = receiverBE.reponse?.[0]?.isChats;
+    const isAllowNotificationChatsLocal = receiverBE.response?.[0].isChats;
     if (isAllowNotificationChatsLocal) {
       if (os !== "android") {
         const data = {
@@ -658,7 +657,7 @@ const ChatMessage = ({
           data: { isFrom: "Message", receiver: user?.userId },
           token: pushTokenReceiver,
         };
-        sendPushNotificationAndroid(pushNotification);
+        await sendPushNotificationAndroid(pushNotification);
       }
     }
   };

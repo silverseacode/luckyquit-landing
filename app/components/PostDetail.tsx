@@ -148,8 +148,8 @@ export default function PostDetail({ postId }: any) {
     const idv4 = uuidv4();
 
     const userRecevier = await getUser(postInfo?.userId);
-    const isAllowCommentsNotif = userRecevier[0]?.isComments;
-    const isAllowRepliesNotif = userRecevier[0]?.isReplies;
+    const isAllowCommentsNotif = userRecevier.response[0]?.isComments;
+    const isAllowRepliesNotif = userRecevier.reponse[0]?.isReplies;
 
     if (regex.test(comment) && userNameInInput !== "") {
       let newReplyLocal = {
@@ -467,7 +467,7 @@ export default function PostDetail({ postId }: any) {
           receiver: user?.userId,
         };
         const userRecevier = await getUser(postInfo?.userId);
-        const isAllowLikesNotif = userRecevier[0]?.isLikes;
+        const isAllowLikesNotif = userRecevier.response[0]?.isLikes;
         socket?.emit("send_notification_request", dataSocket);
         if (isAllowLikesNotif) {
           if (os !== "android") {
