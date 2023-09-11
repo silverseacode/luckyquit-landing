@@ -148,8 +148,8 @@ export default function PostDetail({ postId }: any) {
     const idv4 = uuidv4();
 
     const userRecevier = await getUser(postInfo?.userId);
-    const isAllowCommentsNotif = userRecevier.response[0]?.isComments;
-    const isAllowRepliesNotif = userRecevier.reponse[0]?.isReplies;
+    const isAllowCommentsNotif = userRecevier.response?.[0].isComments;
+    const isAllowRepliesNotif = userRecevier.reponse?.[0].isReplies;
 
     if (regex.test(comment) && userNameInInput !== "") {
       let newReplyLocal = {
@@ -467,7 +467,7 @@ export default function PostDetail({ postId }: any) {
           receiver: user?.userId,
         };
         const userRecevier = await getUser(postInfo?.userId);
-        const isAllowLikesNotif = userRecevier.response[0]?.isLikes;
+        const isAllowLikesNotif = userRecevier.response?.[0].isLikes;
         socket?.emit("send_notification_request", dataSocket);
         if (isAllowLikesNotif) {
           if (os !== "android") {
@@ -477,7 +477,7 @@ export default function PostDetail({ postId }: any) {
               data: { isFrom: "Likes", postId: postId },
               token: pushTokenReceiver,
             };
-            sendPushNotification(pushNotification);
+            await sendPushNotification(pushNotification);
           } else {
             const pushNotification = {
               title: `New like on your post`,
@@ -485,7 +485,7 @@ export default function PostDetail({ postId }: any) {
               data: { isFrom: "Comments", postId: postId },
               token: pushTokenReceiver,
             };
-            sendPushNotificationAndroid(pushNotification);
+            await sendPushNotificationAndroid(pushNotification);
           }
         }
       }

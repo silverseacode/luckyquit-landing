@@ -389,14 +389,14 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
         const dataPush = {
           token: user?.pushToken,
           title: `New follow request`,
-          body: `@${user?.userName} wants to connect`,
+          body: `${userCurrent?.firstName} ${userCurrent?.lastName} wants to connect`,
           data: { isFrom: "Follow", follow: "network" },
         };
         await sendPushNotification(dataPush);
       } else {
         const pushNotification = {
           title: `New follow request`,
-          body: `@${user?.userName} wants to connect`,
+          body: `${userCurrent?.firstName} ${userCurrent?.lastName} wants to connect`,
           data: { isFrom: "Follow", follow: "network" },
           token: user?.pushToken,
         };
