@@ -694,6 +694,14 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
   };
   const [errorMaxSize, setErrorMaxSize] = useState("");
 
+  const checkSizeOfUserImage = (event: any) => {
+    const maxSizeAllowed = 50 * 1024 * 1024;
+    const file = event.target.files[0];
+    const fileSizeInBytes = file.size;
+    const fileSizeInMB = (fileSizeInBytes / (1024 * 1024)).toFixed(2);
+    return { isBigger: file && file.size > maxSizeAllowed, size: fileSizeInMB };
+  };
+
   const checkSizeOfImageFile = (event: any) => {
     const maxSizeAllowed = 50 * 1024 * 1024;
     const file = event.target.files[0];
@@ -753,6 +761,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
               )}
             </View>
           )}
+          
           {!isLoadingInitial && (
             <View
               style={{
@@ -855,8 +864,20 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                                   <label className={styles.label}>
                                     <input
                                       onChange={(event) => {
+                                        setErrorMaxSize("")
+                                        const isBiggerThanAllowed =
+                                          checkSizeOfUserImage(event);
+                                        if (isBiggerThanAllowed.isBigger) {
+                                          setErrorMaxSize(
+                                            `Your file is ${isBiggerThanAllowed.size}MB in size, while the maximum allowed size is 50MB.`
+                                          );
+                                          return;
+                                        } else {
+                                          setErrorMaxSize("");
+                                        }
                                         const file = event.target.files[0];
                                         const url = URL.createObjectURL(file);
+                                        (event.target as HTMLInputElement).value = "";
                                         pickImage(true, url, file);
                                       }}
                                       id="file"
@@ -879,6 +900,16 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                           )}
                         </View>
                       )}
+                      {errorMaxSize.length > 0 && (
+                    <div
+                      style={{
+                        display: "flex",
+                        marginTop: 120,
+                      }}
+                    >
+                      <span style={{ color: Colors.red }}>{errorMaxSize}</span>
+                    </div>
+                  )}
                       {myUserId !== user?.userId && (
                         <View>
                           <TouchableOpacity
@@ -945,6 +976,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                         </View>
                       )}
                     </View>
+                    
 
                     {myUserId === user?.userId && (
                       <TouchableOpacity>
@@ -983,8 +1015,20 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                             <label className={styles.label}>
                               <input
                                 onChange={(event) => {
+                                  setErrorMaxSize("")
+                                  const isBiggerThanAllowed =
+                                    checkSizeOfUserImage(event);
+                                  if (isBiggerThanAllowed.isBigger) {
+                                    setErrorMaxSize(
+                                      `Your file is ${isBiggerThanAllowed.size}MB in size, while the maximum allowed size is 50MB.`
+                                    );
+                                    return;
+                                  } else {
+                                    setErrorMaxSize("")
+                                  }
                                   const file = event.target.files[0];
                                   const url = URL.createObjectURL(file);
+                                  (event.target as HTMLInputElement).value = "";
                                   pickImage(false, url, file);
                                 }}
                                 id="file"
@@ -1008,6 +1052,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                       </TouchableOpacity>
                     )}
                   </View>
+                  
                   {!isLoadingInitial && (
                     <View
                       style={{
@@ -1697,7 +1742,17 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                   </View>
                 </View>
               )}
-              {errorMaxSize.length > 0}<div style={{display:"flex", justifyContent: "center", alignItems: "center", marginTop: 20}}><span style={{color: Colors.red}}>{errorMaxSize}</span></div>
+              {errorMaxSize.length > 0}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: 20,
+                }}
+              >
+                <span style={{ color: Colors.red }}>{errorMaxSize}</span>
+              </div>
 
               <View
                 style={{
