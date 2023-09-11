@@ -48,10 +48,10 @@ import {
 import mixpanel from "mixpanel-browser";
 import DeleteIcon from "@mui/icons-material/Delete";
 import "../../app/globals.css";
-import CloseIcon from '@mui/icons-material/Close';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import InstagramIcon from '@mui/icons-material/Instagram';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import CloseIcon from "@mui/icons-material/Close";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 interface IProps {
   id: string;
   isUsername: boolean;
@@ -691,6 +691,26 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
     const pattern = /^https:\/\/www\.linkedin\.com\/.*/;
     const isValid = pattern.test(url);
     setValidLinkedin(isValid);
+  };
+  const [errorMaxSize, setErrorMaxSize] = useState("");
+
+  const checkSizeOfImageFile = (event: any) => {
+    const maxSizeAllowed = 50 * 1024 * 1024;
+    const file = event.target.files[0];
+    const fileSizeInBytes = file.size;
+    const fileSizeInMB = (fileSizeInBytes / (1024 * 1024)).toFixed(2);
+    if (file && file.size > maxSizeAllowed) {
+      setErrorMaxSize(
+        `Your file is ${fileSizeInMB}MB in size, while the maximum allowed size is 50MB.`
+      );
+      return;
+    } else {
+      setErrorMaxSize("");
+    }
+
+    const url = URL.createObjectURL(file);
+
+    uploadPhotoCertificates(url, file);
   };
 
   return (
@@ -1335,227 +1355,225 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
           </View>
 
           {user?.type === "coach" && (
+            <View
+              style={{
+                marginTop: 10,
+                backgroundColor: Colors.white,
+                paddingHorizontal: 20,
+                paddingVertical: 20,
+              }}
+            >
               <View
                 style={{
-                  marginTop: 10,
-                  backgroundColor: Colors.white,
-                  paddingHorizontal: 20,
-                  paddingVertical: 20,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                 }}
               >
-                <View
+                <span
                   style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
+                    paddingLeft: 20,
+                    paddingRight: 20,
+                    fontSize: 25,
+                    color: Colors.blackCardDarkMode,
                   }}
                 >
-                  <span
-                    style={{
-                      paddingLeft: 20,
-                      paddingRight: 20,
-                      fontSize: 25,
-                      color: Colors.blackCardDarkMode,
-                    }}
-                  >
-                    Social Media
-                  </span>
-                  {myUserId === user?.userId && (
-                    <View>
-                      {!isEnableSocial && (
+                  Social Media
+                </span>
+                {myUserId === user?.userId && (
+                  <View>
+                    {!isEnableSocial && (
+                      <TouchableOpacity onPress={() => setIsEnableSocial(true)}>
+                        <EditIcon name="edit" style={{ fontSize: 24 }} />
+                      </TouchableOpacity>
+                    )}
+                    {isEnableSocial && (
+                      <View style={{ flexDirection: "row" }}>
                         <TouchableOpacity
-                          onPress={() => setIsEnableSocial(true)}
+                          style={{ marginRight: 15 }}
+                          onPress={() => {
+                            setValidFacebook(undefined);
+                            setValidInstagram(undefined);
+                            setValidLinkedin(undefined);
+                            setShowErrorSocial("");
+                            // setFacebook("");
+                            // setInstagram("");
+                            // setLinkdn("");
+                            setShowErrorSocial("");
+                            setIsEnableSocial(false);
+                          }}
                         >
-                           <EditIcon name='edit' style={{fontSize: 24}} />
+                          <CloseIcon style={{ fontSize: 24 }} />
                         </TouchableOpacity>
-                      )}
-                      {isEnableSocial && (
-                        <View style={{ flexDirection: "row" }}>
-                          <TouchableOpacity
-                            style={{ marginRight: 15 }}
-                            onPress={() => {
-                              setValidFacebook(undefined);
-                              setValidInstagram(undefined);
-                              setValidLinkedin(undefined);
-                              setShowErrorSocial("");
-                              // setFacebook("");
-                              // setInstagram("");
-                              // setLinkdn("");
-                              setShowErrorSocial("");
-                              setIsEnableSocial(false);
+                        <TouchableOpacity onPress={saveSocial}>
+                          <span
+                            style={{
+                              fontSize: 17,
                             }}
                           >
-                           <CloseIcon style={{fontSize: 24}} /> 
-                          </TouchableOpacity>
-                          <TouchableOpacity onPress={saveSocial}>
-                            <span
-                              style={{
-                                fontSize: 17,
-                              }}
-                            >
-                              Save
-                            </span>
-                          </TouchableOpacity>
-                        </View>
-                      )}
-                    </View>
-                  )}
-                </View>
-                {!isEnableSocial &&
-                  facebookUrl?.length == 0 &&
-                  instagramUrl?.length == 0 &&
-                  linkedinUrl?.length == 0 && (
-                    <View style={{ marginHorizontal: 20, marginTop: 15 }}>
-                      <span
-                        style={{
-                          color: "rgba(0,0,0,0.3)",
-                          fontSize: 18,
-                        }}
-                      >
-                        Not information provided.
-                      </span>
-                    </View>
-                  )}
-                {!isEnableSocial && (
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      marginHorizontal: 0,
-                      marginTop: 10,
-                      marginBottom: 10,
-                    }}
-                  >
-                    {facebookUrl?.length > 0 && (
-                      <TouchableOpacity
-                        style={{ marginLeft: 20 }}
-                        onPress={() => window.location.href = facebookUrl}
-                      >
-                        <FacebookIcon
-                          style={{fontSize: 40, color: Colors.darkGray}}
-                        />
-                      </TouchableOpacity>
-                    )}
-                    {instagramUrl?.length > 0 && (
-                      <TouchableOpacity
-                        style={{ marginLeft: 20 }}
-                        onPress={() => window.location.href = instagramUrl}
-                      >
-                      <InstagramIcon
-                          style={{fontSize: 40, color: Colors.darkGray}}
-                        />
-                      </TouchableOpacity>
-                    )}
-                    {linkedinUrl.length > 0 && (
-                      <TouchableOpacity
-                        style={{ marginLeft: 20 }}
-                        onPress={() => window.location.href = linkedinUrl}
-                      >
-                        <LinkedInIcon
-                         style={{fontSize: 40, color: Colors.darkGray}}
-                        />
-                      </TouchableOpacity>
+                            Save
+                          </span>
+                        </TouchableOpacity>
+                      </View>
                     )}
                   </View>
                 )}
-                {myUserId === user?.userId && isEnableSocial && (
-                  <>
-                    <View>
-                      <TextInput
-                        value={facebookUrl}
-                        multiline
-                        autoCapitalize='none'
-                        placeholder='Put your Facebook profile URL'
-                        editable={isEnableSocial}
-                        maxLength={500}
-                        onChangeText={validateFacebookUrl}
-                        style={{
-                          borderRadius: 8,
-                          marginLeft: 20,
-                          marginTop: 20,
-                          maxWidth: 600,
-                          fontSize: 19,
-                          outline: "none"
-                        }}
-                      />
-                    </View>
-                    {isValidFacebook === false && (
-                      <span
-                        style={{
-                          marginLeft: 18,
-                          marginTop: 10,
-                          marginBottom: 10,
-                          color: Colors.red,
-                          fontSize: 12,
-                        }}
-                      >
-                        The url should start with https://www.facebook.com/
-                      </span>
-                    )}
-                    <View>
-                      <TextInput
-                        value={instagramUrl}
-                        multiline
-                        autoCapitalize='none'
-                        placeholder='Put your Instagram profile URL'
-                        editable={isEnableSocial}
-                        maxLength={500}
-                        onChangeText={validateInstagramUrl}
-                        style={{
-                          borderRadius: 8,
-                          marginLeft: 20,
-                          maxWidth: 600,
-                          fontSize: 19,
-                          outline: "none"
-                        }}
-                      />
-                    </View>
-                    {isValidInstagram === false && (
-                      <span
-                        style={{
-                          marginLeft: 18,
-                          marginTop: 10,
-                          marginBottom: 10,
-                          color: Colors.red,
-                          fontSize: 12,
-                        }}
-                      >
-                        The url should start with https://www.instagram.com/
-                      </span>
-                    )}
-                    <View>
-                      <TextInput
-                        value={linkedinUrl}
-                        multiline
-                        autoCapitalize='none'
-                        placeholder='Put your Linkedin profile URL'
-                        editable={isEnableSocial}
-                        maxLength={500}
-                        onChangeText={validateLinkedinUrl}
-                        style={{
-                          borderRadius: 8,
-                          marginLeft: 20,
-                          maxWidth: 600,
-                          fontSize: 19,
-                          outline: "none"
-                        }}
-                      />
-                    </View>
-                    {isValidLinkedin === false && (
-                      <span
-                        style={{
-                          marginLeft: 18,
-                          marginTop: 10,
-                          marginBottom: 10,
-                          color: Colors.red,
-                          fontSize: 12,
-                        }}
-                      >
-                        The url should start with https://www.linkedin.com/
-                      </span>
-                    )}
-                  </>
-                )}
               </View>
-            )}
+              {!isEnableSocial &&
+                facebookUrl?.length == 0 &&
+                instagramUrl?.length == 0 &&
+                linkedinUrl?.length == 0 && (
+                  <View style={{ marginHorizontal: 20, marginTop: 15 }}>
+                    <span
+                      style={{
+                        color: "rgba(0,0,0,0.3)",
+                        fontSize: 18,
+                      }}
+                    >
+                      Not information provided.
+                    </span>
+                  </View>
+                )}
+              {!isEnableSocial && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    marginHorizontal: 0,
+                    marginTop: 10,
+                    marginBottom: 10,
+                  }}
+                >
+                  {facebookUrl?.length > 0 && (
+                    <TouchableOpacity
+                      style={{ marginLeft: 20 }}
+                      onPress={() => (window.location.href = facebookUrl)}
+                    >
+                      <FacebookIcon
+                        style={{ fontSize: 40, color: Colors.darkGray }}
+                      />
+                    </TouchableOpacity>
+                  )}
+                  {instagramUrl?.length > 0 && (
+                    <TouchableOpacity
+                      style={{ marginLeft: 20 }}
+                      onPress={() => (window.location.href = instagramUrl)}
+                    >
+                      <InstagramIcon
+                        style={{ fontSize: 40, color: Colors.darkGray }}
+                      />
+                    </TouchableOpacity>
+                  )}
+                  {linkedinUrl.length > 0 && (
+                    <TouchableOpacity
+                      style={{ marginLeft: 20 }}
+                      onPress={() => (window.location.href = linkedinUrl)}
+                    >
+                      <LinkedInIcon
+                        style={{ fontSize: 40, color: Colors.darkGray }}
+                      />
+                    </TouchableOpacity>
+                  )}
+                </View>
+              )}
+              {myUserId === user?.userId && isEnableSocial && (
+                <>
+                  <View>
+                    <TextInput
+                      value={facebookUrl}
+                      multiline
+                      autoCapitalize="none"
+                      placeholder="Put your Facebook profile URL"
+                      editable={isEnableSocial}
+                      maxLength={500}
+                      onChangeText={validateFacebookUrl}
+                      style={{
+                        borderRadius: 8,
+                        marginLeft: 20,
+                        marginTop: 20,
+                        maxWidth: 600,
+                        fontSize: 19,
+                        outline: "none",
+                      }}
+                    />
+                  </View>
+                  {isValidFacebook === false && (
+                    <span
+                      style={{
+                        marginLeft: 18,
+                        marginTop: 10,
+                        marginBottom: 10,
+                        color: Colors.red,
+                        fontSize: 12,
+                      }}
+                    >
+                      The url should start with https://www.facebook.com/
+                    </span>
+                  )}
+                  <View>
+                    <TextInput
+                      value={instagramUrl}
+                      multiline
+                      autoCapitalize="none"
+                      placeholder="Put your Instagram profile URL"
+                      editable={isEnableSocial}
+                      maxLength={500}
+                      onChangeText={validateInstagramUrl}
+                      style={{
+                        borderRadius: 8,
+                        marginLeft: 20,
+                        maxWidth: 600,
+                        fontSize: 19,
+                        outline: "none",
+                      }}
+                    />
+                  </View>
+                  {isValidInstagram === false && (
+                    <span
+                      style={{
+                        marginLeft: 18,
+                        marginTop: 10,
+                        marginBottom: 10,
+                        color: Colors.red,
+                        fontSize: 12,
+                      }}
+                    >
+                      The url should start with https://www.instagram.com/
+                    </span>
+                  )}
+                  <View>
+                    <TextInput
+                      value={linkedinUrl}
+                      multiline
+                      autoCapitalize="none"
+                      placeholder="Put your Linkedin profile URL"
+                      editable={isEnableSocial}
+                      maxLength={500}
+                      onChangeText={validateLinkedinUrl}
+                      style={{
+                        borderRadius: 8,
+                        marginLeft: 20,
+                        maxWidth: 600,
+                        fontSize: 19,
+                        outline: "none",
+                      }}
+                    />
+                  </View>
+                  {isValidLinkedin === false && (
+                    <span
+                      style={{
+                        marginLeft: 18,
+                        marginTop: 10,
+                        marginBottom: 10,
+                        color: Colors.red,
+                        fontSize: 12,
+                      }}
+                    >
+                      The url should start with https://www.linkedin.com/
+                    </span>
+                  )}
+                </>
+              )}
+            </View>
+          )}
 
           {myUserId !== user?.userId && imagesCertificate.length > 0 && (
             <View
@@ -1661,11 +1679,8 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                             if (isUploadingCertificate) {
                               return;
                             }
-                            const file = event.target.files[0];
-                            const url = URL.createObjectURL(file);
+                            checkSizeOfImageFile(event);
                             (event.target as HTMLInputElement).value = "";
-
-                            uploadPhotoCertificates(url, file);
                           }}
                           id="file"
                           accept="image/jpeg,image/png"
@@ -1682,6 +1697,7 @@ const ProfilePage = ({ id, isUsername }: IProps) => {
                   </View>
                 </View>
               )}
+              {errorMaxSize.length > 0}<div style={{display:"flex", justifyContent: "center", alignItems: "center", marginTop: 20}}><span style={{color: Colors.red}}>{errorMaxSize}</span></div>
 
               <View
                 style={{
