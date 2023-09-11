@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 import { useState } from "react";
 import { Colors } from "@/app/colors";
@@ -267,6 +267,24 @@ export default function VideoCall({ params }: any) {
     setMute(true);
     router.replace("/messages");
   }
+  const videoRef = useRef(null);
+  useEffect(() => {
+    const video1 = videoRef.current;
+    if (video1) {
+      return () => {
+        if (
+          video1 !== null &&
+          video1.srcObject !== null &&
+          video1 !== undefined
+        ) {
+          for (const track of video1.srcObject.getTracks()) {
+            track.stop();
+          }
+          video1.srcObject = null;
+        }
+      };
+    }
+  }, []);
 
   function hideCam() {
     const videoTrack = userStream
@@ -315,7 +333,6 @@ export default function VideoCall({ params }: any) {
       socket?.on("user disconnected", (userId) => handleDisconnect(userId));
       socket?.on("disconnect", () => handleDisconnect(1));
 
-
       socket?.on("disconnect", () => handleDisconnect(1));
 
       socket?.on("hide cam", hideCam);
@@ -351,6 +368,7 @@ export default function VideoCall({ params }: any) {
             muted={isMute}
             autoPlay
             id="user-video"
+            ref={videoRef}
             className={styles["user-video"]}
           ></video>
         </div>
