@@ -348,18 +348,51 @@ export default function VideoCall({ params }: any) {
       socket?.emit("leaves screen");
     };
   }, [socket]);
+  async function getUserMediaAsync() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+      return stream;
+    } catch (error) {
+      console.error("Error accessing microphone:", error);
+      return null;
+    }
+  }
 
   const [isMute, setMute] = useState(false);
-  console.log("ismuute", isMute);
-  const mute = () => {
-    setMute((prev) => !prev);
-    // me parece que solo tendria que mutear a el mismo a <video>
-    // const elements = document.getElementsByClassName("remote-video");
-    // const videoElement = elements[0]; // Assuming there is only one element with the given class
-    // if (videoElement) {
-    //   videoElement.muted = !videoElement.muted ? true : false;
-    // }
+  const mute = async () => {
+    setMute((prev) => {
+      if (prev === false) {
+        const audioStream = document.getElementById("user-video"); // Assuming you have an audio element with an audio stream
+
+        if (audioStream) {
+          const audioTracks = audioStream.srcObject.getAudioTracks();
+
+          for (const track of audioTracks) {
+            track.stop();
+          }
+
+          audioStream.srcObject = null;
+        }
+      } else {
+        getUserMediaAsync().then((stream) => {
+          userStream = stream;
+          if (userVideo) {
+            userVideo.srcObject = stream;
+          }
+        });
+      }
+      return !prev;
+    });
   };
+  // me parece que solo tendria que mutear a el mismo a <video>
+  // const elements = document.getElementsByClassName("remote-video");
+  // const videoElement = elements[0]; // Assuming there is only one element with the given class
+  // if (videoElement) {
+  //   videoElement.muted = !videoElement.muted ? true : false;
+  // }
   return (
     <>
       <div id="chat-container" className={styles["chat-container"]}>
