@@ -286,6 +286,37 @@ export default function VideoCall({ params }: any) {
     }
   }, []);
 
+  useEffect(() => {
+    const beforeUnloadHandler = (event) => {
+      event.preventDefault();
+      event.returnValue = ""; // Some browsers require a return value
+
+      const video1 = videoRef.current;
+      if (video1) {
+        //return () => {
+        if (
+          video1 !== null &&
+          video1.srcObject !== null &&
+          video1 !== undefined
+        ) {
+          for (const track of video1.srcObject.getTracks()) {
+            track.stop();
+          }
+          video1.srcObject = null;
+        }
+        //};
+      }
+    };
+
+    // Attach the beforeunload event listener when the component mounts
+    window.addEventListener("beforeunload", beforeUnloadHandler);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnloadHandler);
+    };
+  }, []);
+
   function hideCam() {
     const videoTrack = userStream
       .getTracks()
