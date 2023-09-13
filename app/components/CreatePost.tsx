@@ -69,7 +69,7 @@ const CreatePost = ({ user, setNewPostAdded }: IProps) => {
         formData.append("image", file);
         await Promise.all([
           axios.post(
-            `${API_URL}/post/uploadImagePost/${postBE.idv4}`,
+            `api/posts/uploadImagePost/${postBE.idv4}`,
             formData,
             {
               headers: { "Content-Type": "multipart/form-data" },
