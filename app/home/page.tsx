@@ -17,12 +17,14 @@ import Layout from "../components/Layout";
 import Header from "@/globals/Header";
 import { useRouter } from "next/navigation";
 import mixpanel from "mixpanel-browser";
+import { useSocket } from "../Context/store";
 interface IProps {
   posts: { totalPages: number; response: { posts: Post[] } };
 }
 
 const Home = ({ posts }: IProps) => {
   const router = useRouter();
+  const socket = useSocket();
   useEffect(() => {
     const itemUUID = localStorage.getItem("UUID");
       const UUID = itemUUID ? itemUUID : null;

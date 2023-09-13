@@ -14,8 +14,10 @@ import { useEffect, useState } from "react";
 import { User } from "@/models";
 import Header from "@/globals/Header";
 import { useRouter } from "next/navigation";
+import { useSocket } from "../Context/store";
 
 export default function Messages() {
+  const socket = useSocket();
   const [user, setUser] = useState<User>();
   const [usersRecommendation, setUsersRecommendation] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);

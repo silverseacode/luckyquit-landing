@@ -14,6 +14,7 @@ import ProfilePage from "../../../components/ProfilePage";
 import { useRouter } from "next/navigation";
 import Header from "@/globals/Header";
 import { API_URL } from "@/config";
+import { useSocket } from "@/app/Context/store";
 // async function fetchUser(id: string) {
 //   console.log("PARAMS123", id);
 //   const userResponse = await fetch(`${API_URL}/user/only/${id}`, {
@@ -27,6 +28,7 @@ import { API_URL } from "@/config";
 export default function Profile(params: any) {
   //const userContext = await fetchUser(params.params.id);
   const router = useRouter()
+  const socket = useSocket();
   
   const [isCheckingUserId, setCheckingUserId] = useState(true);
   useEffect(() => {

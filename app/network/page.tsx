@@ -8,11 +8,13 @@ import { useEffect, useState } from "react";
 import NetworkPage from "../../app/components/NetworkPage";
 import Header from "@/globals/Header";
 import { useRouter } from "next/navigation";
+import { useSocket } from "../Context/store";
 
 export default function Network() {
   const [user, setUser] = useState();
   const [isCheckingUserId, setCheckingUserId] = useState(true);
   const router = useRouter();
+  const socket = useSocket();
 
   useEffect(() => {
     const itemUUID = localStorage.getItem("UUID");
