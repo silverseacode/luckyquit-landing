@@ -524,7 +524,7 @@ const ChatMessage = ({
           receiverProfilePicture: messageSocket.receiverProfilePicture,
           initialsReceiver: messageSocket.initialsReceiver,
           backgroundColorReceiver: messageSocket.backgroundColorReceiver,
-          dateDefault: messageSocket.dateDefault
+          dateDefault: messageSocket.dateDefault,
         });
 
         const existingMessage = {
@@ -539,7 +539,7 @@ const ChatMessage = ({
           receiverProfilePicture: messageSocket.receiverProfilePicture,
           initialsReceiver: messageSocket.initialsReceiver,
           backgroundColorReceiver: messageSocket.backgroundColorReceiver,
-          dateDefault: messageSocket.dateDefault
+          dateDefault: messageSocket.dateDefault,
         };
         console.log("111 existing", existingMessage);
 
@@ -663,6 +663,7 @@ const ChatMessage = ({
   };
 
   const [reevalute, setReevalute] = useState(false);
+  const messagesRef = useRef(null);
 
   useEffect(() => {
     socket?.on("new_message", async function (socketData: MessageBody) {
@@ -697,6 +698,9 @@ const ChatMessage = ({
 
       const messageBE = dataBE.response.res;
       handleMessages(messageBE);
+      if (messagesRef.current) {
+        messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+      }
     });
   }, [socket]);
 
@@ -1072,14 +1076,17 @@ const ChatMessage = ({
         </View>
       </View>
 
-      <div style={{ height: "410px", overflow: "hidden", overflowY: "scroll" }}>
-        <ScrollView>
+     
+        <div
+          ref={messagesRef}
+          style={{ height: "343px", overflow: "hidden", overflowY: "scroll" }}
+        >
           {receiver !== undefined && (
-            <View style={{ marginHorizontal: 10, paddingBottom: 120 }}>
+            <View style={{ marginHorizontal: 10}}>
               {messageGroups}
             </View>
           )}
-        </ScrollView>
+        </div>
         <div className={styles.containerInput}>
           {user?.type === "coach" && receiverTypeOfUser !== "coach" && (
             <View
@@ -1215,7 +1222,7 @@ const ChatMessage = ({
             </div>
           </View>
         </div>
-      </div>
+     
       <Modal
         open={isPlanModalOpen}
         className={styles.modal}
@@ -1569,7 +1576,13 @@ const ChatMessage = ({
                   />
                 </View>
                 {isErrorEmail && (
-                  <span style={{ color: Colors.red, textAlign: "center", marginBottom: 15 }}>
+                  <span
+                    style={{
+                      color: Colors.red,
+                      textAlign: "center",
+                      marginBottom: 15,
+                    }}
+                  >
                     Invalid email format.
                   </span>
                 )}

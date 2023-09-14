@@ -33,8 +33,6 @@
   }
 
   .containerInput {
-    position: absolute;
-    bottom: 0;
     background: #fff;
     max-width: 427px;
     width: 100%;
