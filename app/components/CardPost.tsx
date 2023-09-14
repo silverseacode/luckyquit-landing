@@ -27,7 +27,7 @@ import {
   sendPushNotificationAndroid,
 } from "@/helpers/notifications";
 import { v4 as uuidv4 } from "uuid";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 interface IProps {
   post: Post;
   index: number;
@@ -55,7 +55,7 @@ const CardPost = ({
   user,
   followers,
   socket,
-  deletePostLuckyLocal
+  deletePostLuckyLocal,
 }: IProps) => {
   const router = useRouter();
   let totalNumberOfReplies = 0;
@@ -95,8 +95,6 @@ const CardPost = ({
   const existingLike = post.likes?.find(
     (like) => like?.userName === user?.userName
   );
-
-
 
   const toggleLike = () => {
     const like = {
@@ -157,11 +155,11 @@ const CardPost = ({
   const shareOnApp = async () => {
     //activeUserToShae save here item entero para campos receiver
     // hacer get user UUID para sender
-    const data =  await getUser(activeUserToShare?.userId);
+    const data = await getUser(activeUserToShare?.userId);
     const activeUserToShareBE: User = data.response[0];
     const userData = await getUser();
     const userSender: User = userData.response[0];
-    console.log(1,userSender)
+    console.log(1, userSender);
     const newUUID = uuidv4();
     const messageRamdomToGenerateNewMessage = newUUID;
 
@@ -179,8 +177,9 @@ const CardPost = ({
       senderFullName: `${userSender?.firstName} ${userSender?.lastName}`,
       receiverFullName: `${activeUserToShareBE?.firstName} ${activeUserToShareBE?.lastName}`,
       receiverProfilePicture:
-        activeUserToShareBE?.profilePicture.split?.("/")?.[3]?.split?.("?")?.[0] ??
-        "",
+        activeUserToShareBE?.profilePicture
+          .split?.("/")?.[3]
+          ?.split?.("?")?.[0] ?? "",
       initialsSender: `${userSender?.firstName[0]} ${userSender?.lastName[0]}`,
       backgroundColorSender: userSender?.backgroundColor,
       initialsReceiver: `${activeUserToShareBE?.firstName[0]} ${activeUserToShareBE?.lastName[0]}`,
@@ -200,7 +199,7 @@ const CardPost = ({
       postIdOwnerPost: infoOwnerPostShare?.idv4,
       postUserIdOwnerPost: infoOwnerPostShare?.userId,
       likesOwnerPost: infoOwnerPostShare?.likes,
-      dateDefault: new Date()
+      dateDefault: new Date(),
     };
 
     //handleSendToSocketMessage(newMessageBE);
@@ -208,27 +207,25 @@ const CardPost = ({
     await saveMessageBE(newMessageBE);
     console.log("ACTIVE", activeUserToShareBE);
 
-    if (
-      activeUserToShareBE?.isChats
-    ) {
+    if (activeUserToShareBE?.isChats) {
       //if (activeUserToShare?.os !== "") {
-        if (activeUserToShareBE?.os !== "android") {
-          const data = {
-            token: activeUserToShareBE?.pushToken,
-            title: `New message`,
-            body: `${activeUserToShareBE?.firstName} ${activeUserToShareBE?.lastName} share a post`,
-            data: { isFrom: "Message", receiver: userSender.userId },
-          };
-          await sendPushNotification(data);
-        } else {
-          const pushNotification = {
-            title: `New message`,
-            body: `${activeUserToShareBE?.firstName} ${activeUserToShareBE?.lastName} share a post`,
-            data: { isFrom: "Message", receiver: userSender.userId },
-            token: activeUserToShareBE?.pushToken,
-          };
-          await sendPushNotificationAndroid(pushNotification);
-        }
+      if (activeUserToShareBE?.os !== "android") {
+        const data = {
+          token: activeUserToShareBE?.pushToken,
+          title: `New message`,
+          body: `${activeUserToShareBE?.firstName} ${activeUserToShareBE?.lastName} share a post`,
+          data: { isFrom: "Message", receiver: userSender.userId },
+        };
+        await sendPushNotification(data);
+      } else {
+        const pushNotification = {
+          title: `New message`,
+          body: `${activeUserToShareBE?.firstName} ${activeUserToShareBE?.lastName} share a post`,
+          data: { isFrom: "Message", receiver: userSender.userId },
+          token: activeUserToShareBE?.pushToken,
+        };
+        await sendPushNotificationAndroid(pushNotification);
+      }
       //}
     }
 
@@ -259,8 +256,8 @@ const CardPost = ({
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Pressable
               onPress={() => {
-                if(post.userName !== "12345-lucky-12345") {
-                  router.push(`/profile/${post.userId}/false`)
+                if (post.userName !== "12345-lucky-12345") {
+                  router.push(`/profile/${post.userId}/false`);
                 }
               }}
             >
@@ -275,7 +272,7 @@ const CardPost = ({
                       width: 70,
                       height: 70,
                       borderRadius: 50,
-                      objectFit: "cover"
+                      objectFit: "cover",
                     }}
                   />
                 </View>
@@ -298,32 +295,53 @@ const CardPost = ({
             </Pressable>
             <View style={{ marginLeft: 15 }}>
               <View>
-                
                 <Pressable
                   onPress={() => {
                     if (post.userName !== "12345-lucky-12345") {
-                      router.push(`/profile/${post.userId}/false`)
+                      router.push(`/profile/${post.userId}/false`);
                     }
                   }}
                 >
-                  <View style={{flexDirection: "row", alignItems: "center"}}>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <span
-                      style={{ fontSize: 17, fontWeight: "600", marginTop: 5, marginRight: 15 }}
+                      style={{
+                        fontSize: 17,
+                        fontWeight: "600",
+                        marginTop: 5,
+                        marginRight: 15,
+                      }}
                     >
                       {`${post.firstName} ${post.lastName}`}
                     </span>
-                    {post.userType !== undefined && post.userType !== "" &&  <span style={{background: Colors.primary, padding: "5px 5px", margin: "5px 0px", borderRadius: "24px", color: Colors.white, fontSize: 11, textAlign: "center", position: "relative", top: 4}}>{post.userType.toUpperCase()}</span>}
+                    {post.userId !== "12345-lucky-12345" &&
+                      post.userType !== undefined &&
+                      post.userType !== "" && (
+                        <span
+                          style={{
+                            background: Colors.primary,
+                            padding: "5px 5px",
+                            margin: "5px 0px",
+                            borderRadius: "24px",
+                            color: Colors.white,
+                            fontSize: 11,
+                            textAlign: "center",
+                            position: "relative",
+                            top: 4,
+                          }}
+                        >
+                          {post.userType.toUpperCase()}
+                        </span>
+                      )}
                   </View>
                 </Pressable>
-               
+
                 <View style={{ marginBottom: 10, marginTop: 5 }}>
                   <span style={{ fontSize: 13, color: Colors.darkGray }}>
-                  {post.userId === "12345-lucky-12345"
+                    {post.userId === "12345-lucky-12345"
                       ? "Official Account"
                       : timeAgo}
                   </span>
                 </View>
-                
               </View>
             </View>
           </View>
@@ -337,15 +355,14 @@ const CardPost = ({
                 }}
               >
                 {post.userId !== "12345-lucky-12345" ? (
-                <TouchableOpacity onPress={() => share(post)}>
-                   <ShareIcon />
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity onPress={() => deletePostLucky(post._id)}>
-                  <CloseIcon style={{fontSize: 26}} />
-                </TouchableOpacity>
-              )}
-               
+                  <TouchableOpacity onPress={() => share(post)}>
+                    <ShareIcon />
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity onPress={() => deletePostLucky(post._id)}>
+                    <CloseIcon style={{ fontSize: 26 }} />
+                  </TouchableOpacity>
+                )}
               </View>
             </TouchableOpacity>
           )}
@@ -396,34 +413,35 @@ const CardPost = ({
                   width: "100%",
                   height: 300,
                   borderRadius: 20,
-                  objectFit: "cover"
+                  objectFit: "cover",
                 }}
               />
-
-              <View
-                style={{
-                  borderRadius: 50,
-                  backgroundColor: existingLike ? "#FF2D55" : Colors.white,
-                  width: 40,
-                  height: 40,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  position: "absolute",
-                  bottom: 20,
-                  left: 30,
-                }}
-              >
-                <Pressable onPress={() => toggleLike()}>
-                  {!existingLike && (
-                    <FavoriteIcon style={{ color: "#FF2D55" }} />
-                  )}
-                  {existingLike && (
-                    <FavoriteBorderIcon
-                      style={{ color: Colors.blackCardDarkMode }}
-                    />
-                  )}
-                </Pressable>
-              </View>
+              {post.userId !== "12345-lucky-12345" && (
+                <View
+                  style={{
+                    borderRadius: 50,
+                    backgroundColor: existingLike ? "#FF2D55" : Colors.white,
+                    width: 40,
+                    height: 40,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    position: "absolute",
+                    bottom: 20,
+                    left: 30,
+                  }}
+                >
+                  <Pressable onPress={() => toggleLike()}>
+                    {!existingLike && (
+                      <FavoriteIcon style={{ color: "#FF2D55" }} />
+                    )}
+                    {existingLike && (
+                      <FavoriteBorderIcon
+                        style={{ color: Colors.blackCardDarkMode }}
+                      />
+                    )}
+                  </Pressable>
+                </View>
+              )}
             </>
           )}
           {post.likes?.length > 0 &&
@@ -573,11 +591,13 @@ const CardPost = ({
                 </span>
               </Pressable>
             )}
-            {post.comments?.length === 0 && post.allowComments && post.userId !== "12345-lucky-12345" && (
-              <Pressable onPress={() => goToCommentsScreen()}>
-                <span style={{ color: Colors.darkGray }}>Add a comment</span>
-              </Pressable>
-            )}
+            {post.comments?.length === 0 &&
+              post.allowComments &&
+              post.userId !== "12345-lucky-12345" && (
+                <Pressable onPress={() => goToCommentsScreen()}>
+                  <span style={{ color: Colors.darkGray }}>Add a comment</span>
+                </Pressable>
+              )}
           </View>
           {post.comments?.length > 0 && (
             <View
@@ -586,7 +606,7 @@ const CardPost = ({
                 marginTop: 10,
                 maxWidth: 500,
                 marginLeft: post.picturePost !== "" ? 0 : 15,
-                alignItems: "center"
+                alignItems: "center",
               }}
             >
               <Pressable
@@ -599,7 +619,7 @@ const CardPost = ({
                 </span>
               </Pressable>
               <span
-              className={styles.firstComment}
+                className={styles.firstComment}
                 style={{
                   color: Colors.darkGray,
                   marginLeft: 5,
@@ -678,9 +698,7 @@ const CardPost = ({
                     name="search1"
                   />
                 </View>
-                <div
-                  className={styles.wrapperFollowers}
-                >
+                <div className={styles.wrapperFollowers}>
                   {followers
                     ?.filter(
                       (item) =>
@@ -713,9 +731,7 @@ const CardPost = ({
                             borderBottomColor: Colors.lightGray,
                           }}
                         >
-                          <Pressable
-                            onPress={() => setActiveUserToShare(item)}
-                          >
+                          <Pressable onPress={() => setActiveUserToShare(item)}>
                             <View
                               style={{
                                 flexDirection: "row",
@@ -812,7 +828,6 @@ const CardPost = ({
                         justifyContent: "flex-end",
                         flexDirection: "row",
                         marginRight: 20,
-                        
                       }}
                     >
                       <Pressable

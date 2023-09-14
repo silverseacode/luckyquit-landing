@@ -99,6 +99,8 @@ const Home = ({ posts }: IProps) => {
   const [newPostAdded, setNewPostAdded] = useState<Post>();
   const [isChangesWithoutSave, setChangesWithoutSave] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [file, setFile] = useState();
+  const [text, setText] = useState("");
 
   if (isCheckingUserId) return null;
 
@@ -125,7 +127,7 @@ const Home = ({ posts }: IProps) => {
             </Grid>
             <Grid item xs={showCalendar || showModules ? 9 : 6}>
               {!showModules && !showCalendar && (
-                <CreatePost user={user} setNewPostAdded={setNewPostAdded} />
+                <CreatePost setText={setText} text={text} setFile={setFile} file={file} user={user} setNewPostAdded={setNewPostAdded} />
               )}
               <PostsHome
                 showCalendar={showCalendar}

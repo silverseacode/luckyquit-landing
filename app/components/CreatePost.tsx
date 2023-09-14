@@ -18,11 +18,14 @@ import mixpanel from 'mixpanel-browser';
 interface IProps {
   user: User | undefined;
   setNewPostAdded: (value: Post) => void;
+  setFile: (value: any) => void
+  file: any;
+  setText: (value: string) => void
+  text: string
 }
-const CreatePost = ({ user, setNewPostAdded }: IProps) => {
+const CreatePost = ({ user, setNewPostAdded, setFile, file, setText, text }: IProps) => {
   const [openModal, setOpenModal] = useState(false);
 
-  const [base64, setBase64] = useState<string | null>(null);
   const [myUserId, setMyUserId] = useState<string | null>("");
   useEffect(() => {
     const itemUUID = localStorage.getItem("UUID");
@@ -31,7 +34,6 @@ const CreatePost = ({ user, setNewPostAdded }: IProps) => {
   }, []);
 
   const [valueSwitch, setSwitch] = useState(true);
-  const [file, setFile] = useState();
   const [isCreatingPost, setIsCreatingPost] = useState(false);
   const createPost = async () => {
     if (myUserId !== null) {
@@ -69,7 +71,7 @@ const CreatePost = ({ user, setNewPostAdded }: IProps) => {
         formData.append("image", file);
         await Promise.all([
           axios.post(
-            `api/posts/uploadImagePost/${postBE.idv4}`,
+            `${API_URL}/post/uploadImagePost/${postBE.idv4}`,
             formData,
             {
               headers: { "Content-Type": "multipart/form-data" },
@@ -77,15 +79,17 @@ const CreatePost = ({ user, setNewPostAdded }: IProps) => {
           ),
         ]);
       }
+      setFile(undefined)
+      setText("")
       const postRes = await getPostByIdBE(postBE.idv4);
       const post = postRes.response.post;
       mixpanel.track('Created new post web');
       setIsCreatingPost(false);
       setNewPostAdded(post);
+      
     }
   };
 
-  const [text, setText] = useState("");
 
   const removeFile = () => {
     setFile(undefined);
