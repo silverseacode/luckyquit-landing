@@ -223,8 +223,8 @@ export default function Notifications() {
     notif: NotificationType;
     index: number;
   }>();
-  //const emailMySelf = process.env.NEXT_PUBLIC_MY_PAYPAL_EMAIL
-  const emailMySelf = "sb-2l5c625357871@business.example.com";
+  const emailMySelf = process.env.NEXT_PUBLIC_MY_PAYPAL_EMAIL
+  //const emailMySelf = "sb-2l5c625357871@business.example.com";
   const [nameCurrentUser, setNameCurrentUser] = useState("");
   const [timezone, setTimezone] = useState("");
   const [quitterDataVar, setQuitterData] = useState<User>();
@@ -299,9 +299,7 @@ export default function Notifications() {
       setTimeout(() => {
         if (iframeRef.current) {
           const data = {
-            //clientId: process.env.NEXT_PUBLIC_CLIENT_ID_PAYPAL,
-            clientId:
-              "AaMMsWryLKfjq6scSA9wm-Yy-cdM1_hTFf-89tHvMpJJVg2-NgOkHMFe03DoMLmY5Zav3X0Gm1T-0DNp",
+            clientId: process.env.NEXT_PUBLIC_CLIENT_ID_PAYPAL,
             emailMySelf,
             emailCoach: coachData[0].email,
             emailCoachPayPal: coachData[0].emailPaypal,
