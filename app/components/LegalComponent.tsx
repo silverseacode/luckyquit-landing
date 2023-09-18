@@ -24,9 +24,11 @@ const LegalComponent = () => {
             setOpen(true);
           }}
           className={styles.textFooter}
+          style={{marginBottom:5}}
         >
           Privacy Policy
         </h4>
+        <span className={styles.contactUsMobile} style={{ color: "#FFF", fontWeight: "600", fontSize: 9 }}>lucky.quit.app@gmail.com</span>
       </div>
       <Modal
         className={styles.modal}

@@ -288,7 +288,8 @@ export default function Landing() {
               </h5>
             </div>
             <div className={`${styles.columnFooter} ${styles.getTheApp}`}>
-              <h3 style={{ color: "#FFF", fontWeight: "600" }}>Get the app</h3>
+              <h3 style={{ color: "#FFF", fontWeight: "600" }}>Contact Us</h3>
+              <h5 style={{ color: "#FFF", fontWeight: "600" }}>lucky.quit.app@gmail.com</h5>
             </div>
           </div>
           <div className={styles.downloadButtonsMobile}>
@@ -379,7 +380,8 @@ export default function Landing() {
             </h5>
           </div>
           <div className={`${styles.columnFooter} ${styles.getTheApp}`}>
-            <h3 style={{ color: "#FFF", fontWeight: "600" }}>Get the app</h3>
+            <h3 style={{ color: "#FFF", fontWeight: "600" }}>Contact Us</h3>
+             <h5 style={{ color: "#FFF", fontWeight: "600" }}>lucky.quit.app@gmail.com</h5>
           </div>
           <div className={styles.downloadButtonsMobile}>
             <img

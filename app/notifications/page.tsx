@@ -418,7 +418,7 @@ export default function Notifications() {
     const newMessageBE = {
       sender: notifToBeUpdated?.notif.receiver,
       receiver: notifToBeUpdated?.notif.sender,
-      message: `The quitter has payed the amount sent by ${notifToBeUpdated?.notif.senderFullName}`,
+      message: `The quitter has payed the amount sent by ${notifToBeUpdated?.notif.senderFullName}. Please update your tracking information in PayPal to receive the money if the payment is on hold.`,
       date: dateTimezone,
       isRead: false,
       profilePicture: quitterDataVar?.profilePicture,

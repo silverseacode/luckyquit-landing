@@ -231,6 +231,12 @@ color: #55616C;
   }
 }
 
+@media screen and (min-width: 851px) {
+  .contactUsMobile {
+    display: none;
+  }
+}
+
 @media screen and (min-width: 851px) and (max-width: 1000px)  {
   .footerNotDesktop {
     display: block;
