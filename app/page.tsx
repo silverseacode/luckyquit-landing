@@ -49,6 +49,7 @@ export default function Landing() {
               </p>
             </div>
             <div className={styles.downloadButtons}>
+              <a href="https://apps.apple.com/us/app/lucky-quit/id6451087263">
               <img
                 width={"230px"}
                 height={75}
@@ -57,6 +58,8 @@ export default function Landing() {
                 style={{ cursor: "pointer" }}
                 className={styles.headerAppIcons}
               />
+              </a>
+              <a href="https://play.google.com/store/apps/details?id=com.francorobusiness.myproject">
               <img
                 style={{ marginLeft: "30px", cursor: "pointer" }}
                 width={"230px"}
@@ -65,6 +68,7 @@ export default function Landing() {
                 src={"/playstore.png"}
                 className={`${styles.headerAppIcons}`}
               />
+              </a>
             </div>
           </div>
           <div className={styles.imageMain}>
