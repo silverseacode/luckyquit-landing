@@ -10,19 +10,19 @@ const LegalComponent = () => {
     <>
       <div>
         <h4
-          onClick={() => {
-            setOpenModal("terms");
-            setOpen(true);
-          }}
+          // onClick={() => {
+          //   setOpenModal("terms");
+          //   setOpen(true);
+          // }}
           className={styles.textFooter}
         >
           Terms of Service
         </h4>
         <h4
-          onClick={() => {
-            setOpenModal("privacy");
-            setOpen(true);
-          }}
+          // onClick={() => {
+          //   setOpenModal("privacy");
+          //   setOpen(true);
+          // }}
           className={styles.textFooter}
           style={{marginBottom:5}}
         >

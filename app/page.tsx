@@ -49,7 +49,7 @@ export default function Landing() {
               </p>
             </div>
             <div className={styles.downloadButtons}>
-              <a href="https://apps.apple.com/us/app/lucky-quit/id6451087263">
+            
               <img
                 width={"230px"}
                 height={75}
@@ -58,8 +58,7 @@ export default function Landing() {
                 style={{ cursor: "pointer" }}
                 className={styles.headerAppIcons}
               />
-              </a>
-              <a href="https://play.google.com/store/apps/details?id=com.francorobusiness.myproject">
+            
               <img
                 style={{ marginLeft: "30px", cursor: "pointer" }}
                 width={"230px"}
@@ -68,7 +67,6 @@ export default function Landing() {
                 src={"/playstore.png"}
                 className={`${styles.headerAppIcons}`}
               />
-              </a>
             </div>
           </div>
           <div className={styles.imageMain}>
@@ -181,41 +179,7 @@ export default function Landing() {
           </div>
         </div>
 
-        <div id="faq-section" className={styles.faqSection}>
-          <h1>FAQ For Coaches</h1>
-        </div>
-        <div className={styles.containerFaq}>
-          <div className="accordion">
-            <AccordionItem
-              title="How can I start earning money as a Coach?"
-              content="Start connecting with individuals who are looking to quit in the community section of the app."
-              id="faq-coaches-1"
-            />
-            <AccordionItem
-              title="How do I send a payment link?"
-              content="In the chat with a quitter, there is a button that says Configure Payment Link, where you can customize the payment as you like."
-            />
-            <AccordionItem
-              title="How do I receive the payment?"
-              content="To receive payments, you'll need a verified PayPal account associated with your email. In the Communities tab, when prompted, please enter your PayPal email. Additionally, at the moment you're sending the link, you can also update the email to ensure it's correct. Furthermore, you have the option to modify it later in the Settings screen, accessible by tapping the gear icon on the app's homepage. If you're using the web version, you can also make changes in your profile.
-              "
-            />
-            <AccordionItem
-              title="How much can I earn?"
-              content="When sending the payment link, you have the flexibility to set the amount you want and the expiration date for the plan you're selling. The quitter will receive a payment link with the specified amount and a 10% fee, which goes to the Lucky Quit app. This information is clearly explained in the payment link that will be sent to the quitter."
-              id="faq-coaches-4"
-            />
-            <AccordionItem
-              title="How can I create modules and exercises for the quitter?"
-              content="Creating modules and exercises for the quitter is a seamless process. While it's possible to create them both in the app and on the website, it's often more convenient to develop them on the website. Additionally, you'll find that refining the format and enhancing the content is more accessible from the web interface, especially when using a computer."
-              id="faq-coaches-5"
-            />
-            <AccordionItem
-              title="How can I schedule and conduct video calls with my quitter?"
-              content="Our platform offers the capability for coaches and quitters to engage in video calls whenever they're connected through a plan. These calls can be initiated exclusively on the website, accessible from a computer. To schedule a video call, coaches have a dedicated button in the chat interface, located next to the payment link button. Once the call is scheduled, it's automatically recorded in the calendar, visible to both the coach and the quitter.
-              "
-            />
-          </div>
+        
         </div>
 
         <div className={`${styles.footerNotDesktop}`}>
@@ -315,7 +279,7 @@ export default function Landing() {
             />
           </div>
         </div>
-      </div>
+     
       <div className={styles.footer}>
         <div className={styles.flexContainerFooter}>
           <div className={styles.columnFooter}>
@@ -326,10 +290,7 @@ export default function Landing() {
             <h1 style={{ color: "#FFF", fontWeight: "600" }}>Lucky Quit</h1>
 
             <div className={styles.social}>
-              <a
-                href="https://www.facebook.com/app.lucky.quit"
-                className={styles.socialButton}
-              >
+              <div className={styles.socialButton}>
                 <img
                   width={25}
                   height={25}
@@ -337,8 +298,8 @@ export default function Landing() {
                   style={{ cursor: "pointer" }}
                   className={styles.socialButtonImage}
                 />
-              </a>
-              <a
+                </div>
+              {/* <a
                 href="https://twitter.com/lucky_quit_app"
                 className={styles.socialButton}
               >
@@ -349,9 +310,8 @@ export default function Landing() {
                   style={{ cursor: "pointer" }}
                   className={styles.socialButtonImage}
                 />
-              </a>
-              <a
-                href="https://www.instagram.com/lucky_quit/"
+              </a> */}
+             <div
                 className={styles.socialButton}
               >
                 <img
@@ -361,9 +321,8 @@ export default function Landing() {
                   style={{ cursor: "pointer" }}
                   className={styles.socialButtonImage}
                 />
-              </a>
-              <a
-                href="https://www.threads.net/@lucky_quit"
+                </div>
+              <div
                 className={styles.socialButton}
               >
                 <img
@@ -373,7 +332,7 @@ export default function Landing() {
                   style={{ cursor: "pointer" }}
                   className={styles.socialButtonImage}
                 />
-              </a>
+              </div>
             </div>
 
             <h5

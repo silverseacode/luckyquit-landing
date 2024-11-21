@@ -41,7 +41,7 @@ const NavBarItems = () => {
           <span onClick={() => scrollToSection("faq-section")}>FAQ</span>
         </div>
       </div>
-      <div onClick={() => router.push('/login')} className={styles.signInButton}>Sign In</div>
+      {/* <div onClick={() => router.push('/login')} className={styles.signInButton}>Sign In</div> */}
     </div>
   );
 };

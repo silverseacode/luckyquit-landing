@@ -303,7 +303,15 @@ color: #55616C;
   .headerAppIcons {
     width: 150px;
     height: 50px;
+    object-fit: contain;
   }
+  @media (max-width: 768px) {
+    .headerAppIcons {
+        width: 135px; 
+        height: 65px;
+        
+    }
+}
   .featuresSection {
     margin-top: -500px !important;
   }

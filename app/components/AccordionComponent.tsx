@@ -23,12 +23,6 @@ const AccordionItem = ({ title, content, id }: any) => {
       {isOpen && (
         <>
           <div className="accordion-content">{content}</div>
-          <div style={{flexDirection: "row", display: "flex", justifyContent: "center", alignItems: "center"}}>{id === "faq-coaches-5" && <VideoFaqCoaches5 />}</div>
-          <div style={{flexDirection: "row", display: "flex", justifyContent: "center", alignItems: "center"}}>{id === "faq-coaches-4" && <VideoFaqCoaches4 />}</div>
-          <div style={{flexDirection: "row", display: "flex", justifyContent: "center", alignItems: "center"}}>{id === "faq-coaches-1" && <VideoFaqCoaches1 />}</div>
-          <div style={{flexDirection: "row", display: "flex", justifyContent: "center", alignItems: "center"}}>{id === "faq-quitters-4" && <VideoFaqQuitters4 />}</div>
-          <div style={{flexDirection: "row", display: "flex", justifyContent: "center", alignItems: "center"}}>{id === "faq-quitters-1" && <VideoFaqQuitters1 />}</div>
-        
         </>
       )}
     </div>
